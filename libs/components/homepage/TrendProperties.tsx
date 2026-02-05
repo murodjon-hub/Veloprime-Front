@@ -24,7 +24,7 @@ const TrendProperties = (props: TrendPropertiesProps) => {
 	/** APOLLO REQUESTS **/
 	const {
 		loading: getPropertiesLoading,
-		data: etPropertiesData,
+		data: getPropertiesData,
 		error: getPropertiesError,
 		refetch: getPropertiesRefetch,
 	} = useQuery(GET_PROPERTIES, {

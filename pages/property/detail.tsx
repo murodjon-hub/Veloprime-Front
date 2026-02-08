@@ -30,8 +30,8 @@ import 'swiper/css/pagination';
 import { GET_COMMENTS, GET_PROPERTIES, GET_PROPERTY } from '../../apollo/user/query';
 import { T } from '../../libs/types/common';
 import { Direction, Message } from '../../libs/enums/common.enum';
-import { sweetErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
-import { LIKE_TARGET_PROPERTY } from '../../apollo/user/mutation';
+import { sweetErrorAlert, sweetErrorHandling, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
+import { CREATE_COMMENT, LIKE_TARGET_PROPERTY } from '../../apollo/user/mutation';
 
 SwiperCore.use([Autoplay, Navigation, Pagination]);
 
@@ -60,6 +60,7 @@ const PropertyDetail: NextPage = ({ initialComment, ...props }: any) => {
 
 	/** APOLLO REQUESTS **/
 	const [likeTargetProperty] = useMutation(LIKE_TARGET_PROPERTY);
+	const [createComment] = useMutation(CREATE_COMMENT);
 
 	const {
 		loading: getPropertyLoading,
@@ -176,6 +177,19 @@ const PropertyDetail: NextPage = ({ initialComment, ...props }: any) => {
 	const commentPaginationChangeHandler = async (event: ChangeEvent<unknown>, value: number) => {
 		commentInquiry.page = value;
 		setCommentInquiry({ ...commentInquiry });
+	};
+
+	const createCommentHandler = async () => {
+		try {
+			if (!user._id) throw new Error(Message.NOT_AUTHENTICATED);
+			await createComment({ variables: { input: insertCommentData } });
+
+			setInsertCommentData({ ...insertCommentData, commentContent: '' });
+
+			await getCommentsRefetch({ input: commentInquiry });
+		} catch (err: any) {
+			await sweetErrorHandling(err);
+		}
 	};
 
 	if (device === 'mobile') {
@@ -490,6 +504,7 @@ const PropertyDetail: NextPage = ({ initialComment, ...props }: any) => {
 										<Button
 											className={'submit-review'}
 											disabled={insertCommentData.commentContent === '' || user?._id === ''}
+											onClick={createCommentHandler}
 										>
 											<Typography className={'title'}>Submit Review</Typography>
 											<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 17 17" fill="none">

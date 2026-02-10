@@ -46,7 +46,7 @@ const CommunityBoards = () => {
 		variables: { input: { ...searchCommunity, limit: 3, search: { articleCategory: BoardArticleCategory.FREE } } },
 		notifyOnNetworkStatusChange: true,
 		onCompleted: (data: T) => {
-			setNewsArticles(data?.getBoardArticles?.list);
+			setFreeArticles(data?.getBoardArticles?.list);
 		},
 	});
 

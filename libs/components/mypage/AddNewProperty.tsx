@@ -213,7 +213,10 @@ const AddProperty = ({ initialValues, ...props }: any) => {
 										placeholder={'Price'}
 										value={insertPropertyData.propertyPrice}
 										onChange={({ target: { value } }) =>
-											setInsertPropertyData({ ...insertPropertyData, propertyPrice: parseInt(value) })
+											setInsertPropertyData({
+												...insertPropertyData,
+												propertyPrice: value === '' ? 0 : parseInt(value, 10),
+											})
 										}
 									/>
 								</Stack>

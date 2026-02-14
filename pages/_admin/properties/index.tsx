@@ -142,7 +142,7 @@ const AdminProperties: NextPage = ({ initialInquiry, ...props }: any) => {
 	const updatePropertyHandler = async (updateData: PropertyUpdate) => {
 		try {
 			console.log('+updateData: ', updateData);
-			await removePropertyByAdmin({
+			await updatePropertyByAdmin({
 				variables: {
 					input: updateData,
 				},

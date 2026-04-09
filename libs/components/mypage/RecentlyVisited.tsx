@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { NextPage } from 'next';
 import useDeviceDetect from '../../hooks/useDeviceDetect';
 import { Pagination, Stack, Typography } from '@mui/material';
-import PropertyCard from '../property/PropertyCard';
 import { Property } from '../../types/property/property';
 import { T } from '../../types/common';
 import { useQuery } from '@apollo/client';
@@ -48,7 +47,7 @@ const RecentlyVisited: NextPage = () => {
 				<Stack className="favorites-list-box">
 					{recentlyVisited?.length ? (
 						recentlyVisited?.map((property: Property) => {
-							return <PropertyCard property={property} recentlyVisited={true} />;
+							// return < property={property} recentlyVisited={true} />;
 						})
 					) : (
 						<div className={'no-data'}>

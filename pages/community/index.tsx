@@ -1,296 +1,161 @@
-import React, { useEffect, useState } from 'react';
-import { NextPage } from 'next';
-import { useRouter } from 'next/router';
-import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Stack, Tab, Typography, Button, Pagination } from '@mui/material';
-import CommunityCard from '../../libs/components/common/CommunityCard';
-import useDeviceDetect from '../../libs/hooks/useDeviceDetect';
-import withLayoutBasic from '../../libs/components/layout/LayoutBasic';
-import { BoardArticle } from '../../libs/types/board-article/board-article';
-import { T } from '../../libs/types/common';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { BoardArticlesInquiry } from '../../libs/types/board-article/board-article.input';
-import { BoardArticleCategory } from '../../libs/enums/board-article.enum';
-import { useMutation, useQuery } from '@apollo/client';
-import { LIKE_TARGET_BOARD_ARTICLE } from '../../apollo/user/mutation';
-import { GET_BOARD_ARTICLES } from '../../apollo/user/query';
-import { Messages } from '../../libs/config';
-import { sweetErrorAlert, sweetTopSmallSuccessAlert } from '../../libs/sweetAlert';
 
-export const getStaticProps = async ({ locale }: any) => ({
-	props: {
-		...(await serverSideTranslations(locale, ['common'])),
-	},
-});
+import { NextPage } from "next";
+import { Box, Typography, Button, Card, CardContent, CardMedia, Chip, Stack } from '@mui/material';
+import CreateIcon from '@mui/icons-material/Create';
+import React from 'react';
+import useDeviceDetect from "../../libs/hooks/useDeviceDetect";
+import withLayoutBasic from "../../libs/components/layout/LayoutBasic";
 
-const Community: NextPage = ({ initialInput, ...props }: T) => {
-	const device = useDeviceDetect();
-	const router = useRouter();
-	const { query } = router;
-	const articleCategory = query?.articleCategory as string;
-	const [searchCommunity, setSearchCommunity] = useState<BoardArticlesInquiry>(initialInput);
-	const [boardArticles, setBoardArticles] = useState<BoardArticle[]>([]);
-	const [totalCount, setTotalCount] = useState<number>(0);
-	if (articleCategory) initialInput.search.articleCategory = articleCategory;
+const Community: NextPage = () => {
+  interface BlogPost {
+  id: string;
+  title: string;
+  date: string;
+  categories: string[];
+  excerpt: string;
+  image: string;
+}
 
-	/** APOLLO REQUESTS **/
-	const [likeTargetBoardArticle] = useMutation(LIKE_TARGET_BOARD_ARTICLE);
+const blogCategories = [
+  'All Posts',
+  'Nutrition',
+  'Healthy Eating',
+  'Salads',
+  'Fruits',
+  'Wellness',
+  'Lifestyle',
+  'Recipes',
+];
 
-	const {
-		loading: BoardArticlesLoading,
-		data: BoardArticlesData,
-		error: BoardArticlesError,
-		refetch: BoardArticlesRefetch,
-	} = useQuery(GET_BOARD_ARTICLES, {
-		fetchPolicy: 'cache-and-network',
-		variables: { input: searchCommunity },
-		notifyOnNetworkStatusChange: true,
-		onCompleted: (data: any) => {
-			setBoardArticles(data?.getBoardArticles?.list ?? []);
-			setTotalCount(data?.getBoardArticles?.metaCounter?.[0]?.total ?? 0);
-		},
-	});
+const blogPosts: BlogPost[] = [
+  {
+    id: '1',
+    title: 'Sugar can make us addicts. How to fight against it!',
+    date: 'April 27, 2023',
+    categories: ['Salads', 'Fruits'],
+    excerpt: 'Sugar is a super controversial ingredient! It can cause addiction and is often found in tons of ultra-processed foods!...',
+    image: '../img/patrick-hendry-1ow9zrlldJU-unsplash.jpg',
+  },
+  {
+    id: '2',
+    title: '10 Superfoods you should include in your diet',
+    date: 'May 12, 2023',
+    categories: ['Nutrition', 'Wellness'],
+    excerpt: 'Discover the most nutrient-dense foods on the planet that can help boost your immune system and energy levels naturally...',
+    image: '../img/Blogs/dmitrii-vaccinium-9qsK2QHidmg-unsplash.jpg',
+  },
+  {
+    id: '3',
+    title: 'The benefits of a plant-based Mediterranean diet',
+    date: 'June 05, 2023',
+    categories: ['Healthy Eating', 'Recipes'],
+    excerpt: 'The Mediterranean diet is more than just a meal plan; it is a lifestyle that promotes heart health and longevity...',
+    image: '../img/Blogs/gabriel-rissi-6GGBPumFWeE-unsplash.jpg',
+  },
+  {
+    id: '4',
+    title: 'How to start your day with a healthy breakfast',
+    date: 'June 18, 2023',
+    categories: ['Wellness', 'Recipes'],
+    excerpt: 'Starting your morning with the right nutrients can set the tone for your entire day. Here are some quick and easy ideas...',
+    image: '../img/Blogs/rayyu-maldives-i-rETD5k1Qk-unsplash.jpg',
+  },
+  {
+    id: '5',
+    title: 'Understanding the impact of processed foods',
+    date: 'July 02, 2023',
+    categories: ['Nutrition', 'Lifestyle'],
+    excerpt: 'Not all processed foods are bad, but knowing which ones to avoid can make a huge difference in your long-term health...',
+    image: '../img/Blogs/saurav-kundu-H8QttyFgroY-unsplash.jpg',
+  },
+  {
+    id: '6',
+    title: 'Seasonal fruits you must try this summer',
+    date: 'July 15, 2023',
+    categories: ['Fruits', 'Healthy Eating'],
+    excerpt: 'Summer brings a bounty of delicious and hydrating fruits. Learn about the best picks for the season and their benefits...',
+    image: '../img/Blogs/alessio-soggetti-JQGGf6OuIdQ-unsplash.jpg',
+  },
+];
+  const device = useDeviceDetect();
 
-	/** LIFECYCLES **/
-	useEffect(() => {
-		if (!query?.articleCategory)
-			router.push(
-				{
-					pathname: router.pathname,
-					query: { articleCategory: 'FREE' },
-				},
-				router.pathname,
-				{ shallow: true },
-			);
-	}, []);
+  if (device === "mobile") {
+    return <Stack>COMMUNITY MOBILE</Stack>;
+  } else {
+    return (
+      <Box className="blogs-page-container">
+      <Box className="blogs-header">
+        <Typography variant="h2" className="page-title">
+          OUR BLOGS
+        </Typography>
+        <Button 
+          variant="contained" 
+          startIcon={<CreateIcon />}
+          className="write-blog-button"
+        >
+          Write a Blog
+        </Button>
+      </Box>
 
-	/** HANDLERS **/
-	const tabChangeHandler = async (e: T, value: string) => {
-		console.log(value);
+      <Box className="blogs-layout">
+        {/* Sidebar */}
+        <Box className="blogs-sidebar">
+          <Typography variant="h6" className="sidebar-title">
+            Categories
+          </Typography>
+          <ul className="category-list">
+            {blogCategories.map((cat) => (
+              <li key={cat} className={`category-item ${cat === 'All Posts' ? 'active' : ''}`}>
+                {cat}
+              </li>
+            ))}
+          </ul>
+        </Box>
 
-		setSearchCommunity({ ...searchCommunity, page: 1, search: { articleCategory: value as BoardArticleCategory } });
-		await router.push(
-			{
-				pathname: '/community',
-				query: { articleCategory: value },
-			},
-			router.pathname,
-			{ shallow: true },
-		);
-	};
-
-	const paginationHandler = (e: T, value: number) => {
-		setSearchCommunity({ ...searchCommunity, page: value });
-	};
-
-	const likeArticleHandler = async (e: any, user: any, id: string) => {
-		try {
-			if (!id) return;
-			if (!user._id) throw new Error(Messages.error2);
-
-			await likeTargetBoardArticle({
-				variables: {
-					input: id,
-				},
-			});
-
-			await BoardArticlesRefetch({ input: searchCommunity });
-			await sweetTopSmallSuccessAlert('success', 800);
-		} catch (err: any) {
-			console.log('ERROR, likePropertyHandeler:', err.message);
-			sweetErrorAlert(err.message).then();
-		}
-	};
-
-	if (device === 'mobile') {
-		return <h1>COMMUNITY PAGE MOBILE</h1>;
-	} else {
-		return (
-			<div id="community-list-page">
-				<div className="container">
-					<TabContext value={searchCommunity.search.articleCategory}>
-						<Stack className="main-box">
-							<Stack className="left-config">
-								<Stack className={'image-info'}>
-									<img src={'/img/logo/logoText.svg'} />
-									<Stack className={'community-name'}>
-										<Typography className={'name'}>Nestar Community</Typography>
-									</Stack>
-								</Stack>
-
-								<TabList
-									orientation="vertical"
-									aria-label="lab API tabs example"
-									TabIndicatorProps={{
-										style: { display: 'none' },
-									}}
-									onChange={tabChangeHandler}
-								>
-									<Tab
-										value={'FREE'}
-										label={'Free Board'}
-										className={`tab-button ${searchCommunity.search.articleCategory == 'FREE' ? 'active' : ''}`}
-									/>
-									<Tab
-										value={'RECOMMEND'}
-										label={'Recommendation'}
-										className={`tab-button ${searchCommunity.search.articleCategory == 'RECOMMEND' ? 'active' : ''}`}
-									/>
-									<Tab
-										value={'NEWS'}
-										label={'News'}
-										className={`tab-button ${searchCommunity.search.articleCategory == 'NEWS' ? 'active' : ''}`}
-									/>
-									<Tab
-										value={'HUMOR'}
-										label={'Humor'}
-										className={`tab-button ${searchCommunity.search.articleCategory == 'HUMOR' ? 'active' : ''}`}
-									/>
-								</TabList>
-							</Stack>
-							<Stack className="right-config">
-								<Stack className="panel-config">
-									<Stack className="title-box">
-										<Stack className="left">
-											<Typography className="title">{searchCommunity.search.articleCategory} BOARD</Typography>
-											<Typography className="sub-title">
-												Express your opinions freely here without content restrictions
-											</Typography>
-										</Stack>
-										<Button
-											onClick={() =>
-												router.push({
-													pathname: '/mypage',
-													query: {
-														category: 'writeArticle',
-													},
-												})
-											}
-											className="right"
-										>
-											Write
-										</Button>
-									</Stack>
-
-									<TabPanel value="FREE">
-										<Stack className="list-box">
-											{totalCount ? (
-												boardArticles?.map((boardArticle: BoardArticle) => {
-													return (
-														<CommunityCard
-															boardArticle={boardArticle}
-															likeArticleHandler={likeArticleHandler}
-															key={boardArticle?._id}
-														/>
-													);
-												})
-											) : (
-												<Stack className={'no-data'}>
-													<img src="/img/icons/icoAlert.svg" alt="" />
-													<p>No Article found!</p>
-												</Stack>
-											)}
-										</Stack>
-									</TabPanel>
-									<TabPanel value="RECOMMEND">
-										<Stack className="list-box">
-											{totalCount ? (
-												boardArticles?.map((boardArticle: BoardArticle) => {
-													return (
-														<CommunityCard
-															boardArticle={boardArticle}
-															likeArticleHandler={likeArticleHandler}
-															key={boardArticle?._id}
-														/>
-													);
-												})
-											) : (
-												<Stack className={'no-data'}>
-													<img src="/img/icons/icoAlert.svg" alt="" />
-													<p>No Article found!</p>
-												</Stack>
-											)}
-										</Stack>
-									</TabPanel>
-									<TabPanel value="NEWS">
-										<Stack className="list-box">
-											{totalCount ? (
-												boardArticles?.map((boardArticle: BoardArticle) => {
-													return (
-														<CommunityCard
-															boardArticle={boardArticle}
-															likeArticleHandler={likeArticleHandler}
-															key={boardArticle?._id}
-														/>
-													);
-												})
-											) : (
-												<Stack className={'no-data'}>
-													<img src="/img/icons/icoAlert.svg" alt="" />
-													<p>No Article found!</p>
-												</Stack>
-											)}
-										</Stack>
-									</TabPanel>
-									<TabPanel value="HUMOR">
-										<Stack className="list-box">
-											{totalCount ? (
-												boardArticles?.map((boardArticle: BoardArticle) => {
-													return (
-														<CommunityCard
-															boardArticle={boardArticle}
-															likeArticleHandler={likeArticleHandler}
-															key={boardArticle?._id}
-														/>
-													);
-												})
-											) : (
-												<Stack className={'no-data'}>
-													<img src="/img/icons/icoAlert.svg" alt="" />
-													<p>No Article found!</p>
-												</Stack>
-											)}
-										</Stack>
-									</TabPanel>
-								</Stack>
-							</Stack>
-						</Stack>
-					</TabContext>
-
-					{totalCount > 0 && (
-						<Stack className="pagination-config">
-							<Stack className="pagination-box">
-								<Pagination
-									count={Math.ceil(totalCount / searchCommunity.limit)}
-									page={searchCommunity.page}
-									shape="circular"
-									color="primary"
-									onChange={paginationHandler}
-								/>
-							</Stack>
-							<Stack className="total-result">
-								<Typography>
-									Total {totalCount} article{totalCount > 1 ? 's' : ''} available
-								</Typography>
-							</Stack>
-						</Stack>
-					)}
-				</div>
-			</div>
-		);
-	}
-};
-
-Community.defaultProps = {
-	initialInput: {
-		page: 1,
-		limit: 6,
-		sort: 'createdAt',
-		direction: 'ASC',
-		search: {
-			articleCategory: 'FREE',
-		},
-	},
+        {/* Blog Grid */}
+        <Box className="blog-grid">
+          {blogPosts.map((post) => (
+            <Card key={post.id} className="blog-card" elevation={0}>
+              <CardMedia
+                component="img"
+                image={post.image}
+                alt={post.title}
+                className="blog-card-image"
+              />
+              <CardContent className="blog-card-content">
+                <Box className="blog-card-meta">
+                  <Typography variant="body2" className="blog-date">
+                    {post.date}
+                  </Typography>
+                  <Box className="blog-categories">
+                    {post.categories.map((cat, index) => (
+                      <React.Fragment key={cat}>
+                        <Typography variant="body2" className="blog-category-link">
+                          {cat}
+                        </Typography>
+                        {index < post.categories.length - 1 && (
+                          <span className="category-separator">•</span>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </Box>
+                </Box>
+                
+                <Typography variant="h5" className="blog-title">
+                  {post.title}
+                </Typography>
+                
+                <Typography variant="body2" className="blog-excerpt">
+                  {post.excerpt} <span className="read-more">Read more</span>
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      </Box>
+    </Box>
+    );
+  }
 };
 
 export default withLayoutBasic(Community);

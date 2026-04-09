@@ -11,7 +11,7 @@ import { sweetErrorHandling, sweetMixinErrorAlert, sweetMixinSuccessAlert } from
 import { useMutation, useQuery, useReactiveVar } from '@apollo/client';
 import { userVar } from '../../../apollo/store';
 import { CREATE_PROPERTY, UPDATE_PROPERTY } from '../../../apollo/user/mutation';
-import { GET_PROPERTY } from '../../../apollo/user/query';
+import { GET_PRODUCTS, GET_PROPERTIES } from '../../../apollo/user/query';
 
 const AddProperty = ({ initialValues, ...props }: any) => {
 	const device = useDeviceDetect();
@@ -32,7 +32,7 @@ const AddProperty = ({ initialValues, ...props }: any) => {
 		data: getPropertyData,
 		error: getPropertyError,
 		refetch: getPropertyRefetch,
-	} = useQuery(GET_PROPERTY, {
+	} = useQuery(GET_PROPERTIES, {
 		fetchPolicy: 'network-only',
 		variables: {
 			input: router.query.propertyId,

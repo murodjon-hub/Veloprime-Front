@@ -82,59 +82,34 @@ query GetMember($input: String!) {
  *        PROPERTY        *
  *************************/
 
-export const GET_PROPERTY = gql`
-	query GetProperty($input: String!) {
-		getProperty(propertyId: $input) {
-			_id
-			propertyType
-			propertyStatus
-			propertyLocation
-			propertyAddress
-			propertyTitle
-			propertyPrice
-			propertySquare
-			propertyBeds
-			propertyRooms
-			propertyViews
-			propertyLikes
-			propertyImages
-			propertyDesc
-			propertyBarter
-			propertyRent
-			memberId
-			soldAt
-			deletedAt
-			constructedAt
-			createdAt
-			updatedAt
-			memberData {
-				_id
-				memberType
-				memberStatus
-				memberAuthType
-				memberPhone
-				memberNick
-				memberFullName
-				memberImage
-				memberAddress
-				memberDesc
-				memberWarnings
-				memberBlocks
-				memberPoints
-				memberLikes
-				memberViews
-				deletedAt
-				createdAt
-				updatedAt
-				accessToken
-			}
-			meLiked {
-				memberId
-				likeRefId
-				myFavorite
-			}
-		}
-	}
+ export const GET_PRODUCTS = gql`
+	query GetProducts($input: ProductInquiry!) {
+    getProducts(input: $input) {
+        list {
+            _id
+            productType
+            productStatus
+            productAgeCategory
+            productColor
+            productSize
+            productName
+            productPrice
+            productViews
+            productLikes
+            productComments
+            productRank
+            productImages
+            productDesc
+            memberId
+            soldAt
+            deletedAt
+            updatedAt
+        }
+        metaCounter {
+            total
+        }
+    }
+}
 `;
 
 export const GET_PROPERTIES = gql`

@@ -1,194 +1,313 @@
 #pc-wrap {
-  .join-page {
-    position: relative;
-    padding: 90px 0px;
-    width: 100%;
-    height: auto;
-   .container {
-     align-items: center;
-     .main {
-       width: 1200px;
-       height: 900px;
-       display: flex;
-       flex-direction: row;
-       border-radius: 12px 0px 0px 12px;
-       background: #FFF;
-       box-shadow: 0px 1px 4px 0px rgba(24, 26, 32, 0.07);
-       .left {
-         width: 50%;
-         height: 100%;
-         display: flex;
-         flex-direction: column;
-         align-items: center;
-         justify-content: center;
-         .logo {
-           display: flex;
-           flex-direction: row;
-           align-items: center;
-           img {
-             width: 40px;
-             height: 40px;
-           }
-           span {
-             margin-left: 10px;
-             font-family: $font ;
-             font-size: 22px;
-             font-style: normal;
-             font-weight: 600;
-             line-height: normal;
-             letter-spacing: 0.44px;
-             color:#181A20;
-           }
-         }
-         .info {
-           margin-top: 30px;
-           display: flex;
-           flex-direction: column;
-           align-items: center;
-           span {
-             font-family: $font;
-             font-size: 20px;
-             font-style: normal;
-             font-weight: 600;
-             line-height: normal;
-             text-transform: uppercase;
-             color:  #181A20;
-           }
-           p {
-             margin-top: 5px;
-             font-family: $font;
-             font-size: 14px;
-             font-style: normal;
-             font-weight: 400;
-             line-height: 26px;
-             color: #181A20;
 
-           }
-         }
-         .input-wrap {
-           margin-top: 45px;
-           width: 470px;
-           display: flex;
-           flex-direction: column;
+/* Variables */
+$primary-color: #688a0b; // User specified primary color
+$secondary-color: #6c757d; // A neutral grey for balance
+$accent-color: #28a745; // A green for success/positive actions
+$neumorphic-bg: #e0e5ec; // Light grey-blue background for Neumorphism
+$neumorphic-light-shadow: #ffffff; // Light shadow for neumorphism
+$neumorphic-dark-shadow: #a7a7a7; // Dark shadow for neumorphism
+$card-background: $neumorphic-bg; // Card background is the same as neumorphic background
+$border-color: transparent; // Borders are replaced by shadows in neumorphism
+$text-color: #343a40; // Dark text
+$light-text-color: #9e9e9e; // Lighter text for hints/descriptions
+$font-family: 'Arial', sans-serif; // Professional font
 
-          .input-box {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            &:first-child {
-              margin-top: 0px;
-            }
-            span {
-              margin-bottom: 8px;
-              font-family: $font;
-              font-size: 14px;
-              font-style: normal;
-              font-weight: 600;
-              line-height: normal;
-              color:  #181A20;
-            }
-            input {
-              padding: 0px 15px;
-              width: 100%;
-              height: 55px;
-              border-radius: 8px;
-              border: 1px solid #DDD;
-              background:  #FFF;
-              font-family: $font;
-              font-size: 14px;
-              font-style: normal;
-              font-weight: 400;
-              line-height: 26px;
-              color: #717171;
+/* Mixins */
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin neumorphic-raised {
+  border-radius: 20px;
+  background: $neumorphic-bg;
+  box-shadow: 8px 8px 16px $neumorphic-dark-shadow, -8px -8px 16px $neumorphic-light-shadow;
+}
+
+@mixin neumorphic-pressed {
+  border-radius: 8px;
+  background: $neumorphic-bg;
+  box-shadow: inset 5px 5px 10px $neumorphic-dark-shadow, inset -5px -5px 10px $neumorphic-light-shadow;
+}
+
+@mixin transition($property: all, $duration: 0.3s, $timing-function: ease) {
+  transition: $property $duration $timing-function;
+}
+
+/* Animations */
+@keyframes pedal-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bike-glide {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.join-page {
+  @include flex-center;
+  min-height: 100vh;
+  background: $neumorphic-bg; // Neumorphic background
+  font-family: $font-family;
+  overflow: hidden;
+
+  .container {
+    margin-top: 60px;
+    display: flex;
+    width: 90%;
+    max-width: 500px; // Adjusted max-width to fit the single column form in the image
+    @include neumorphic-raised; // Raised effect for the main container
+    overflow: hidden;
+    animation: fade-in 0.8s ease-out forwards;
+    flex-direction: column; // Ensure content stacks vertically
+
+    .main {
+      display: flex;
+      width: 100%;
+      flex-direction: column; // Stack content vertically
+
+      .left {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        text-align: left;
+
+     
+        .info {
+          margin-bottom: 30px;
+
+          span {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: $text-color;
+            text-transform: capitalize;
+            position: relative;
+            padding-bottom: 5px;
+
+            &::after {
+              content: "";
+              position: absolute;
+              left: 0;
+              bottom: 0;
+              width: 40px;
+              height: 3px;
+              background-color: $primary-color;
+              border-radius: 2px;
             }
           }
-         }
-         .register {
-           margin-top: 45px;
-           width: 470px;
-           display: flex;
-           flex-direction: column;
-           align-items: center;
-           .type-option {
-             display: flex;
-             flex-direction: row;
-             align-items: center;
-             span.text {
-               font-family: $font;
-               font-size: 14px;
-               font-style: normal;
-               font-weight: 600;
-               line-height: normal;
-               color:  #181A20;
-             }
-             div {
-               margin-left: 20px;
-               display: flex;
-               flex-direction: row;
-               &:nth-child(1){
-                 margin-right: 25px;
-               }
-             }
-           }
-           .remember-info {
-             width: 100%;
-             display: flex;
-             flex-direction: row;
-             justify-content: space-between;
-             align-items: center;
-             a {
-               font-family: $font;
-               font-size: 14px;
-               font-style: normal;
-               font-weight: 400;
-               line-height: 26px;
-               cursor: pointer;
-               color:  #181A20;
-             }
-           }
-           button {
-             margin-top: 25px;
-             width: 100%;
-             height: 55px;
-             border-radius: 12px;
-             background:  #EB6753;
-             font-family: $font;
-             font-size: 15px;
-             font-style: normal;
-             font-weight: 600;
-             line-height: normal;
-             color:  #FFF;
-             img {
-               filter: brightness(0) invert(1);
-             }
-           }
-         }
-         .ask-info {
-           margin-top: 90px;
-           p {
-             font-family: $font;
-             font-size: 20px;
-             font-style: normal;
-             line-height: normal;
-             font-weight: 400;
-             color:  #181A20;
-             b {
-               margin-left: 10px;
-               font-weight: 600;
-               font-size: 32px;
-               cursor: pointer;
-               text-decoration: underline;
-             }
-           }
-         }
-       }
-       .right {
-         width: 50%;
-         height: 100%;
-         background-image: url("/img/banner/joinBg.svg");
-         background-size: cover;
-       }
-     }
-   }
+
+          p {
+            color: $light-text-color;
+            margin-top: 10px;
+          }
+        }
+
+        .input-wrap {
+          width: 100%;
+          max-width: 100%; // Allow full width within the container
+          margin-bottom: 20px;
+
+          .input-box {
+            margin-bottom: 20px;
+            text-align: left;
+
+            span {
+              display: block;
+              margin-bottom: 8px;
+              color: $text-color;
+              font-weight: bold;
+            }
+
+            input {
+              width: 100%;
+              padding: 12px 15px;
+              border: $border-color;
+              @include neumorphic-pressed; // Pressed effect for input fields
+              font-size: 1rem;
+              @include transition(box-shadow);
+
+              &:focus {
+                outline: none;
+                box-shadow: inset 3px 3px 6px $neumorphic-dark-shadow, inset -3px -3px 6px $neumorphic-light-shadow, 0 0 0 2px $primary-color; // Add focus ring
+              }
+            }
+          }
+        }
+
+        .register {
+          width: 100%;
+          max-width: 100%;
+
+          .type-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+
+            .text {
+              color: $text-color;
+            }
+
+            .MuiFormGroup-root {
+              flex-direction: row;
+            }
+          }
+
+          .remember-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            width: 100%;
+
+            a {
+              color: $primary-color;
+              text-decoration: none;
+              font-size: 0.9rem;
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+
+          .MuiButton-contained {
+            width: 100%;
+            padding: 12px 0;
+            background: $neumorphic-bg; // Use neumorphic background for button
+            color: $text-color; // Text color for button
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            @include neumorphic-raised; // Raised effect for button
+            @include transition(box-shadow);
+            border: none;
+
+            &:hover {
+              box-shadow: 5px 5px 10px $neumorphic-dark-shadow, -5px -5px 10px $neumorphic-light-shadow; // Slightly less pronounced on hover
+            }
+
+            &:active {
+              @include neumorphic-pressed; // Pressed effect on click
+            }
+
+            &:disabled {
+              background: $neumorphic-bg;
+              box-shadow: 3px 3px 6px $neumorphic-dark-shadow, -3px -3px 6px $neumorphic-light-shadow; // Disabled state
+              color: $light-text-color;
+              cursor: not-allowed;
+              opacity: 0.7;
+            }
+
+            img {
+              width: 20px;
+              height: 20px;
+              margin-left: 10px;
+            }
+          }
+
+          .social-login {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+
+            .MuiButton-root {
+              flex: 1;
+              margin: 0 5px;
+              padding: 10px 0;
+              border: $border-color;
+              border-radius: 8px;
+              background-color: $neumorphic-bg;
+              color: $text-color;
+              font-weight: bold;
+              @include neumorphic-raised; // Raised effect for social buttons
+              @include transition(box-shadow);
+
+              &:hover {
+                box-shadow: 5px 5px 10px $neumorphic-dark-shadow, -5px -5px 10px $neumorphic-light-shadow;
+              }
+
+              &:active {
+                @include neumorphic-pressed;
+              }
+
+              img {
+                width: 20px;
+                height: 20px;
+                margin-right: 8px;
+              }
+            }
+          }
+        }
+
+        .ask-info {
+          margin-top: 20px;
+          color: $light-text-color;
+
+          b {
+            color: $primary-color;
+            cursor: pointer;
+            margin-left: 5px;
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+
+      .right {
+        // This section is not present in the new image, so it will be hidden or removed
+        display: none;
+      }
+    }
   }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .join-page {
+    .container {
+      flex-direction: column;
+
+      .main {
+        flex-direction: column;
+
+        .left {
+          width: 100%;
+          flex: none;
+        }
+      }
+    }
+  }
+}
+
 }

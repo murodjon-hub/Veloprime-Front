@@ -95,6 +95,31 @@ export const REMOVE_PROPERTY_BY_ADMIN = gql`
 	}
 `;
 
+export const CREATE_PRODUCT = gql`
+	mutation CreateProduct($input: ProductInput!) {
+    createProduct(input: $input) {
+        _id
+        productType
+        productStatus
+        productAgeCategory
+        productColor
+        productSize
+        productName
+        productPrice
+        productViews
+        productLikes
+        productComments
+        productRank
+        productImages
+        productDesc
+        memberId
+        soldAt
+        deletedAt
+        updatedAt
+    }
+}
+`;
+
 /**************************
  *      BOARD-ARTICLE     *
  *************************/

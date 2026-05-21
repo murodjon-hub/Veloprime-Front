@@ -36,7 +36,7 @@ const Header2 = () => {
 
               <nav className="bike-menu">
                 <a href="/">HOME</a>
-                <a href="/product">BIKES</a>
+                <a href="/products">BIKES</a>
                 <a href="/accessories">ACCESSORIES</a>
                 <a href="/community">BLOGS</a>
                 <a href="/cs">CONTACT</a>

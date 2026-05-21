@@ -1,28 +1,36 @@
 import React, { useState } from 'react';
-import {
-  Container,
-  Grid,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Button,
-  Typography,
-  Box,
-  Link,
-} from '@mui/material';
+import { Box, Typography, Button, Container, Link } from '@mui/material';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useQuery } from "@apollo/client";
-import { GET_PRODUCTS } from "../../../apollo/user/query";
-import { Direction } from "../../enums/common.enum";
-import { ProductType } from "../../enums/product/product";
-import { ProductInquiry } from "../../types/product/productInput";
+import { useQuery } from '@apollo/client';
+import { GET_PRODUCTS } from '../../../apollo/user/query';
+import { Direction } from '../../enums/common.enum';
+import { ProductType } from '../../enums/product/product';
+import { ProductInquiry } from '../../types/product/productInput';
+
+const colorMap: Record<string, string> = {
+  BLACK: '#111111',
+  WHITE: '#f5f5f5',
+  RED: '#ef4444',
+  BLUE: '#2563eb',
+  GREEN: '#10b981',
+  YELLOW: '#f59e0b',
+  ORANGE: '#f97316',
+  PURPLE: '#8b5cf6',
+  SILVER: '#94a3b8',
+  GRAY: '#6b7280',
+  BROWN: '#92400e',
+  PINK: '#ec4899',
+  MULTICOLOR: 'linear-gradient(135deg, #ef4444, #3b82f6, #10b981)',
+};
 
 const E_bike = () => {
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
   const [initialInput] = useState<ProductInquiry>({
     page: 1,
     limit: 3,
-    sort: "createdAt",
+    sort: 'createdAt',
     direction: Direction.DESC,
     search: {
       productTypeList: [ProductType.E_BIKE],
@@ -33,67 +41,89 @@ const E_bike = () => {
     variables: { input: initialInput },
   });
 
-  const products = data?.getProducts?.list || [];
-
   if (loading) return <Box className="e-bike"><p>Loading...</p></Box>;
   if (error) return <Box className="e-bike"><p>Error loading products</p></Box>;
+
+  const products = data?.getProducts?.list || [];
 
   return (
     <Box className="e-bike">
       <Container maxWidth="lg">
-        <Box className="arrivals-header">
-          <Typography variant="h3" component="h2" className="arrivals-title">
+
+        {/* Header */}
+        <Box className="e-bike-header">
+          <Typography variant="h3" component="h2" className="e-bike-title">
             E-BIKE COLLECTION
           </Typography>
-          <Link href="#" className="see-all-link" underline="none">
+          <Link href="#" className="e-bike-see-all" underline="none">
             See All <ArrowForwardIcon sx={{ fontSize: 18, marginLeft: 1 }} />
           </Link>
         </Box>
 
-        <Grid container spacing={3} className="products-grid">
+        {/* Grid */}
+        <Box className="e-bike-grid">
           {products.map((product: any) => (
-            <Grid item xs={12} sm={6} md={4} key={product._id}>
-              <Card className="product-card">
-                <CardMedia
-                  component="img"
-                  height="280"
-                  image={
+            <Box
+              key={product._id}
+              className={`e-bike-card ${hoveredId === product._id ? 'hovered' : ''}`}
+              onMouseEnter={() => setHoveredId(product._id)}
+              onMouseLeave={() => setHoveredId(null)}
+            >
+              {/* Image Box */}
+              <Box className="e-bike-image-box">
+                <img
+                  className="e-bike-image"
+                  src={
                     product.productImages?.[0]
                       ? `${process.env.NEXT_PUBLIC_API_URL}/${product.productImages[0]}`
-                      : "../img/4253517958_2224302_3.png"
+                      : '/img/4253517958_2224302_3.png'
                   }
                   alt={product.productName}
-                  className="product-image"
                 />
-                <CardContent className="product-info">
-                  <Typography gutterBottom variant="h6" component="div" className="product-name">
+              </Box>
+
+              {/* Info */}
+              <Box className="e-bike-info">
+
+                {/* Name & Add to Cart */}
+                <Box className="e-bike-name-row">
+                  <Typography className="e-bike-name">
                     {product.productName}
                   </Typography>
-                  <Typography variant="body2" color="textSecondary" className="product-category">
-                    {product.productType}
-                  </Typography>
-                </CardContent>
-                <CardActions className="product-footer">
-                  <Typography variant="body1" className="product-price">
-                    ${product.productPrice}
-                  </Typography>
+                
+                </Box>
+
+                {/* Type */}
+                <Typography className="e-bike-type">
+                  {product.productType}
+                </Typography>
+
+                {/* Price */}
+                <Typography className="e-bike-price">
+                  ${product.productPrice.toLocaleString()}
+                </Typography>
+
+                {/* Color Dots */}
+                <Box className="e-bike-colors">
+                  <Box
+                    className="e-bike-color-dot"
+                    sx={{ background: colorMap[product.productColor] || '#ccc' }}
+                  />
                   <Button
-                    variant="contained"
-                    size="small"
-                    className="buy-now-btn"
-                    sx={{
-                      backgroundColor: '#000',
-                      color: '#fff',
-                      '&:hover': { backgroundColor: '#333' },
-                    }}
+                    className="e-bike-add-btn"
+                    startIcon={<AddShoppingCartIcon sx={{ fontSize: 14 }} />}
                   >
-                    Buy Now
+                    Add to Cart
                   </Button>
-                </CardActions>
-              </Card>
-            </Grid>
+                </Box>
+
+                
+
+              </Box>
+            </Box>
           ))}
-        </Grid>
+        </Box>
+
       </Container>
     </Box>
   );

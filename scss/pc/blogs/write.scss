@@ -1,0 +1,473 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;0,600&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+// ── Tokens ────────────────────────────────────────────────────────────────────
+$black:         #1a1a1a;
+$white:         #ffffff;
+$bg:            #ffffff;
+$surface:       #fafafa;
+$border:        #e8e8e8;
+$border-focus:  #1a1a1a;
+$text-primary:  #1a1a1a;
+$text-secondary:#555555;
+$text-muted:    #999999;
+$green:         #1a8917;   // Medium publish green
+$green-dark:    #156d12;
+$green-glow:    rgba(26, 137, 23, 0.18);
+
+$font-ui:      'Source Sans 3', system-ui, sans-serif;
+$font-display: 'Lora', Georgia, serif;
+$ease:         cubic-bezier(0.22, 1, 0.36, 1);
+
+// ── Page Shell ────────────────────────────────────────────────────────────────
+#write-blog-page {
+  min-height:  100vh;
+  background:  $bg;
+  font-family: $font-ui;
+
+  // ── Top Nav Bar (Medium-style thin bar) ───────────────────────────────────────
+  .write-blog__banner {
+    display:       flex;
+    align-items:   center;
+    justify-content: space-between;
+    padding:       0 clamp(24px, 5vw, 80px);
+    height:        64px;
+    border-bottom: 1px solid $border;
+    background:    $white;
+    position:      sticky;
+    top:           0;
+    z-index:       100;
+  }
+
+  .write-blog__banner-title {
+    font-family:  $font-display !important;
+    font-size:    22px !important;
+    font-weight:  700 !important;
+    color:        $black !important;
+    font-style:   italic;
+    letter-spacing: -0.3px;
+  }
+
+  .write-blog__banner-sub {
+    font-family: $font-ui !important;
+    font-size:   13px !important;
+    color:       $text-muted !important;
+    font-weight: 400 !important;
+
+    @media (max-width: 600px) { display: none; }
+  }
+
+  // ── Body ──────────────────────────────────────────────────────────────────────
+  .write-blog__body {
+    max-width:      740px;
+    margin:         0 auto;
+    padding:        48px 24px 120px;
+    display:        flex;
+    flex-direction: column;
+    gap:            0;
+  }
+
+  // ── Meta row ──────────────────────────────────────────────────────────────────
+  .write-blog__meta {
+    display:       flex;
+    align-items:   center;
+    gap:           12px;
+    margin-bottom: 32px;
+    flex-wrap:     wrap;
+  }
+
+  .write-blog__field {
+    display:        flex;
+    flex-direction: column;
+    gap:            6px;
+  }
+
+  .write-blog__label {
+    font-family:    $font-ui !important;
+    font-size:      11px !important;
+    font-weight:    600 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase;
+    color:          $text-muted !important;
+  }
+
+  // Category chip-style select
+  .write-blog__field .MuiOutlinedInput-root {
+    font-family:   $font-ui !important;
+    font-size:     13px !important;
+    font-weight:   500 !important;
+    background:    $surface !important;
+    border-radius: 20px !important;
+    transition:    box-shadow 200ms $ease;
+
+    .MuiSelect-select { padding: 8px 16px !important; }
+
+    .MuiOutlinedInput-notchedOutline { border-color: $border !important; }
+
+    &:hover .MuiOutlinedInput-notchedOutline  { border-color: #aaa !important; }
+    &.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: $border-focus !important;
+      border-width: 1.5px !important;
+    }
+  }
+
+  // ── Title input — huge like Medium ───────────────────────────────────────────
+  .write-blog__title-input {
+    width: 100%;
+
+    .MuiInputBase-root {
+      font-family: $font-display !important;
+      font-size:   clamp(28px, 4vw, 42px) !important;
+      font-weight: 700 !important;
+      color:       $black !important;
+      background:  transparent !important;
+      padding:     0 !important;
+
+      fieldset { border: none !important; }
+
+      textarea {
+        padding:       0 !important;
+        line-height:   1.25 !important;
+        letter-spacing: -0.5px;
+        resize:        none;
+
+        &::placeholder {
+          color:   #ccc !important;
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  // Thin divider between title and editor
+  .write-blog__divider {
+    width:         48px;
+    height:        3px;
+    background:    $border;
+    margin:        24px 0;
+    border-radius: 2px;
+  }
+
+  // ── Editor wrapper ────────────────────────────────────────────────────────────
+  .write-blog__editor {
+    display:        flex;
+    flex-direction: column;
+    gap:            8px;
+
+    // Hide label — editor speaks for itself
+    > .write-blog__label { display: none; }
+
+    .toastui-editor-defaultUI {
+      border:        none !important;
+      border-radius: 0 !important;
+      font-family:   $font-ui !important;
+    }
+
+    .toastui-editor-toolbar {
+      background:    $white !important;
+      border:        1px solid $border !important;
+      border-radius: 8px !important;
+      padding:       6px 10px !important;
+      margin-bottom: 16px !important;
+      position:      sticky;
+      top:           72px;
+      z-index:       10;
+      box-shadow:    0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .toastui-editor-toolbar-group {
+      border-right: 1px solid $border !important;
+      padding-right: 6px !important;
+      margin-right:  6px !important;
+
+      &:last-child { border-right: none !important; }
+    }
+
+    .toastui-editor-toolbar-icons {
+      border-color:  transparent !important;
+      border-radius: 4px !important;
+      transition:    background 140ms ease !important;
+
+      &:hover {
+        background:   #f0f0f0 !important;
+        border-color: transparent !important;
+      }
+
+      &.active {
+        background:   $black !important;
+        border-color: $black !important;
+
+        &::before { filter: invert(1); }
+      }
+    }
+
+    // Content area — Medium body text feel
+    .toastui-editor-contents,
+    .toastui-editor {
+      font-family: $font-ui !important;
+      font-size:   20px !important;
+      line-height: 1.8 !important;
+      color:       $text-primary !important;
+      padding:     0 !important;
+    }
+
+    .toastui-editor-contents p {
+      margin-bottom: 1.4em !important;
+      color:         $text-secondary !important;
+    }
+
+    .toastui-editor-contents h1,
+    .toastui-editor-contents h2,
+    .toastui-editor-contents h3 {
+      font-family:  $font-display !important;
+      font-weight:  700 !important;
+      color:        $black !important;
+      margin-top:   1.6em !important;
+      margin-bottom: 0.6em !important;
+      line-height:  1.25 !important;
+    }
+
+    .toastui-editor-contents h1 { font-size: 32px !important; }
+    .toastui-editor-contents h2 { font-size: 26px !important; }
+    .toastui-editor-contents h3 { font-size: 20px !important; }
+
+    .toastui-editor-contents blockquote {
+      border-left:  3px solid $black !important;
+      padding-left: 20px !important;
+      font-style:   italic;
+      color:        $text-secondary !important;
+      margin:       1.6em 0 !important;
+    }
+
+    .toastui-editor-contents code {
+      background:    #f3f3f3 !important;
+      border-radius: 3px !important;
+      padding:       2px 6px !important;
+      font-size:     0.88em !important;
+    }
+
+    .toastui-editor-contents img {
+      max-width:     100% !important;
+      border-radius: 4px !important;
+      margin:        1.2em 0 !important;
+    }
+
+    .ProseMirror {
+      outline:    none !important;
+      min-height: 400px;
+
+      &.ProseMirror-focused { outline: none !important; }
+
+      p.is-editor-empty:first-child::before {
+        content: attr(data-placeholder);
+        color:   #ccc;
+        pointer-events: none;
+        float:   left;
+        height:  0;
+      }
+    }
+
+    // Preview pane
+    .toastui-editor-md-preview {
+      font-family: $font-ui !important;
+      font-size:   18px !important;
+      padding:     0 24px !important;
+      border-left: 1px solid $border !important;
+    }
+  }
+
+  // ── Actions ───────────────────────────────────────────────────────────────────
+  .write-blog__actions {
+    display:         flex;
+    align-items:     center;
+    gap:             12px;
+    padding-top:     40px;
+    margin-top:      8px;
+    border-top:      1px solid $border;
+
+    // spacer pushes buttons right
+    &::before {
+      content: '';
+      flex:    1;
+    }
+  }
+
+  .write-blog__btn {
+    font-family:    $font-ui !important;
+    font-size:      14px !important;
+    font-weight:    600 !important;
+    letter-spacing: 0 !important;
+    padding:        10px 24px !important;
+    border-radius:  20px !important;
+    text-transform: none !important;
+    transition:     background 180ms $ease, box-shadow 180ms $ease,
+                    transform 140ms $ease !important;
+
+    &:active { transform: scale(0.97) !important; }
+
+    &--cancel {
+      color:        $text-secondary !important;
+      border-color: $border !important;
+      background:   $white !important;
+
+      &:hover {
+        background:   $surface !important;
+        border-color: #aaa !important;
+        color:        $black !important;
+      }
+    }
+
+    &--submit {
+      background:   $green !important;
+      border-color: $green !important;
+      color:        $white !important;
+      box-shadow:   0 2px 10px $green-glow !important;
+
+      &:hover {
+        background: $green-dark !important;
+        box-shadow: 0 4px 18px $green-glow !important;
+      }
+    }
+  }
+
+  // ── Mobile ────────────────────────────────────────────────────────────────────
+  @media (max-width: 600px) {
+    .write-blog__body { padding: 32px 16px 80px; }
+
+    .write-blog__actions {
+      flex-wrap: wrap;
+
+      &::before { display: none; }
+
+      .write-blog__btn { flex: 1; text-align: center; }
+    }
+
+    .write-blog__editor .toastui-editor-toolbar {
+      top: 56px;
+    }
+  }
+
+  // ── Cover Image ───────────────────────────────────────────────────────────────
+  .write-blog__cover {
+    width:         100%;
+    margin-bottom: 32px;
+    border-radius: 12px;
+    overflow:      hidden;
+  }
+
+  // Empty state — dashed upload zone
+  .write-blog__cover-empty {
+    display:         flex;
+    flex-direction:  column;
+    align-items:     center;
+    justify-content: center;
+    gap:             10px;
+    height:          220px;
+    border:          2px dashed $border;
+    border-radius:   12px;
+    background:      $surface;
+    cursor:          pointer;
+    transition:      border-color 200ms $ease, background 200ms $ease;
+
+    &:hover {
+      border-color: #aaa;
+      background:   #f0efec;
+
+      .write-blog__cover-icon { color: $black; }
+    }
+  }
+
+  .write-blog__cover-icon {
+    font-size:  40px !important;
+    color:      #ccc;
+    transition: color 200ms $ease;
+  }
+
+  .write-blog__cover-hint {
+    font-family: $font-ui !important;
+    font-size:   15px !important;
+    font-weight: 500 !important;
+    color:       $text-secondary !important;
+  }
+
+  .write-blog__cover-hint-sub {
+    font-family: $font-ui !important;
+    font-size:   12px !important;
+    color:       $text-muted !important;
+  }
+
+  // Filled state — image with hover overlay
+  .write-blog__cover-preview {
+    position:      relative;
+    width:         100%;
+    height:        280px;
+    border-radius: 12px;
+    overflow:      hidden;
+
+    &:hover .write-blog__cover-overlay { opacity: 1; }
+  }
+
+  .write-blog__cover-img {
+    width:       100%;
+    height:      100%;
+    object-fit:  cover;
+    display:     block;
+    transition:  transform 400ms $ease;
+
+    .write-blog__cover-preview:hover & {
+      transform: scale(1.02);
+    }
+  }
+
+  .write-blog__cover-overlay {
+    position:        absolute;
+    inset:           0;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    gap:             12px;
+    background:      rgba(0, 0, 0, 0.45);
+    opacity:         0;
+    transition:      opacity 220ms ease;
+    backdrop-filter: blur(2px);
+  }
+
+  .write-blog__cover-change,
+  .write-blog__cover-remove {
+    font-family:   $font-ui !important;
+    font-size:     13px !important;
+    font-weight:   500 !important;
+    text-transform: none !important;
+    border-radius: 20px !important;
+    padding:       8px 18px !important;
+    transition:    background 180ms ease !important;
+  }
+
+  .write-blog__cover-change {
+    background: rgba(255,255,255,0.92) !important;
+    color:      $black !important;
+
+    &:hover { background: $white !important; }
+  }
+
+  .write-blog__cover-remove {
+    background: rgba(220, 50, 50, 0.85) !important;
+    color:      $white !important;
+
+    &:hover { background: rgba(200, 30, 30, 0.95) !important; }
+  }
+
+  .write-blog__cover-uploading {
+    position:    absolute;
+    bottom:      12px;
+    left:        50%;
+    transform:   translateX(-50%);
+    font-family: $font-ui;
+    font-size:   12px;
+    font-weight: 500;
+    color:       $white;
+    background:  rgba(0,0,0,0.55);
+    padding:     4px 14px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+  }
+}

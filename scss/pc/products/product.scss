@@ -1,299 +1,151 @@
-// Variables
-$primary: #ef4444; // Red for TOP badge and icons
-$text-main: #111827;
-$text-sub: #6b7280;
-$bg-page: #f3f4f6;
-$white: #ffffff;
-$border: #e5e7eb;
-$shadow:
-  0 1px 3px 0 rgba(0, 0, 0, 0.1),
-  0 1px 2px 0 rgba(0, 0, 0, 0.06);
-#pc-wrap {
-  #property-list-page {
-    background-color: $bg-page;
-    padding: 40px 0;
-    min-height: 100vh;
+.product-list {
+  margin-top: 50px;
+  min-height: 100vh;
+  background-color: #ffffff;
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
+  // ── Mobile modifier ────────────────────────────────
+  &--mobile {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 
-      .right {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 24px;
+  // ── Desktop layout ─────────────────────────────────
+  &__layout {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
 
-        span {
-          font-size: 14px;
-          color: $text-sub;
-        }
+  // ── Main panel ─────────────────────────────────────
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
 
-        button {
-          text-transform: none;
-          color: $text-main;
-          font-weight: 600;
-          background: $white;
-          border: 1px solid $border;
-          padding: 6px 16px;
-          border-radius: 8px;
-        }
-      }
+  // ── Top bar ────────────────────────────────────────
+  &__topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  &__heading-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__heading {
+    font-size: 26px !important;
+    font-weight: 800 !important;
+    color: #111 !important;
+    letter-spacing: -0.03em;
+    line-height: 1.2 !important;
+  }
+
+  &__count {
+    font-size: 13px !important;
+    color: #888 !important;
+  }
+
+  // ── Sort tabs ──────────────────────────────────────
+  &__sort-tabs {
+    display: flex;
+    gap: 2px;
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  &__sort-tab {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #888;
+    background: transparent;
+    transition: all 0.15s ease;
+    user-select: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: #555;
     }
 
-    .property-page {
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 32px;
-
-      .filter-config {
-        margin-left: -60px;
-        margin-top: 95px;
-        width: 300px;
-        flex-shrink: 0;
-
-        .filter-main {
-          background: $white;
-          padding: 24px;
-          border-radius: 12px;
-          box-shadow: $shadow;
-
-          .title-main {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: $text-main;
-          }
-
-          .title-sub {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: $text-main;
-          }
-
-          .input-box {
-            .MuiOutlinedInput-root {
-              border-radius: 8px;
-              background: #f9fafb;
-            }
-          }
-
-          .checkbox-item {
-            margin-left: -8px;
-            p {
-              font-size: 14px;
-              color: $text-main;
-            }
-          }
-
-          .property-checkbox {
-            width: 16px;
-            height: 15px;
-            border-radius: 12px;
-            margin-right: 10px;
-            svg {
-              width: 19px;
-            }
-          }
-
-          .button-group {
-            width: 100%;
-            height: 44px;
-            flex-direction: row;
-            button {
-              width: 100%;
-              color: #181a20;
-              text-align: center;
-              font-family: sans-serif;
-              font-size: 13px;
-              font-style: normal;
-              font-weight: 600;
-              line-height: normal;
-            }
-          }
-
-          .MuiSelect-select {
-            font-size: 14px;
-          }
-
-          .MuiOutlinedInput-input {
-            font-size: 14px;
-          }
-        }
-      }
-
-      .main-config {
-        width: 936px;
-        align-items: center;
-
-        .list-config {
-          display: flex;
-          width: 100%;
-          height: auto;
-          flex-direction: row;
-          flex-wrap: wrap;
-          gap: 23px;
-        }
-
-        .pagination-config {
-          align-items: center;
-          gap: 24px;
-
-          .pagination-box {
-            .MuiPaginationItem-root {
-              font-weight: 600;
-              &.Mui-selected {
-                background-color: $text-main;
-                color: $white;
-              }
-            }
-          }
-
-          .total-result {
-            p {
-              font-size: 14px;
-              color: $text-sub;
-            }
-          }
-        }
-      }
+    &--active {
+      color: #111;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     }
   }
 
-  //**CARD**//
-
-  .bike-grid-section {
-    margin-bottom: 30px;
-    
-    background-color: #F3F4F6;
-    font-family: Arial, sans-serif;
-
-    .bike-grid-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 3rem;
-      max-width: 1200px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .bike-grid-title {
-      font-size: 2.5rem;
-      font-weight: 800;
-      color: #1a1a1a;
-    }
-
-    .bike-grid-see-all-button {
-      border-color: #e0e0e0;
-      color: #1a1a1a;
-      border-radius: 25px;
-      padding: 8px 20px;
-      text-transform: none;
-      font-weight: 600;
-
-      &:hover {
-        background-color: #f0f0f0;
-        border-color: #d0d0d0;
-      }
-    }
-
-    .bike-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .bike-card {
-      display: flex;
-      flex-direction: column;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-      background-color: white;
-      overflow: hidden;
-      transition: transform 0.2s ease-in-out;
-
-      &:hover {
-        transform: translateY(-5px);
-      }
-
-      .bike-card-content {
-        padding: 1.5rem;
-        padding-bottom: 0.5rem;
-      }
-
-      .bike-name {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #1a1a1a;
-        margin-bottom: 0.25rem;
-      }
-
-      .bike-category {
-        font-size: 0.9rem;
-        color: #666;
-        margin-bottom: 1rem;
-      }
-
-      .bike-image {
-        width: 100%;
-        height: 200px;
-        object-fit: contain;
-        padding: 1rem;
-      }
-
-      .bike-card-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.5rem;
-        padding-top: 0.5rem;
-        border-top: 1px solid #eee;
-      }
-
-      .bike-price {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #1a1a1a;
-      }
-
-      .bike-buy-button {
-        background-color: #1a1a1a;
-        color: white;
-        border-radius: 20px;
-        padding: 8px 20px;
-        text-transform: none;
-        font-weight: 600;
-
-        &:hover {
-          background-color: #333;
-        }
-      }
-    }
+  // ── Product grid ───────────────────────────────────
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
   }
 
-  @media (max-width: 768px) {
-    .bike-grid-section {
-      padding: 2rem 1rem;
+  // ── States ─────────────────────────────────────────
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: 80px 0;
+  }
 
-      .bike-grid-header {
-        flex-direction: column;
-        align-items: flex-start;
-        margin-bottom: 2rem;
-      }
+  &__error {
+    border-radius: 12px !important;
+  }
 
-      .bike-grid-title {
-        margin-bottom: 1rem;
-      }
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 96px 0;
+    gap: 8px;
+    text-align: center;
+  }
 
-      .bike-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+  &__empty-icon {
+    font-size: 40px !important;
+    line-height: 1 !important;
+    margin-bottom: 8px !important;
+  }
+
+  &__empty-title {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #555 !important;
+  }
+
+  &__empty-sub {
+    font-size: 13px !important;
+    color: #aaa !important;
+  }
+
+  // ── Pagination ─────────────────────────────────────
+  &__pagination-wrap {
+    display: flex;
+    justify-content: center;
+    padding-top: 16px;
+  }
+
+  &__pagination {
+    align-self: center;
+  }
+
+  &__spinner {
+    align-self: center;
   }
 }

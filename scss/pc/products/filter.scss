@@ -1,0 +1,124 @@
+.filter {
+  position: sticky;
+  top: 24px;
+  background: #fff;
+  border: 1px solid #ebebeb;
+  border-radius: 20px;
+  padding: 24px;
+
+  // ── Header ─────────────────────────────────────────
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  &__title {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em;
+    color: #111 !important;
+  }
+
+  &__reset {
+    font-size: 12px !important;
+    color: #888 !important;
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: #111 !important;
+    }
+  }
+
+  // ── Group ──────────────────────────────────────────
+  &__group {
+    margin-bottom: 24px;
+
+    &--price {
+      margin-bottom: 0;
+    }
+  }
+
+  &__group-label {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.12em;
+    color: #888 !important;
+    text-transform: uppercase;
+    margin-bottom: 10px !important;
+  }
+
+  // ── Search input ───────────────────────────────────
+  &__search-input {
+    width: 100%;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 8px 12px;
+    outline: none;
+    color: #111;
+    background-color: #fafafa;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease;
+
+    &:focus {
+      border-color: #1a1a1a;
+    }
+
+    &::placeholder {
+      color: #bbb;
+    }
+  }
+
+  // ── Chips ──────────────────────────────────────────
+  &__chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  &__chip {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.05em;
+    border-radius: 6px !important;
+    border: 1px solid #ddd !important;
+    background-color: transparent !important;
+    color: #555 !important;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: #f5f5f5 !important;
+    }
+
+    &--active {
+      border: 1.5px solid #1a1a1a !important;
+      background-color: #1a1a1a !important;
+      color: #fff !important;
+
+      &:hover {
+        background-color: #333 !important;
+      }
+    }
+  }
+
+  // ── Price ──────────────────────────────────────────
+  &__slider {
+    color: #1a1a1a !important;
+  }
+
+  &__price-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+
+    span {
+      font-size: 12px;
+      color: #888;
+    }
+  }
+}

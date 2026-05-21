@@ -7,7 +7,13 @@
 @import '/scss/pc/products/product.scss';
 @import '/scss/pc/products/detail.scss';
 @import '/scss/pc/products/addProduct.scss';
+@import '/scss/pc/products/filter.scss';
+@import '/scss/pc/products/productCard.scss';
 @import '/scss/pc/blogs/blogs.scss';
+@import '/scss/pc/blogs/write.scss';
+
+ @import '/scss/pc/accessories/accessories.scss';
+
 
 @import '/scss/pc/agent/agent';
 @import '/scss/pc/agent/detail.scss';
@@ -42,302 +48,300 @@ body::-webkit-scrollbar {
 
 #pc-wrap {
 	#top {
-		
-  .biker-hero {
-    position: relative;
-    height: 100vh;
-    width: 100%;
-    color: white;
-    font-family: "Inter", sans-serif;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+		.biker-hero {
+			position: relative;
+			height: 100vh;
+			width: 100%;
+			color: white;
+			font-family: 'Inter', sans-serif;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
 
-    /* Background Image */
-    .hero-bg-image {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center;
-      z-index: 1;
-    }
+			/* Background Image */
+			.hero-bg-image {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				object-position: center;
+				z-index: 1;
+			}
 
-    /* Dark Overlay */
-    .hero-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
-      z-index: 2;
-    }
+			/* Dark Overlay */
+			.hero-overlay {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
+				z-index: 2;
+			}
 
-    /* Content Wrapper */
-    .hero-wrapper {
-      position: relative;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
+			/* Content Wrapper */
+			.hero-wrapper {
+				position: relative;
+				z-index: 10;
+				display: flex;
+				flex-direction: column;
+				height: 100%;
+			}
 
-    .navbar-main {
-      width: 100%;
-      height: 100px;
-      display: flex;
-      align-items: center;
-      transition: background-color 0.3s ease;
+			.navbar-main {
+				color: #ffff;
+				width: 100%;
+				height: 100px;
+				display: flex;
+				align-items: center;
+				transition: background-color 0.3s ease;
 
-      &.transparent {
-        background-color: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(10px);
-      }
+				&.transparent {
+					background-color: rgba(0, 0, 0, 0.8);
+					backdrop-filter: blur(10px);
+				}
 
-      .container {
-        padding: 10px;
-        width: 1300px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+				.container {
+					padding: 10px;
+					width: 1300px;
+					margin: 0 auto;
+					display: flex;
+					flex-direction: row;
+					justify-content: space-between;
+					align-items: center;
 
-        .logo-box {
-          .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            color: white;
-            cursor: pointer;
-            transition: opacity 0.3s ease;
+					.logo-box {
+						.logo {
+							font-size: 1.8rem;
+							font-weight: 900;
+							letter-spacing: 2px;
+							color: white;
+							cursor: pointer;
+							transition: opacity 0.3s ease;
 
-            &:hover {
-              opacity: 0.8;
-            }
-          }
-        }
+							&:hover {
+								opacity: 0.8;
+							}
+						}
+					}
 
-        .router-box {
-          display: flex;
-          flex-direction: row;
-          gap: 30px;
+					.router-box {
+						display: flex;
+						flex-direction: row;
+						gap: 30px;
 
-          div {
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: opacity 0.3s ease;
+						div {
+							color: white;
+							font-size: 0.85rem;
+							font-weight: 600;
+							text-transform: uppercase;
+							letter-spacing: 1px;
+							cursor: pointer;
+							transition: opacity 0.3s ease;
 
-            &:hover {
-              opacity: 0.8;
-            }
-          }
-        }
+							&:hover {
+								opacity: 0.8;
+							}
+						}
+					}
 
-        .user-box {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 20px;
+					.user-box {
+						display: flex;
+						flex-direction: row;
+						align-items: center;
+						gap: 20px;
 
-          .login-user {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            overflow: hidden;
-            cursor: pointer;
-            border: 2px solid white;
-            transition: all 0.3s ease;
+						.login-user {
+							width: 40px;
+							height: 40px;
+							border-radius: 50%;
+							overflow: hidden;
+							cursor: pointer;
+							border: 2px solid white;
+							transition: all 0.3s ease;
 
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
+							img {
+								width: 100%;
+								height: 100%;
+								object-fit: cover;
+							}
 
-            &:hover {
-              transform: scale(1.05);
-            }
-          }
+							&:hover {
+								transform: scale(1.05);
+							}
+						}
 
-          .auth-buttons-box {
-            display: flex;
-            gap: 12px;
-            align-items: center;
+						.auth-buttons-box {
+							display: flex;
+							gap: 12px;
+							align-items: center;
 
-            a {
-              text-decoration: none;
-            }
+							a {
+								text-decoration: none;
+							}
 
-            .login-btn {
-              color: white !important;
-              text-transform: none !important;
-              font-weight: 600 !important;
-              font-size: 0.9rem !important;
-              padding: 10px 24px !important;
-              border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
-              border-radius: 6px !important;
-              background-color: transparent !important;
-              transition: all 0.3s ease !important;
+							.login-btn {
+								color: white !important;
+								text-transform: none !important;
+								font-weight: 600 !important;
+								font-size: 0.9rem !important;
+								padding: 10px 24px !important;
+								border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+								border-radius: 6px !important;
+								background-color: transparent !important;
+								transition: all 0.3s ease !important;
 
-              &:hover {
-                background-color: rgba(255, 255, 255, 0.1) !important;
-                border-color: white !important;
-              }
-            }
+								&:hover {
+									background-color: rgba(255, 255, 255, 0.1) !important;
+									border-color: white !important;
+								}
+							}
 
-            .signup-btn {
-              color: black !important;
-              text-transform: none !important;
-              font-weight: 700 !important;
-              font-size: 0.9rem !important;
-              padding: 10px 28px !important;
-              border-radius: 6px !important;
-              background-color: #a5dc10 !important;
-              border: none !important;
-              transition: all 0.3s ease !important;
+							.signup-btn {
+								color: black !important;
+								text-transform: none !important;
+								font-weight: 700 !important;
+								font-size: 0.9rem !important;
+								padding: 10px 28px !important;
+								border-radius: 6px !important;
+								background-color: #a5dc10 !important;
+								border: none !important;
+								transition: all 0.3s ease !important;
 
-              &:hover {
-                background-color: #8ec40d !important;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(165, 220, 16, 0.3);
-              }
-            }
-          }
+								&:hover {
+									background-color: #8ec40d !important;
+									transform: translateY(-2px);
+									box-shadow: 0 4px 12px rgba(165, 220, 16, 0.3);
+								}
+							}
+						}
 
-          .lan-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+						.lan-box {
+							display: flex;
+							align-items: center;
+							gap: 12px;
 
-            .notification-icon {
-              color: white;
-              cursor: pointer;
-              font-size: 20px;
-              transition: opacity 0.3s ease;
+							.notification-icon {
+								color: white;
+								cursor: pointer;
+								font-size: 20px;
+								transition: opacity 0.3s ease;
 
-              &:hover {
-                opacity: 0.8;
-              }
-            }
+								&:hover {
+									opacity: 0.8;
+								}
+							}
 
-            .btn-lang {
-              padding: 8px 16px !important;
-              min-width: auto !important;
-              border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
-              border-radius: 6px !important;
-              background-color: transparent !important;
-              transition: all 0.3s ease !important;
+							.btn-lang {
+								padding: 8px 16px !important;
+								min-width: auto !important;
+								border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
+								border-radius: 6px !important;
+								background-color: transparent !important;
+								transition: all 0.3s ease !important;
 
-              .lang-text {
-                color: white;
-                font-weight: 600;
-                font-size: 0.85rem;
-                letter-spacing: 0.5px;
-              }
+								.lang-text {
+									color: white;
+									font-weight: 600;
+									font-size: 0.85rem;
+									letter-spacing: 0.5px;
+								}
 
-              &:hover {
-                background-color: rgba(255, 255, 255, 0.1) !important;
-                border-color: white !important;
-              }
-            }
-          }
-        }
-      }
-    }
+								&:hover {
+									background-color: rgba(255, 255, 255, 0.1) !important;
+									border-color: white !important;
+								}
+							}
+						}
+					}
+				}
+			}
 
-    .hero-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding-left: 10%;
+			.hero-content {
+				flex: 1;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				padding-left: 10%;
 
-      .text-section {
-        max-width: 600px;
+				.text-section {
+					max-width: 600px;
 
-        .title {
-          margin-top: 50px;
-          font-size: 70px;
-          font-weight: 900;
-          line-height: 0.9;
-          margin-bottom: 20px;
-          text-transform: uppercase;
-        }
+					.title {
+						margin-top: 50px;
+						font-size: 70px;
+						font-weight: 900;
+						line-height: 0.9;
+						margin-bottom: 20px;
+						text-transform: uppercase;
+					}
 
-        .subtitle {
-          font-size: 1.1rem;
-          margin-bottom: 35px;
-          line-height: 1.6;
-          opacity: 0.9;
-          max-width: 450px;
-        }
+					.subtitle {
+						font-size: 1.1rem;
+						margin-bottom: 35px;
+						line-height: 1.6;
+						opacity: 0.9;
+						max-width: 450px;
+					}
 
-        .button-group {
-          display: flex;
-          gap: 20px;
+					.button-group {
+						display: flex;
+						gap: 20px;
 
-          .btn {
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            text-transform: none;
+						.btn {
+							padding: 15px 40px;
+							border-radius: 30px;
+							font-weight: 700;
+							cursor: pointer;
+							transition: all 0.3s ease;
+							font-size: 1rem;
+							text-transform: none;
 
-            &-primary {
-              background-color: #a5dc10; /* Neon green */
-              color: black;
-              border: none;
+							&-primary {
+								background-color: #a5dc10; /* Neon green */
+								color: black;
+								border: none;
 
-              &:hover {
-                background-color: #8ec40d;
-                transform: translateY(-2px);
-              }
-            }
+								&:hover {
+									background-color: #8ec40d;
+									transform: translateY(-2px);
+								}
+							}
 
-            &-outline {
-              background: transparent;
-              color: white;
-              border: 2px solid white;
+							&-outline {
+								background: transparent;
+								color: white;
+								border: 2px solid white;
 
-              &:hover {
-                background: white;
-                color: black;
-                transform: translateY(-2px);
-              }
-            }
-          }
-        }
-      }
+								&:hover {
+									background: white;
+									color: black;
+									transform: translateY(-2px);
+								}
+							}
+						}
+					}
+				}
 
-      .footer-note {
-        margin-top: auto;
-        padding-bottom: 40px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 1px;
-        opacity: 0.8;
-      }
-    }
-  }
+				.footer-note {
+					margin-top: auto;
+					padding-bottom: 40px;
+					font-size: 0.85rem;
+					font-weight: 700;
+					letter-spacing: 1px;
+					opacity: 0.8;
+				}
+			}
+		}
 
-
-.img-flag {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  border-radius: 50%;
-}
-
+		.img-flag {
+			width: 20px;
+			height: 20px;
+			margin-right: 10px;
+			border-radius: 50%;
+		}
 	}
 	//HEADER2
 	.bike-hero-section {

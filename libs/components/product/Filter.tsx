@@ -1,207 +1,78 @@
-import React, { useState } from "react";
-import {
-  Stack,
-  Typography,
-  Checkbox,
-  Button,
-  OutlinedInput,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Tooltip,
-  IconButton,
-  InputAdornment,
-} from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import { propertySquare } from "../../config";
+import React from 'react';
+import { Box, Typography, Chip, Slider } from '@mui/material';
+import { ProductType, ProductAgeCategory, ProductColor, ProductSize } from "../../enums/product/product";
 
-const Filter = () => {
-  const [searchText, setSearchText] = useState<string>("");
-  const [showMore, setShowMore] = useState<boolean>(false);
-  const [propertyPrice, setPropertyPrice] = useState({
-    start: 0,
-    end: 250000,
-  });
+interface FilterChipGroupProps {
+  label: string;
+  options: string[];
+  selected: string[];
+  onToggle: (val: string) => void;
+}
 
-  return (
-    <Stack className="filter-main">
-      <Stack className="find-your-home" mb="40px">
-        <Typography className="title-main">Find your Bike</Typography>
-        <Stack className="input-box">
-          <OutlinedInput
-            placeholder="What are you looking for?"
-            endAdornment={
-              <InputAdornment position="end">
-                <RefreshIcon />
-              </InputAdornment>
-            }
+const FilterChipGroup = ({ label, options, selected, onToggle }: FilterChipGroupProps) => (
+  <Box className="filter__group">
+    <Typography className="filter__group-label">{label}</Typography>
+    <Box className="filter__chip-row">
+      {options.map((opt) => {
+        const active = selected.includes(opt);
+        return (
+          <Chip
+            key={opt}
+            label={opt.replace(/_/g, ' ')}
+            size="small"
+            onClick={() => onToggle(opt)}
+            className={`filter__chip ${active ? 'filter__chip--active' : ''}`}
           />
-        </Stack>
-      </Stack>
+        );
+      })}
+    </Box>
+  </Box>
+);
 
-      <Stack className="filter-group" mb="30px">
-        <Typography className="title-sub">Location</Typography>
-        {["SEOUL", "BUSAN", "INCHEON", "DAEGU", "GYEONGJU"].map((loc) => (
-          <Stack key={loc} direction="row" alignItems="center" className="checkbox-item">
-            <Checkbox size="small" />
-            <Typography>{loc}</Typography>
-          </Stack>
-        ))}
-      </Stack>
+const Filter = ({
+  searchText, onSearchChange, activeTypes, onToggleType,
+  activeAges, onToggleAge, activeColors, onToggleColor,
+  activeSizes, onToggleSize, priceRange, onPriceChange, onReset,
+}: any) => {
+  return (
+    <Box className="filter">
+      <Box className="filter__header">
+        <Typography className="filter__title">Filters</Typography>
+        <Typography className="filter__reset" onClick={onReset}>Reset all</Typography>
+      </Box>
 
-      <Stack className="filter-group" mb="30px">
-        <Typography className="title-sub">Property Type</Typography>
-        {["APARTMENT", "VILLA", "HOUSE"].map((type) => (
-          <Stack key={type} direction="row" alignItems="center" className="checkbox-item">
-            <Checkbox size="small" />
-            <Typography>{type}</Typography>
-          </Stack>
-        ))}
-      </Stack>
-      <Stack className={"find-your-home"} mb={"30px"}>
-        <Typography className={"title"}>Rooms</Typography>
-        <Stack className={"button-group"}>
-          <Button
-            sx={{
-              borderRadius: "12px 0 0 12px",
-              border: "1px solid #b9b9b9",
-            }}
-          >
-            Any
-          </Button>
-          <Button
-            sx={{
-              borderRadius: 0,
-              border: "1px solid #b9b9b9",
-            }}
-          >
-            1
-          </Button>
-          <Button
-            sx={{
-              borderRadius: 0,
-              border: "2px solid #181A20",
-            }}
-          >
-            2
-          </Button>
-          <Button
-            sx={{
-              borderRadius: 0,
-              border: "1px solid #b9b9b9",
-            }}
-          >
-            3
-          </Button>
-          <Button
-            sx={{
-              borderRadius: 0,
-              border: "2px solid #181A20",
-            }}
-          >
-            4
-          </Button>
-          <Button
-            sx={{
-              borderRadius: "0 12px 12px 0",
-              border: "1px solid #b9b9b9",
-            }}
-          >
-            5+
-          </Button>
-        </Stack>
-      </Stack>
-      <Stack className={"find-your-home"} mb={"30px"}>
-        <Typography className={"title"}>Bedrooms</Typography>
-        <Stack className={"button-group"}>
-          <Button
-            sx={{
-              borderRadius: "12px 0 0 12px",
-              border: "1px solid #b9b9b9",
-            }}
-          >
-            Any
-          </Button>
-          <Button
-            sx={{
-              borderRadius: 0,
-              border: "1px solid #b9b9b9",
-            }}
-          >
-            1
-          </Button>
-          <Button
-            sx={{
-              borderRadius: 0,
-              border: "2px solid #181A20",
-            }}
-          >
-            2
-          </Button>
-          <Button
-            sx={{
-              borderRadius: 0,
-              border: "1px solid #b9b9b9",
-            }}
-          >
-            3
-          </Button>
-          <Button
-            sx={{
-              borderRadius: 0,
-              border: "1px solid #b9b9b9",
-            }}
-          >
-            4
-          </Button>
-          <Button
-            sx={{
-              borderRadius: "0 12px 12px 0",
-              border: "1px solid #b9b9b9",
-            }}
-          >
-            5+
-          </Button>
-        </Stack>
-      </Stack>
+      <Box className="filter__group">
+        <Typography className="filter__group-label">Search</Typography>
+        <input
+          className="filter__search-input"
+          value={searchText}
+          onChange={(e) => onSearchChange(e.target.value)}
+          placeholder="Product name..."
+        />
+      </Box>
 
-      <Stack className="filter-group" mb="30px">
-        <Typography className="title-sub">Options</Typography>
-        <Stack direction="row" alignItems="center" className="checkbox-item">
-          <Checkbox size="small" />
-          <Typography>Barter</Typography>
-        </Stack>
-        <Stack direction="row" alignItems="center" className="checkbox-item">
-          <Checkbox size="small" />
-          <Typography>Rent</Typography>
-        </Stack>
-      </Stack>
+      {/* ✅ ACCESSORY excluded from type filter */}
+      <FilterChipGroup
+        label="Type"
+        options={Object.values(ProductType).filter(t => t !== ProductType.ACCESSORY)}
+        selected={activeTypes}
+        onToggle={onToggleType}
+      />
+      <FilterChipGroup label="Age Category" options={Object.values(ProductAgeCategory)} selected={activeAges} onToggle={onToggleAge} />
+      <FilterChipGroup label="Color"        options={Object.values(ProductColor)}       selected={activeColors} onToggle={onToggleColor} />
+      <FilterChipGroup label="Size"         options={Object.values(ProductSize)}        selected={activeSizes} onToggle={onToggleSize} />
 
-      <Stack className="filter-group" mb="30px">
-        <Typography className="title-sub">Square meter</Typography>
-        <Stack direction="row" spacing={2}>
-          <FormControl fullWidth size="small">
-            <Select defaultValue={0}>
-              <MenuItem value={0}>Min 0</MenuItem>
-            </Select>
-          </FormControl>
-          <FormControl fullWidth size="small">
-            <Select defaultValue={500}>
-              <MenuItem value={500}>Max 500</MenuItem>
-            </Select>
-          </FormControl>
-        </Stack>
-      </Stack>
-
-      <Stack className="filter-group">
-        <Typography className="title-sub">Price Range</Typography>
-        <Stack direction="row" spacing={2}>
-          <OutlinedInput size="small" placeholder="$ min" />
-          <OutlinedInput size="small" placeholder="$ max" />
-        </Stack>
-      </Stack>
-    </Stack>
+      <Box className="filter__group filter__group--price">
+        <Typography className="filter__group-label">Price Range</Typography>
+        <Slider
+          value={priceRange}
+          min={0}
+          max={5000}
+          onChange={(_: any, v: any) => onPriceChange(v)}
+          valueLabelDisplay="auto"
+        />
+      </Box>
+    </Box>
   );
 };
 

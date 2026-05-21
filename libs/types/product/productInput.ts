@@ -13,7 +13,7 @@ export interface ProductInput {
   productDesc?: string;
   memberId?: string;
 }
-interface PrISearch {
+export interface PrISearch {
   memberId?: string;
   productStatus?: ProductStatus;
   productTypeList?: ProductType[];

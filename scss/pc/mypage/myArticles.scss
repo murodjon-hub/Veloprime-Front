@@ -30,3 +30,12 @@ $ease:   cubic-bezier(0.22, 1, 0.36, 1);
     .total-result p { font-size: 13px; color: $muted; }
   }
 }
+
+#pc-wrap {
+  @media (max-width: 768px) {
+    .my-articles { padding: 0 16px; }
+    .my-articles__list { gap: 12px; }
+    .my-articles__item { flex-direction: column; gap: 12px; }
+    .my-articles__img  { width: 100%; height: 160px; border-radius: 10px; }
+  }
+}

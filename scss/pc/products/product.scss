@@ -134,4 +134,32 @@
       .product-list__spinner { display: block; margin: 40px auto; }
     }
   }
+
+  @media (max-width: 768px) {
+    .product-list {
+      padding: 16px 0 48px;
+
+      &__layout {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+        gap: 0;
+      }
+
+      &__sidebar { display: none; } /* filter sidebar hidden; use filter button */
+
+      &__topbar { margin-bottom: 16px; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+      &__heading { font-size: 20px !important; }
+
+      &__sort-tabs { width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+
+      &__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      &__empty { padding: 40px 16px; }
+      &__pagination { margin-top: 24px; }
+    }
+  }
 }

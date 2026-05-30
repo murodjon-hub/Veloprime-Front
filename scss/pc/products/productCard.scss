@@ -216,5 +216,24 @@
       padding: 3px 8px;
       border-radius: 5px;
     }
+
+    @media (max-width: 768px) {
+      border-radius: 10px;
+
+      &__img-wrap { aspect-ratio: 4 / 3; }
+
+      &__body  { padding: 12px 14px 14px; gap: 5px; }
+      &__name  { font-size: 13px !important; }
+      &__desc  { display: none; }
+      &__price { font-size: 15px; }
+
+      &__like {
+        padding: 4px 8px 4px 7px;
+        top: 8px;
+        right: 8px;
+      }
+
+      &__badge { font-size: 8px; padding: 2px 7px; top: 8px; left: 8px; }
+    }
   }
 }

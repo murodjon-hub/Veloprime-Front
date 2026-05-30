@@ -319,3 +319,25 @@ $ease:    cubic-bezier(0.22, 1, 0.36, 1);
     &--active { color: $accent; }
   }
 }
+
+#pc-wrap {
+  @media (max-width: 768px) {
+    .agent-page        { padding: 24px 16px 48px; }
+    .agent-list-layout { grid-template-columns: 1fr; gap: 0; }
+    .agent-sidebar     { display: none; }
+
+    .agent-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+    .agent-card {
+      &__avatar { width: 56px; height: 56px; }
+      &__name   { font-size: 13px; }
+      &__stats  { gap: 8px; font-size: 11px; }
+    }
+
+    .agent-detail-page { padding: 16px; }
+    .agent-detail-top  { flex-direction: column; align-items: center; text-align: center; gap: 16px; }
+    .agent-detail-avatar { width: 90px; height: 90px; }
+    .agent-detail-tabs   { overflow-x: auto; flex-wrap: nowrap; }
+    .agent-detail-grid   { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  }
+}

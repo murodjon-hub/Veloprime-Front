@@ -1,6 +1,33 @@
 /** ─── VELOPRIME AI ASSISTANT ───────────────────────────────────── */
 
 // ── Launcher button ────────────────────────────────────────────────
+// ── Mobile overrides ──────────────────────────────────────────────
+@media (max-width: 768px) {
+  .ai-launcher__btn {
+    bottom: 16px;
+    right: 16px;
+    height: 44px;
+    padding: 0 14px 0 12px;
+  }
+
+  .ai-launcher__window-wrap {
+    bottom: 72px;
+    right: 0;
+    left: 0;
+    padding: 0 8px;
+  }
+
+  .ai-window {
+    width: 100%;
+    height: calc(100vh - 130px);
+    border-radius: 16px;
+  }
+
+  .ai-showcase__inner { grid-template-columns: 1fr; gap: 32px; }
+  .ai-showcase__demo  { display: none; }
+}
+
+// ── Launcher button ────────────────────────────────────────────────
 .ai-launcher__btn {
   position: fixed;
   bottom: 28px;

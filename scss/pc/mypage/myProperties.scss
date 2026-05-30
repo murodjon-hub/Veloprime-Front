@@ -180,3 +180,28 @@ $ease:   cubic-bezier(0.22, 1, 0.36, 1);
     p { font-family: $font; font-size: 12px; color: $muted; }
   }
 }
+
+#pc-wrap {
+  @media (max-width: 768px) {
+    #my-property-page { padding: 0; }
+
+    .myprop-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .myprop-header__add-btn { width: 100%; justify-content: center; }
+
+    .myprop-tabs { gap: 6px; flex-wrap: wrap; }
+
+    /* Stack table rows as cards */
+    .myprop-table__head { display: none; }
+    .myprop-table__row  {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .myprop-table__name-cell { gap: 10px; img { width: 52px; height: 52px; border-radius: 8px; } }
+    .myprop-table__actions { flex-direction: row; gap: 8px; width: 100%; button { flex: 1; } }
+
+    .myprop-pagination { flex-direction: column; gap: 8px; align-items: center; }
+  }
+}

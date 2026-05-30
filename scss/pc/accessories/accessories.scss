@@ -518,3 +518,18 @@ $ease: cubic-bezier(0.22, 1, 0.36, 1);
   .acc-card__price    { font-size: 16px !important; }
   .acc-card__img-wrap { padding-top: 80%; }
 }
+#pc-wrap {
+  @media (max-width: 768px) {
+    .accessories-page    { padding: 24px 16px 48px; }
+    .accessories-layout  { grid-template-columns: 1fr; }
+    .accessories-sidebar { display: none; }
+    .accessories-grid    { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+    .acc-card {
+      &__img-wrap { padding-top: 100%; }
+      &__body     { padding: 10px 12px 14px; }
+      &__name     { font-size: 13px !important; }
+      &__price    { font-size: 14px !important; }
+    }
+  }
+}

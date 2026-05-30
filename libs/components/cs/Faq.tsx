@@ -2,9 +2,7 @@ import React, { SyntheticEvent, useState } from 'react';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import { AccordionDetails, Box, Stack, Typography } from '@mui/material';
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary';
-import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 
 const Accordion = styled((props: AccordionProps) => <MuiAccordion disableGutters elevation={0} square {...props} />)(
@@ -31,8 +29,6 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 }));
 
 const Faq = () => {
-	const device = useDeviceDetect();
-	const router = useRouter();
 	const [category, setCategory] = useState<string>('bikes');
 	const [expanded, setExpanded] = useState<string | false>('panel1');
 
@@ -44,7 +40,7 @@ const Faq = () => {
 		setCategory(category);
 	};
 
-	const handleChange = (panel: string) => (event: SyntheticEvent, newExpanded: boolean) => {
+	const handleChange = (panel: string) => (_event: SyntheticEvent, newExpanded: boolean) => {
 		setExpanded(newExpanded ? panel : false);
 	};
 
@@ -422,10 +418,7 @@ const Faq = () => {
 		],
 	};
 
-	if (device === 'mobile') {
-		return <div>FAQ MOBILE</div>;
-	} else {
-		return (
+	return (
 			<Stack className={'faq-content'}>
 				<Box component="div" className={'categories'}>
 					<div
@@ -507,8 +500,7 @@ const Faq = () => {
 						))}
 				</Box>
 			</Stack>
-		);
-	}
+	);
 };
 
 export default Faq;

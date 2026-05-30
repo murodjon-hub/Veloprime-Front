@@ -5,7 +5,6 @@ import EventNoteOutlinedIcon from '@mui/icons-material/EventNoteOutlined';
 import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
 
 const NOTICES = [
 	{
@@ -63,12 +62,6 @@ const TAG_STYLE: Record<string, { bg: string; color: string }> = {
 };
 
 const Notice = () => {
-	const device = useDeviceDetect();
-
-	if (device === 'mobile') {
-		return <div>NOTICE MOBILE</div>;
-	}
-
 	return (
 		<Stack className="notice-content">
 			<Stack direction="row" alignItems="center" gap={1} sx={{ mb: 3 }}>

@@ -231,3 +231,37 @@
     }
   }
 }
+
+#pc-wrap {
+  @media (max-width: 768px) {
+    .cs-page { padding: 32px 0 48px; }
+
+    .cs-main-info {
+      .info span { font-size: 24px; }
+      .info p    { font-size: 13px; text-align: center; }
+    }
+
+    .btns {
+      margin-top: 28px;
+      div { width: 100px; height: 40px; font-size: 12px; }
+    }
+
+    .cs-content { margin-top: 20px; }
+
+    .notice-content .notice-card {
+      flex-direction: row;
+      padding: 14px 16px;
+      gap: 12px;
+      &__icon-wrap { width: 34px; height: 34px; }
+      &__title     { font-size: 13px; }
+      &__content   { font-size: 12px; }
+    }
+
+    .faq-content {
+      .categories div { width: auto; padding: 0 10px; font-size: 13px; }
+      .wrap .answer   { margin-left: 16px; }
+    }
+
+    .inquiry-content { max-width: 100%; padding: 0 16px; }
+  }
+}

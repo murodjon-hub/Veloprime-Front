@@ -522,3 +522,25 @@
     }
   }
 }
+
+#pc-wrap {
+  @media (max-width: 768px) {
+    .events-page    { padding: 24px 16px 48px; }
+    .events-hero    { padding: 40px 16px; min-height: unset; }
+    .events-hero h1 { font-size: 28px; }
+
+    .events-grid    { grid-template-columns: 1fr; gap: 16px; }
+
+    .event-card {
+      &__img-wrap { aspect-ratio: 16/9; }
+      &__body     { padding: 14px 16px 16px; }
+      &__title    { font-size: 15px; }
+      &__route    { font-size: 11px; }
+      &__meta     { flex-wrap: wrap; gap: 8px; }
+      &__actions  { flex-direction: column; gap: 8px; button { width: 100%; } }
+    }
+
+    .event-detail-layout { grid-template-columns: 1fr; padding: 0 16px; }
+    .event-detail-map    { height: 220px; }
+  }
+}

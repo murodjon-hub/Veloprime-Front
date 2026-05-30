@@ -347,3 +347,30 @@ $ease:    cubic-bezier(0.22, 1, 0.36, 1);
     text-align: center;
   }
 }
+
+#pc-wrap {
+  @media (max-width: 768px) {
+    .my-page-layout {
+      grid-template-columns: 1fr;
+      padding: 0 16px;
+      gap: 0;
+    }
+
+    /* Sidebar collapses to horizontal strip */
+    .mp-sidebar {
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .mp-sidebar__profile { gap: 12px; }
+    .mp-sidebar__avatar  { width: 44px !important; height: 44px !important; }
+    .mp-sidebar__stats   { gap: 12px; }
+    .mp-sidebar__section-label { font-size: 10px; margin-top: 12px; }
+    .mp-nav-item { padding: 10px 12px; }
+    .mp-nav-item__label { font-size: 13px; }
+
+    /* Content area */
+    .mp-content { padding: 0; }
+  }
+}

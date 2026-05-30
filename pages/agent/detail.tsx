@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { NextPage } from 'next';
-import useDeviceDetect from '../../libs/hooks/useDeviceDetect';
 import withLayoutBasic from '../../libs/components/layout/LayoutBasic';
 import ReviewCard from '../../libs/components/agent/ReviewCard';
 import ProductCard, { Product } from '../../libs/components/product/ProductCard';
@@ -29,7 +28,6 @@ export const getStaticProps = async ({ locale }: any) => ({
 });
 
 const AgentDetail: NextPage = ({ initialInput, initialComment }: any) => {
-	const device = useDeviceDetect();
 	const router = useRouter();
 	const user = useReactiveVar(userVar);
 	const [agentId, setAgentId] = useState<string | null>(null);
@@ -151,10 +149,7 @@ const AgentDetail: NextPage = ({ initialInput, initialComment }: any) => {
 		}
 	};
 
-	if (device === 'mobile') {
-		return <div>MEMBER DETAIL PAGE MOBILE</div>;
-	} else {
-		return (
+	return (
 			<Stack className={'agent-detail-page'}>
 				<Stack className={'container'}>
 					<Stack className={'agent-info'}>
@@ -265,8 +260,7 @@ const AgentDetail: NextPage = ({ initialInput, initialComment }: any) => {
 					</Stack>
 				</Stack>
 			</Stack>
-		);
-	}
+	);
 };
 
 AgentDetail.defaultProps = {

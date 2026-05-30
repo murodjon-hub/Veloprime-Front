@@ -577,3 +577,17 @@
     }
   }
 }
+#pc-wrap {
+  @media (max-width: 768px) {
+    .admin-layout { grid-template-columns: 1fr; }
+    .admin-sidebar { display: none; }
+    .admin-content { padding: 16px; }
+
+    /* Tables scroll horizontally */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .MuiTableContainer-root { min-width: 600px; }
+
+    .admin-dashboard__header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .dash-stat-card { padding: 16px !important; }
+  }
+}

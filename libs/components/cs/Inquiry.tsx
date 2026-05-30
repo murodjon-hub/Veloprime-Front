@@ -5,7 +5,6 @@ import {
 } from '@mui/material';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import CheckCircleOutlineRoundedIcon from '@mui/icons-material/CheckCircleOutlineRounded';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
 import { useReactiveVar } from '@apollo/client';
 import { userVar } from '../../../apollo/store';
 import { sweetErrorHandling } from '../../sweetAlert';
@@ -20,7 +19,6 @@ const CATEGORIES = [
 ];
 
 const Inquiry = () => {
-	const device = useDeviceDetect();
 	const user   = useReactiveVar(userVar);
 
 	const [category, setCategory] = useState('PURCHASE');
@@ -55,10 +53,6 @@ const Inquiry = () => {
 		setCategory('PURCHASE');
 		setSent(false);
 	};
-
-	if (device === 'mobile') {
-		return <div>INQUIRY MOBILE</div>;
-	}
 
 	if (sent) {
 		return (

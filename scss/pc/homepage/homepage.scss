@@ -1297,4 +1297,66 @@
       }
     }
   }
+
+  // ── Mobile ─────────────────────────────────────────────────────
+  @media (max-width: 768px) {
+    .home-page { background: #fff; }
+
+    .section-header {
+      margin-bottom: 32px;
+      padding: 0 16px;
+      &__title { font-size: 24px; letter-spacing: -0.5px; }
+      &__sub   { font-size: 13px; }
+    }
+
+    /* New Arrivals */
+    .new-arrivals {
+      padding: 48px 0 32px;
+      &__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 16px; }
+    }
+
+    /* Featured / Popular */
+    .popular-properties { padding: 32px 0; }
+    .featured-bike-section { padding: 0 16px; }
+    .featured-bike-carousel { gap: 8px; }
+    .background-number { font-size: 60px; }
+    .carousel-arrow { width: 32px !important; height: 32px !important; }
+
+    /* E-Bike section */
+    .e-bike-section {
+      padding: 40px 16px;
+      flex-direction: column;
+      gap: 24px;
+      &__content, &__visual { width: 100%; }
+      &__title { font-size: 28px; }
+    }
+
+    /* Community */
+    .community-section {
+      padding: 40px 16px;
+      &__grid { grid-template-columns: 1fr; gap: 16px; }
+    }
+
+    /* Accessories */
+    .accessories-section {
+      padding: 40px 16px;
+      &__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    }
+
+    /* Events */
+    .events-section {
+      padding: 40px 16px;
+      &__grid { grid-template-columns: 1fr; gap: 16px; }
+    }
+
+    /* AI Showcase */
+    .ai-showcase {
+      padding: 48px 16px;
+      &__inner { grid-template-columns: 1fr; gap: 40px; }
+      &__demo  { display: none; }
+      &__title { font-size: 30px; }
+      &__prompts { gap: 6px; }
+      &__prompt-chip { font-size: 11px; padding: 6px 12px; }
+    }
+  }
 }

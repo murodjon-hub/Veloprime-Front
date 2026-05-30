@@ -30,3 +30,11 @@ $ease:   cubic-bezier(0.22, 1, 0.36, 1);
     .total-result p { font-size: 13px; color: $muted; }
   }
 }
+
+#pc-wrap {
+  @media (max-width: 768px) {
+    .my-favorites { padding: 0; }
+    .my-favorites__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .my-favorites__empty { padding: 40px 16px; }
+  }
+}

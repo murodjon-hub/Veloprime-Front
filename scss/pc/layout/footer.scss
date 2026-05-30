@@ -1,25 +1,49 @@
 /** ─── VELOPRIME FOOTER ──────────────────────────────────────────── */
 
-#pc-wrap {
+// ── Sticky-footer layout ───────────────────────────────────────────
+// The outer #pc-wrap Stack must be a full-height flex column so the
+// footer is always pushed to the bottom regardless of page content.
 
+#pc-wrap {
+  min-height: 100vh;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100%;
+}
+
+#main {
+  flex: 1 0 auto; // grows to fill available space → pushes footer down
+}
+
+#footer {
+  flex-shrink: 0; // never shrinks below its natural height
+  width: 100%;
+}
+
+// ── Footer ─────────────────────────────────────────────────────────
+#pc-wrap {
   .footer {
+    width: 100%;
     background: #0a0a0a;
     color: #fff;
 
+    // ── Main grid ─────────────────────────────────────────────────
     &__inner {
       max-width: 1360px;
       margin: 0 auto;
-      padding: 80px 40px 60px;
+      padding: 72px 40px 56px;
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr 1.4fr;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
       gap: 48px;
-
-      @media (max-width: 1100px) { grid-template-columns: 1fr 1fr 1fr; }
-      @media (max-width: 700px)  { grid-template-columns: 1fr; }
+      box-sizing: border-box;
     }
 
     // ── Brand column ──────────────────────────────────────────────
-    &__brand-col { display: flex; flex-direction: column; gap: 16px; }
+    &__brand-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
 
     &__logo {
       font-family: 'Barlow Condensed', 'Inter', sans-serif;
@@ -29,19 +53,21 @@
       color: #fff;
       cursor: pointer;
       text-transform: uppercase;
+      width: fit-content;
+      transition: opacity 0.2s;
+      &:hover { opacity: 0.75; }
     }
 
     &__tagline {
       font-size: 13px;
-      line-height: 1.7;
-      color: rgba(255, 255, 255, 0.48);
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.45);
       margin: 0;
     }
 
     &__social {
       display: flex;
       gap: 8px;
-      margin-top: 4px;
     }
 
     &__social-btn {
@@ -49,13 +75,14 @@
       height: 34px;
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.10);
-      color: rgba(255, 255, 255, 0.60);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.55);
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: background 0.2s, color 0.2s;
+      flex-shrink: 0;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
 
       &:hover {
         background: #e63946;
@@ -64,28 +91,36 @@
       }
     }
 
-    &__contact { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+    &__contact {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 2px;
+    }
 
     &__contact-row {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.45);
-
-      svg { flex-shrink: 0; color: rgba(255, 255, 255, 0.30); }
+      color: rgba(255, 255, 255, 0.42);
+      svg { flex-shrink: 0; color: rgba(255, 255, 255, 0.28); }
     }
 
     // ── Link columns ──────────────────────────────────────────────
-    &__col { display: flex; flex-direction: column; gap: 14px; }
+    &__col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
 
     &__col-title {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 1.5px;
+      letter-spacing: 1.8px;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.35);
-      margin: 0 0 4px;
+      color: rgba(255, 255, 255, 0.32);
+      margin: 0 0 2px;
     }
 
     &__col-list {
@@ -99,42 +134,45 @@
 
     &__link {
       font-size: 13px;
-      color: rgba(255, 255, 255, 0.60);
+      color: rgba(255, 255, 255, 0.58);
       text-decoration: none;
-      transition: color 0.2s;
-
+      transition: color 0.18s;
       &:hover { color: #fff; }
     }
 
     // ── Newsletter ─────────────────────────────────────────────────
-    &__newsletter-col { display: flex; flex-direction: column; gap: 12px; }
+    &__newsletter-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
     &__newsletter-sub {
       font-size: 12px;
-      color: rgba(255, 255, 255, 0.42);
+      color: rgba(255, 255, 255, 0.40);
       margin: 0;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
     &__newsletter-form {
       display: flex;
-      gap: 0;
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 8px;
       overflow: hidden;
+      background: rgba(255, 255, 255, 0.04);
     }
 
     &__newsletter-input {
       flex: 1;
-      background: rgba(255, 255, 255, 0.05);
+      min-width: 0;
+      background: transparent;
       border: none;
       outline: none;
-      padding: 10px 14px;
+      padding: 11px 14px;
       font-size: 12px;
       color: #fff;
       font-family: 'Inter', sans-serif;
-
-      &::placeholder { color: rgba(255, 255, 255, 0.28); }
+      &::placeholder { color: rgba(255, 255, 255, 0.26); }
     }
 
     &__newsletter-btn {
@@ -146,28 +184,29 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
       transition: background 0.2s;
-
       &:hover { background: #c1121f; }
     }
 
     // ── Bottom bar ─────────────────────────────────────────────────
     &__bottom {
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
     &__bottom-inner {
       max-width: 1360px;
       margin: 0 auto;
-      padding: 20px 40px;
+      padding: 18px 40px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      box-sizing: border-box;
     }
 
     &__copy {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.28);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.26);
     }
 
     &__bottom-links {
@@ -176,41 +215,52 @@
     }
 
     &__bottom-link {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.28);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.26);
       text-decoration: none;
-      transition: color 0.2s;
-
+      transition: color 0.18s;
       &:hover { color: rgba(255, 255, 255, 0.65); }
     }
 
-    // ── Mobile ─────────────────────────────────────────────────────
-    &--mobile {
-      padding: 32px 20px 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-
-      .footer__brand {
-        font-size: 18px;
-        font-weight: 900;
-        letter-spacing: 3px;
-        color: #fff;
+    // ── Responsive ─────────────────────────────────────────────────
+    @media (max-width: 1100px) {
+      &__inner {
+        grid-template-columns: 1.5fr 1fr 1fr 1fr;
+        gap: 36px;
+        padding: 60px 32px 48px;
       }
+
+      &__newsletter-col { grid-column: 1 / -1; }
     }
 
-    &__mobile-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 20px;
-      justify-content: center;
-    }
+    @media (max-width: 768px) {
+      &__inner {
+        grid-template-columns: 1fr;
+        padding: 40px 20px 32px;
+        gap: 32px;
+      }
 
-    &__mobile-link {
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.55);
-      text-decoration: none;
+      &__brand-col { align-items: flex-start; }
+
+      &__col { gap: 10px; }
+
+      &__newsletter-col { grid-column: auto; }
+
+      &__newsletter-form { border-radius: 8px; }
+
+      &__newsletter-btn {
+        padding: 12px 16px;
+        border-radius: 0 0 7px 7px;
+      }
+
+      &__bottom-inner {
+        padding: 16px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      &__bottom-links { gap: 16px; flex-wrap: wrap; }
     }
   }
 }

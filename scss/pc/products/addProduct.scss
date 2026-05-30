@@ -705,3 +705,17 @@
     font-size: 0.95rem;
   }
 }
+
+#pc-wrap {
+  @media (max-width: 768px) {
+    .add-product-page   { padding: 16px; }
+    .add-product-layout { grid-template-columns: 1fr; gap: 20px; }
+    .add-product-form   { gap: 16px; }
+    .add-product-upload { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .add-product-submit { width: 100%; }
+
+    .MuiFormControl-root,
+    .MuiTextField-root,
+    .MuiSelect-root { width: 100%; }
+  }
+}

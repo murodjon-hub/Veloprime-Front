@@ -603,3 +603,31 @@ $font-ser: 'Lora', Georgia, serif;
     color:     $muted !important;
   }
 }
+
+#pc-wrap {
+  @media (max-width: 768px) {
+    .community-page, .blogs-page {
+      padding: 24px 16px 48px;
+    }
+    .community-list, .blogs-list {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .community-card, .blog-card {
+      &__title    { font-size: 15px !important; }
+      &__excerpt  { font-size: 12px !important; -webkit-line-clamp: 2; }
+      &__img-wrap { aspect-ratio: 16/9; }
+    }
+    .community-header, .blogs-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .community-tabs, .blog-tabs {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      width: 100%;
+    }
+    .write-btn { width: 100%; justify-content: center; }
+  }
+}

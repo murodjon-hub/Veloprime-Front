@@ -55,12 +55,12 @@ const Join: NextPage = () => {
 	return (
 		<Stack className="join-page">
 			{/* Background overlay */}
-			<Box className="join-bg-overlay" />
+			<Box component="div" className="join-bg-overlay" />
 
 			<Stack className="join-container">
 				{/* Left: Image Side */}
-				<Box className="join-left">
-					<Box className="join-left-content">
+				<Box component="div" className="join-left">
+					<Box component="div" className="join-left-content">
 						<img src="/img/rachel-martin-YZEGtY07jG0-unsplash.jpg" alt="" />
 						<Typography className="join-brand">VELOPRIME</Typography>
 						<Typography className="join-tagline">
@@ -70,10 +70,10 @@ const Join: NextPage = () => {
 				</Box>
 
 				{/* Right: Form Side */}
-				<Box className="join-right">
-					<Box className="join-form-box">
+				<Box component="div" className="join-right">
+					<Box component="div" className="join-form-box">
 						{/* Tabs */}
-						<Box className="join-tabs">
+						<Box component="div" className="join-tabs">
 							<button className={`join-tab ${loginView ? 'active' : ''}`} onClick={() => viewChangeHandler(true)}>
 								Login
 							</button>
@@ -83,7 +83,7 @@ const Join: NextPage = () => {
 						</Box>
 
 						{/* Title */}
-						<Box className="join-title-box">
+						<Box component="div" className="join-title-box">
 							<Typography className="join-title">{loginView ? 'Welcome Back 👋' : 'Create Account 🚴'}</Typography>
 							<Typography className="join-subtitle">
 								{loginView ? 'Login to your Veloprime account' : 'Join thousands of riders today'}
@@ -91,8 +91,8 @@ const Join: NextPage = () => {
 						</Box>
 
 						{/* Inputs */}
-						<Box className="join-inputs">
-							<Box className="join-input-box">
+						<Box component="div" className="join-inputs">
+							<Box component="div" className="join-input-box">
 								<span>Nickname</span>
 								<input
 									type="text"
@@ -104,7 +104,7 @@ const Join: NextPage = () => {
 								/>
 							</Box>
 
-							<Box className="join-input-box">
+							<Box component="div" className="join-input-box">
 								<span>Password</span>
 								<input
 									type="password"
@@ -117,7 +117,7 @@ const Join: NextPage = () => {
 							</Box>
 
 							{!loginView && (
-								<Box className="join-input-box">
+								<Box component="div" className="join-input-box">
 									<span>Phone</span>
 									<input
 										type="text"
@@ -132,18 +132,18 @@ const Join: NextPage = () => {
 						</Box>
 
 						{/* Options */}
-						<Box className="join-options">
+						<Box component="div" className="join-options">
 							{loginView ? (
-								<Box className="join-remember">
+								<Box component="div" className="join-remember">
 									<FormGroup>
 										<FormControlLabel control={<Checkbox defaultChecked size="small" />} label="Remember me" />
 									</FormGroup>
 									<a className="join-forgot">Forgot password?</a>
 								</Box>
 							) : (
-								<Box className="join-type">
+								<Box component="div" className="join-type">
 									<span>Register as:</span>
-									<Box className="join-type-options">
+									<Box component="div" className="join-type-options">
 										<FormGroup>
 											<FormControlLabel
 												control={
@@ -162,12 +162,12 @@ const Join: NextPage = () => {
 												control={
 													<Checkbox
 														size="small"
-														name="AGENT"
+														name="MEMBER"
 														onChange={checkUserTypeHandler}
-														checked={input.type === 'AGENT'}
+														checked={input.type === 'MEMBER'}
 													/>
 												}
-												label="Agent"
+												label="Member"
 											/>
 										</FormGroup>
 									</Box>
@@ -197,7 +197,7 @@ const Join: NextPage = () => {
 						)}
 
 						{/* Switch */}
-						<Box className="join-switch">
+						<Box component="div" className="join-switch">
 							{loginView ? (
 								<p>
 									Not registered yet? <b onClick={() => viewChangeHandler(false)}>SIGN UP</b>

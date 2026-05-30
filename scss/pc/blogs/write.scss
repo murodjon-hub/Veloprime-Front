@@ -1,473 +1,559 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;0,600&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
 
 // ── Tokens ────────────────────────────────────────────────────────────────────
-$black:         #1a1a1a;
-$white:         #ffffff;
-$bg:            #ffffff;
-$surface:       #fafafa;
-$border:        #e8e8e8;
-$border-focus:  #1a1a1a;
-$text-primary:  #1a1a1a;
-$text-secondary:#555555;
-$text-muted:    #999999;
-$green:         #1a8917;   // Medium publish green
-$green-dark:    #156d12;
-$green-glow:    rgba(26, 137, 23, 0.18);
+$black:     #0f0f0f;
+$white:     #ffffff;
+$surface:   #fafaf8;
+$border:    #ebebeb;
+$muted:     #999999;
+$accent:    #e02323;
+$green:     #16a34a;
+$green-dk:  #15803d;
+$font-ui:   'Inter', system-ui, sans-serif;
+$font-ser:  'Lora', Georgia, serif;
+$ease:      cubic-bezier(0.22, 1, 0.36, 1);
 
-$font-ui:      'Source Sans 3', system-ui, sans-serif;
-$font-display: 'Lora', Georgia, serif;
-$ease:         cubic-bezier(0.22, 1, 0.36, 1);
-
-// ── Page Shell ────────────────────────────────────────────────────────────────
+// ── Shell ─────────────────────────────────────────────────────────────────────
 #write-blog-page {
   min-height:  100vh;
-  background:  $bg;
+  background:  $white;
   font-family: $font-ui;
 
-  // ── Top Nav Bar (Medium-style thin bar) ───────────────────────────────────────
-  .write-blog__banner {
+  // ── Sticky top nav ──────────────────────────────────────────────────────
+  .wb-nav {
+    position:      sticky;
+    top:           0;
+    z-index:       200;
+    height:        60px;
+    background:    $white;
+    border-bottom: 1px solid $border;
     display:       flex;
     align-items:   center;
     justify-content: space-between;
-    padding:       0 clamp(24px, 5vw, 80px);
-    height:        64px;
-    border-bottom: 1px solid $border;
-    background:    $white;
-    position:      sticky;
-    top:           0;
-    z-index:       100;
+    padding:       0 clamp(16px, 4vw, 56px);
   }
 
-  .write-blog__banner-title {
-    font-family:  $font-display !important;
-    font-size:    22px !important;
-    font-weight:  700 !important;
-    color:        $black !important;
-    font-style:   italic;
-    letter-spacing: -0.3px;
+  .wb-nav__left {
+    display:     flex;
+    align-items: center;
+    gap:         14px;
   }
 
-  .write-blog__banner-sub {
-    font-family: $font-ui !important;
-    font-size:   13px !important;
-    color:       $text-muted !important;
+  .wb-nav__brand {
+    font-family:    $font-ser !important;
+    font-style:     italic;
+    font-size:      20px !important;
+    font-weight:    700 !important;
+    color:          $black !important;
+    letter-spacing: -0.2px;
+  }
+
+  .wb-nav__wordcount {
+    font-size:  12px !important;
+    color:      $muted !important;
     font-weight: 400 !important;
 
-    @media (max-width: 600px) { display: none; }
+    @media (max-width: 600px) { display: none !important; }
   }
 
-  // ── Body ──────────────────────────────────────────────────────────────────────
-  .write-blog__body {
-    max-width:      740px;
-    margin:         0 auto;
-    padding:        48px 24px 120px;
+  .wb-nav__right {
+    display:     flex;
+    align-items: center;
+    gap:         8px;
+  }
+
+  .wb-nav__btn {
+    font-family:    $font-ui !important;
+    font-size:      13px !important;
+    font-weight:    600 !important;
+    text-transform: none !important;
+    border-radius:  20px !important;
+    padding:        7px 20px !important;
+    transition:     background 160ms $ease, transform 120ms $ease !important;
+
+    &--cancel {
+      color:        #777 !important;
+      border:       1px solid $border !important;
+      background:   $white !important;
+
+      &:hover { background: $surface !important; color: $black !important; }
+    }
+
+    &--publish {
+      background:   $green !important;
+      color:        $white !important;
+      border:       1px solid $green !important;
+
+      &:hover { background: $green-dk !important; transform: translateY(-1px); }
+
+      &.Mui-disabled {
+        background:   #e0e0e0 !important;
+        border-color: #e0e0e0 !important;
+        color:        #bbb !important;
+      }
+    }
+  }
+
+  // ── Two-column body ─────────────────────────────────────────────────────
+  .wb-body {
+    display:   grid;
+    grid-template-columns: 1fr 360px;
+    gap:       0;
+    max-width: 1380px;
+    margin:    0 auto;
+    min-height: calc(100vh - 60px);
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // ── Editor column ────────────────────────────────────────────────────────
+  .wb-editor-col {
+    padding:        48px clamp(20px, 5vw, 72px) 80px;
+    border-right:   1px solid $border;
     display:        flex;
     flex-direction: column;
     gap:            0;
+
+    @media (max-width: 1024px) { border-right: none; }
   }
 
-  // ── Meta row ──────────────────────────────────────────────────────────────────
-  .write-blog__meta {
-    display:       flex;
-    align-items:   center;
-    gap:           12px;
-    margin-bottom: 32px;
-    flex-wrap:     wrap;
-  }
-
-  .write-blog__field {
-    display:        flex;
-    flex-direction: column;
-    gap:            6px;
-  }
-
-  .write-blog__label {
-    font-family:    $font-ui !important;
-    font-size:      11px !important;
-    font-weight:    600 !important;
-    letter-spacing: 1px !important;
-    text-transform: uppercase;
-    color:          $text-muted !important;
-  }
-
-  // Category chip-style select
-  .write-blog__field .MuiOutlinedInput-root {
-    font-family:   $font-ui !important;
-    font-size:     13px !important;
-    font-weight:   500 !important;
-    background:    $surface !important;
-    border-radius: 20px !important;
-    transition:    box-shadow 200ms $ease;
-
-    .MuiSelect-select { padding: 8px 16px !important; }
-
-    .MuiOutlinedInput-notchedOutline { border-color: $border !important; }
-
-    &:hover .MuiOutlinedInput-notchedOutline  { border-color: #aaa !important; }
-    &.Mui-focused .MuiOutlinedInput-notchedOutline {
-      border-color: $border-focus !important;
-      border-width: 1.5px !important;
-    }
-  }
-
-  // ── Title input — huge like Medium ───────────────────────────────────────────
-  .write-blog__title-input {
-    width: 100%;
-
-    .MuiInputBase-root {
-      font-family: $font-display !important;
-      font-size:   clamp(28px, 4vw, 42px) !important;
-      font-weight: 700 !important;
-      color:       $black !important;
-      background:  transparent !important;
-      padding:     0 !important;
-
-      fieldset { border: none !important; }
-
-      textarea {
-        padding:       0 !important;
-        line-height:   1.25 !important;
-        letter-spacing: -0.5px;
-        resize:        none;
-
-        &::placeholder {
-          color:   #ccc !important;
-          opacity: 1;
-        }
-      }
-    }
-  }
-
-  // Thin divider between title and editor
-  .write-blog__divider {
-    width:         48px;
-    height:        3px;
-    background:    $border;
-    margin:        24px 0;
-    border-radius: 2px;
-  }
-
-  // ── Editor wrapper ────────────────────────────────────────────────────────────
-  .write-blog__editor {
-    display:        flex;
-    flex-direction: column;
-    gap:            8px;
-
-    // Hide label — editor speaks for itself
-    > .write-blog__label { display: none; }
-
-    .toastui-editor-defaultUI {
-      border:        none !important;
-      border-radius: 0 !important;
-      font-family:   $font-ui !important;
-    }
-
-    .toastui-editor-toolbar {
-      background:    $white !important;
-      border:        1px solid $border !important;
-      border-radius: 8px !important;
-      padding:       6px 10px !important;
-      margin-bottom: 16px !important;
-      position:      sticky;
-      top:           72px;
-      z-index:       10;
-      box-shadow:    0 2px 8px rgba(0,0,0,0.06);
-    }
-
-    .toastui-editor-toolbar-group {
-      border-right: 1px solid $border !important;
-      padding-right: 6px !important;
-      margin-right:  6px !important;
-
-      &:last-child { border-right: none !important; }
-    }
-
-    .toastui-editor-toolbar-icons {
-      border-color:  transparent !important;
-      border-radius: 4px !important;
-      transition:    background 140ms ease !important;
-
-      &:hover {
-        background:   #f0f0f0 !important;
-        border-color: transparent !important;
-      }
-
-      &.active {
-        background:   $black !important;
-        border-color: $black !important;
-
-        &::before { filter: invert(1); }
-      }
-    }
-
-    // Content area — Medium body text feel
-    .toastui-editor-contents,
-    .toastui-editor {
-      font-family: $font-ui !important;
-      font-size:   20px !important;
-      line-height: 1.8 !important;
-      color:       $text-primary !important;
-      padding:     0 !important;
-    }
-
-    .toastui-editor-contents p {
-      margin-bottom: 1.4em !important;
-      color:         $text-secondary !important;
-    }
-
-    .toastui-editor-contents h1,
-    .toastui-editor-contents h2,
-    .toastui-editor-contents h3 {
-      font-family:  $font-display !important;
-      font-weight:  700 !important;
-      color:        $black !important;
-      margin-top:   1.6em !important;
-      margin-bottom: 0.6em !important;
-      line-height:  1.25 !important;
-    }
-
-    .toastui-editor-contents h1 { font-size: 32px !important; }
-    .toastui-editor-contents h2 { font-size: 26px !important; }
-    .toastui-editor-contents h3 { font-size: 20px !important; }
-
-    .toastui-editor-contents blockquote {
-      border-left:  3px solid $black !important;
-      padding-left: 20px !important;
-      font-style:   italic;
-      color:        $text-secondary !important;
-      margin:       1.6em 0 !important;
-    }
-
-    .toastui-editor-contents code {
-      background:    #f3f3f3 !important;
-      border-radius: 3px !important;
-      padding:       2px 6px !important;
-      font-size:     0.88em !important;
-    }
-
-    .toastui-editor-contents img {
-      max-width:     100% !important;
-      border-radius: 4px !important;
-      margin:        1.2em 0 !important;
-    }
-
-    .ProseMirror {
-      outline:    none !important;
-      min-height: 400px;
-
-      &.ProseMirror-focused { outline: none !important; }
-
-      p.is-editor-empty:first-child::before {
-        content: attr(data-placeholder);
-        color:   #ccc;
-        pointer-events: none;
-        float:   left;
-        height:  0;
-      }
-    }
-
-    // Preview pane
-    .toastui-editor-md-preview {
-      font-family: $font-ui !important;
-      font-size:   18px !important;
-      padding:     0 24px !important;
-      border-left: 1px solid $border !important;
-    }
-  }
-
-  // ── Actions ───────────────────────────────────────────────────────────────────
-  .write-blog__actions {
-    display:         flex;
-    align-items:     center;
-    gap:             12px;
-    padding-top:     40px;
-    margin-top:      8px;
-    border-top:      1px solid $border;
-
-    // spacer pushes buttons right
-    &::before {
-      content: '';
-      flex:    1;
-    }
-  }
-
-  .write-blog__btn {
-    font-family:    $font-ui !important;
-    font-size:      14px !important;
-    font-weight:    600 !important;
-    letter-spacing: 0 !important;
-    padding:        10px 24px !important;
-    border-radius:  20px !important;
-    text-transform: none !important;
-    transition:     background 180ms $ease, box-shadow 180ms $ease,
-                    transform 140ms $ease !important;
-
-    &:active { transform: scale(0.97) !important; }
-
-    &--cancel {
-      color:        $text-secondary !important;
-      border-color: $border !important;
-      background:   $white !important;
-
-      &:hover {
-        background:   $surface !important;
-        border-color: #aaa !important;
-        color:        $black !important;
-      }
-    }
-
-    &--submit {
-      background:   $green !important;
-      border-color: $green !important;
-      color:        $white !important;
-      box-shadow:   0 2px 10px $green-glow !important;
-
-      &:hover {
-        background: $green-dark !important;
-        box-shadow: 0 4px 18px $green-glow !important;
-      }
-    }
-  }
-
-  // ── Mobile ────────────────────────────────────────────────────────────────────
-  @media (max-width: 600px) {
-    .write-blog__body { padding: 32px 16px 80px; }
-
-    .write-blog__actions {
-      flex-wrap: wrap;
-
-      &::before { display: none; }
-
-      .write-blog__btn { flex: 1; text-align: center; }
-    }
-
-    .write-blog__editor .toastui-editor-toolbar {
-      top: 56px;
-    }
-  }
-
-  // ── Cover Image ───────────────────────────────────────────────────────────────
-  .write-blog__cover {
+  // ── Cover upload ──────────────────────────────────────────────────────────
+  .wb-cover {
     width:         100%;
     margin-bottom: 32px;
     border-radius: 12px;
     overflow:      hidden;
   }
 
-  // Empty state — dashed upload zone
-  .write-blog__cover-empty {
+  .wb-cover__drop {
     display:         flex;
     flex-direction:  column;
     align-items:     center;
     justify-content: center;
     gap:             10px;
-    height:          220px;
+    height:          200px;
     border:          2px dashed $border;
     border-radius:   12px;
     background:      $surface;
     cursor:          pointer;
-    transition:      border-color 200ms $ease, background 200ms $ease;
+    transition:      border-color 180ms $ease, background 180ms $ease;
 
-    &:hover {
-      border-color: #aaa;
-      background:   #f0efec;
+    &:hover, &.dragging {
+      border-color: $accent;
+      background:   rgba(224, 35, 35, 0.03);
 
-      .write-blog__cover-icon { color: $black; }
+      .wb-cover__drop-icon { color: $accent; }
     }
   }
 
-  .write-blog__cover-icon {
-    font-size:  40px !important;
+  .wb-cover__drop-icon {
+    font-size:  38px !important;
     color:      #ccc;
-    transition: color 200ms $ease;
+    transition: color 180ms $ease;
   }
 
-  .write-blog__cover-hint {
-    font-family: $font-ui !important;
+  .wb-cover__drop-text {
     font-size:   15px !important;
     font-weight: 500 !important;
-    color:       $text-secondary !important;
+    color:       #666 !important;
   }
 
-  .write-blog__cover-hint-sub {
-    font-family: $font-ui !important;
-    font-size:   12px !important;
-    color:       $text-muted !important;
+  .wb-cover__drop-sub {
+    font-size: 12px !important;
+    color:     $muted !important;
   }
 
-  // Filled state — image with hover overlay
-  .write-blog__cover-preview {
+  .wb-cover__preview {
     position:      relative;
     width:         100%;
-    height:        280px;
+    height:        260px;
     border-radius: 12px;
     overflow:      hidden;
 
-    &:hover .write-blog__cover-overlay { opacity: 1; }
+    &:hover .wb-cover__actions { opacity: 1; }
   }
 
-  .write-blog__cover-img {
-    width:       100%;
-    height:      100%;
-    object-fit:  cover;
-    display:     block;
-    transition:  transform 400ms $ease;
+  .wb-cover__img {
+    width:      100%;
+    height:     100%;
+    object-fit: cover;
+    display:    block;
+    transition: transform 360ms $ease;
 
-    .write-blog__cover-preview:hover & {
-      transform: scale(1.02);
-    }
+    .wb-cover__preview:hover & { transform: scale(1.02); }
   }
 
-  .write-blog__cover-overlay {
+  .wb-cover__progress-wrap {
+    position:   absolute;
+    bottom:     0;
+    left:       0;
+    right:      0;
+    padding:    10px 16px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  .wb-cover__progress {
+    border-radius: 4px;
+    height:        4px !important;
+    background:    rgba(255,255,255,0.2) !important;
+
+    .MuiLinearProgress-bar { background: $white !important; }
+  }
+
+  .wb-cover__progress-label {
+    font-size:   11px !important;
+    color:       rgba(255,255,255,0.85) !important;
+    margin-top:  6px !important;
+    text-align:  center;
+  }
+
+  .wb-cover__actions {
     position:        absolute;
     inset:           0;
     display:         flex;
     align-items:     center;
     justify-content: center;
     gap:             12px;
-    background:      rgba(0, 0, 0, 0.45);
+    background:      rgba(0,0,0,0.42);
     opacity:         0;
-    transition:      opacity 220ms ease;
+    transition:      opacity 200ms ease;
     backdrop-filter: blur(2px);
   }
 
-  .write-blog__cover-change,
-  .write-blog__cover-remove {
-    font-family:   $font-ui !important;
-    font-size:     13px !important;
-    font-weight:   500 !important;
+  .wb-cover__btn {
+    font-size:      13px !important;
+    font-weight:    500 !important;
     text-transform: none !important;
-    border-radius: 20px !important;
-    padding:       8px 18px !important;
-    transition:    background 180ms ease !important;
-  }
-
-  .write-blog__cover-change {
-    background: rgba(255,255,255,0.92) !important;
-    color:      $black !important;
+    border-radius:  20px !important;
+    padding:        7px 18px !important;
+    background:     rgba(255,255,255,0.9) !important;
+    color:          $black !important;
+    transition:     background 160ms ease !important;
 
     &:hover { background: $white !important; }
+
+    &--remove {
+      background: rgba(220,38,38,0.88) !important;
+      color:      $white !important;
+
+      &:hover { background: rgba(200,20,20,0.96) !important; }
+    }
   }
 
-  .write-blog__cover-remove {
-    background: rgba(220, 50, 50, 0.85) !important;
-    color:      $white !important;
+  // ── Title input ───────────────────────────────────────────────────────────
+  .wb-title-input {
+    width:         100%;
+    margin-bottom: 24px;
 
-    &:hover { background: rgba(200, 30, 30, 0.95) !important; }
+    .MuiInputBase-root {
+      font-family:    $font-ser !important;
+      font-size:      clamp(26px, 4vw, 40px) !important;
+      font-weight:    700 !important;
+      color:          $black !important;
+      background:     transparent !important;
+      padding:        0 !important;
+
+      &::before, &::after { display: none !important; }
+    }
+
+    textarea {
+      padding:        0 !important;
+      line-height:    1.2 !important;
+      letter-spacing: -0.03em;
+      resize:         none;
+
+      &::placeholder {
+        color:   #ccc !important;
+        opacity: 1;
+      }
+    }
   }
 
-  .write-blog__cover-uploading {
-    position:    absolute;
-    bottom:      12px;
-    left:        50%;
-    transform:   translateX(-50%);
-    font-family: $font-ui;
-    font-size:   12px;
-    font-weight: 500;
-    color:       $white;
-    background:  rgba(0,0,0,0.55);
-    padding:     4px 14px;
-    border-radius: 20px;
-    backdrop-filter: blur(4px);
+  // ── Section divider ───────────────────────────────────────────────────────
+  .wb-divider {
+    width:         52px;
+    height:        3px;
+    background:    $border;
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+
+  // ── Content textarea ──────────────────────────────────────────────────────
+  .wb-content-input {
+    width: 100%;
+
+    .MuiInputBase-root {
+      font-family: $font-ui !important;
+      font-size:   19px !important;
+      line-height: 1.85 !important;
+      color:       #333 !important;
+      background:  transparent !important;
+      padding:     0 !important;
+      align-items: flex-start;
+
+      &::before, &::after { display: none !important; }
+    }
+
+    textarea {
+      padding:     0 !important;
+      resize:      none;
+      line-height: 1.85 !important;
+
+      &::placeholder {
+        color:   #c8c8c8 !important;
+        opacity: 1;
+      }
+    }
+  }
+
+  // ── Sidebar ────────────────────────────────────────────────────────────────
+  .wb-sidebar {
+    padding:        28px 24px;
+    background:     $surface;
+    display:        flex;
+    flex-direction: column;
+    gap:            0;
+    border-left:    1px solid $border;
+    position:       sticky;
+    top:            60px;
+    height:         calc(100vh - 60px);
+    overflow-y:     auto;
+    scrollbar-width: thin;
+
+    @media (max-width: 1024px) {
+      position: static;
+      height:   auto;
+      border-left: none;
+      border-top: 1px solid $border;
+    }
+
+    &__section {
+      padding-bottom: 24px;
+      margin-bottom:  24px;
+      border-bottom:  1px solid $border;
+
+      &:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    }
+
+    &__section-label {
+      font-size:      10px !important;
+      font-weight:    700 !important;
+      letter-spacing: 1.6px !important;
+      text-transform: uppercase;
+      color:          $muted !important;
+      margin-bottom:  14px !important;
+      display:        block;
+    }
+
+    &__publish-btn {
+      width:          100%;
+      background:     $green !important;
+      color:          $white !important;
+      border-radius:  10px !important;
+      padding:        12px !important;
+      font-family:    $font-ui !important;
+      font-weight:    600 !important;
+      font-size:      14px !important;
+      text-transform: none !important;
+      transition:     background 160ms $ease, transform 120ms $ease !important;
+      margin-bottom:  10px !important;
+
+      &:hover { background: $green-dk !important; transform: translateY(-1px); }
+
+      &.Mui-disabled {
+        background:   #e5e5e5 !important;
+        color:        #bbb !important;
+      }
+    }
+
+    &__cancel-btn {
+      width:          100%;
+      border:         1px solid $border !important;
+      color:          #777 !important;
+      border-radius:  10px !important;
+      padding:        10px !important;
+      font-family:    $font-ui !important;
+      font-weight:    500 !important;
+      font-size:      13px !important;
+      text-transform: none !important;
+      background:     $white !important;
+
+      &:hover { background: #f5f5f5 !important; }
+    }
+  }
+
+  // ── Live preview card ──────────────────────────────────────────────────────
+  .wb-preview-card {
+    background:    $white;
+    border:        1px solid $border;
+    border-radius: 12px;
+    overflow:      hidden;
+
+    &__img-wrap {
+      position:   relative;
+      height:     150px;
+      background: #f0f0ee;
+      overflow:   hidden;
+    }
+
+    &__img {
+      width:      100%;
+      height:     100%;
+      object-fit: cover;
+    }
+
+    &__img-empty {
+      width:           100%;
+      height:          100%;
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+    }
+
+    &__cat-badge {
+      position:       absolute;
+      bottom:         8px;
+      left:           8px;
+      background:     rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      color:          $white;
+      font-size:      9px;
+      font-weight:    700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      padding:        3px 8px;
+      border-radius:  16px;
+    }
+
+    &__body {
+      padding:        14px 16px 16px;
+      display:        flex;
+      flex-direction: column;
+      gap:            8px;
+    }
+
+    &__title {
+      font-family:  $font-ser !important;
+      font-size:    14px !important;
+      font-weight:  700 !important;
+      color:        $black !important;
+      line-height:  1.35 !important;
+      display:             -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp:         3;
+      -webkit-box-orient: vertical;
+      overflow:           hidden;
+    }
+
+    &__placeholder {
+      color: #ccc;
+      font-style: italic;
+    }
+
+    &__excerpt {
+      font-size:   12px !important;
+      color:       #777 !important;
+      line-height: 1.55 !important;
+      display:            -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp:         2;
+      -webkit-box-orient: vertical;
+      overflow:           hidden;
+    }
+
+    &__meta {
+      display:     flex;
+      align-items: center;
+      gap:         8px;
+      padding-top: 10px;
+      border-top:  1px solid $border;
+    }
+
+    &__avatar {
+      width:         28px;
+      height:        28px;
+      border-radius: 50%;
+      object-fit:    cover;
+      flex-shrink:   0;
+    }
+
+    &__author {
+      font-size:   12px !important;
+      font-weight: 600 !important;
+      color:       $black !important;
+    }
+
+    &__info {
+      display:     flex;
+      align-items: center;
+      gap:         3px;
+      font-size:   11px;
+      color:       $muted;
+      margin-top:  2px;
+
+      svg { font-size: 12px !important; }
+      span { line-height: 1; }
+    }
+  }
+
+  // ── Settings ───────────────────────────────────────────────────────────────
+  .wb-settings {
+    display:        flex;
+    flex-direction: column;
+    gap:            10px;
+
+    &__label {
+      font-size:   12px !important;
+      font-weight: 600 !important;
+      color:       #555 !important;
+    }
+
+    &__select {
+      font-family:   $font-ui !important;
+      font-size:     13px !important;
+      border-radius: 8px !important;
+      background:    $white !important;
+
+      fieldset { border-color: $border !important; }
+      &:hover fieldset  { border-color: #aaa !important; }
+      &.Mui-focused fieldset { border-color: $black !important; }
+
+      .MuiSelect-select { padding: 9px 14px !important; }
+    }
+  }
+
+  // ── Checklist ─────────────────────────────────────────────────────────────
+  .wb-checklist {
+    display:        flex;
+    flex-direction: column;
+    gap:            8px;
+
+    &__item {
+      display:     flex;
+      align-items: center;
+      gap:         8px;
+      font-size:   13px;
+      color:       $muted;
+      transition:  color 200ms ease;
+
+      svg { color: #ddd; transition: color 200ms ease; }
+
+      &.done {
+        color: #16a34a;
+        svg   { color: #16a34a; }
+      }
+    }
+  }
+
+  // ── Mobile ─────────────────────────────────────────────────────────────────
+  @media (max-width: 600px) {
+    .wb-editor-col { padding: 24px 16px 60px; }
+    .wb-sidebar    { padding: 20px 16px; }
+
+    .wb-cover__preview { height: 200px; }
   }
 }
+  

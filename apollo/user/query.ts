@@ -20,11 +20,12 @@ export const GET_AGENTS = gql`
 				memberDesc
 				memberWarnings
 				memberBlocks
-				memberProperties
+				memberProducts
 				memberRank
 				memberPoints
 				memberLikes
 				memberViews
+				memberFollowers
 				deletedAt
 				createdAt
 				updatedAt
@@ -55,7 +56,7 @@ query GetMember($input: String!) {
         memberImage
         memberAddress
         memberDesc
-        memberProperties
+        memberProducts
         memberArticles
         memberPoints
         memberLikes
@@ -79,127 +80,55 @@ query GetMember($input: String!) {
 `);
 
 /**************************
- *        PROPERTY        *
+ *        PRODUCT         *
  *************************/
 
  export const GET_PRODUCTS = gql`
 	query GetProducts($input: ProductInquiry!) {
-    getProducts(input: $input) {
-        list {
-            _id
-            productType
-            productStatus
-            productAgeCategory
-            productColor
-            productSize
-            productName
-            productPrice
-            productViews
-            productLikes
-            productComments
-            productRank
-            productImages
-            productDesc
-            memberId
-            soldAt
-            deletedAt
-            updatedAt
-        }
-        metaCounter {
-            total
-        }
-    }
-}
-`;
-
-export const GET_PROPERTIES = gql`
-	query GetProperties($input: PropertiesInquiry!) {
-		getProperties(input: $input) {
+		getProducts(input: $input) {
 			list {
 				_id
-				propertyType
-				propertyStatus
-				propertyLocation
-				propertyAddress
-				propertyTitle
-				propertyPrice
-				propertySquare
-				propertyBeds
-				propertyRooms
-				propertyViews
-				propertyLikes
-				propertyRank
-				propertyImages
-				propertyDesc
-				propertyBarter
-				propertyRent
+				productType
+				productStatus
+				productCondition
+				productAgeCategory
+				productColor
+				productSize
+				productName
+				productBrand
+				productPrice
+				productViews
+				productLikes
+				productComments
+				productReviews
+				productRating
+				productRank
+				productImages
+				productDesc
+				productBrakeType
+				productSuspension
+				productGearCount
+				productWheelSize
+				productFrameSize
+				productWeight
+				productMileage
+				productYear
 				memberId
 				soldAt
 				deletedAt
-				constructedAt
 				createdAt
 				updatedAt
-				memberData {
-					_id
-					memberType
-					memberStatus
-					memberAuthType
-					memberPhone
-					memberNick
-					memberFullName
-					memberImage
-					memberAddress
-					memberDesc
-					memberWarnings
-					memberBlocks
-					memberProperties
-					memberRank
-					memberPoints
-					memberLikes
-					memberViews
-					deletedAt
-					createdAt
-					updatedAt
-				}
 				meLiked {
 					memberId
 					likeRefId
 					myFavorite
 				}
-			}
-			metaCounter {
-				total
-			}
-		}
-	}
-`;
-
-export const GET_AGENT_PROPERTIES = gql`
-	query GetAgentProperties($input: AgentPropertiesInquiry!) {
-		getAgentProperties(input: $input) {
-			list {
-				_id
-				propertyType
-				propertyStatus
-				propertyLocation
-				propertyAddress
-				propertyTitle
-				propertyPrice
-				propertySquare
-				propertyBeds
-				propertyRooms
-				propertyViews
-				propertyLikes
-				propertyImages
-				propertyDesc
-				propertyBarter
-				propertyRent
-				memberId
-				soldAt
-				deletedAt
-				constructedAt
-				createdAt
-				updatedAt
+				memberData {
+					_id
+					memberNick
+					memberImage
+					memberType
+				}
 			}
 			metaCounter {
 				total
@@ -213,55 +142,27 @@ export const GET_FAVORITES = gql`
 		getFavorites(input: $input) {
 			list {
 				_id
-				propertyType
-				propertyStatus
-				propertyLocation
-				propertyAddress
-				propertyTitle
-				propertyPrice
-				propertySquare
-				propertyBeds
-				propertyRooms
-				propertyViews
-				propertyLikes
-				propertyComments
-				propertyRank
-				propertyImages
-				propertyDesc
-				propertyBarter
-				propertyRent
+				productType
+				productStatus
+				productAgeCategory
+				productColor
+				productSize
+				productName
+				productPrice
+				productViews
+				productLikes
+				productComments
+				productRank
+				productImages
+				productDesc
 				memberId
 				soldAt
 				deletedAt
-				constructedAt
-				createdAt
 				updatedAt
-				memberData {
-					_id
-					memberType
-					memberStatus
-					memberAuthType
-					memberPhone
-					memberNick
-					memberFullName
-					memberImage
-					memberAddress
-					memberDesc
-					memberProperties
-					memberArticles
-					memberPoints
-					memberLikes
-					memberViews
-					memberComments
-					memberFollowings
-					memberFollowers
-					memberRank
-					memberWarnings
-					memberBlocks
-					deletedAt
-					createdAt
-					updatedAt
-					accessToken
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
 				}
 			}
 			metaCounter {
@@ -276,60 +177,192 @@ export const GET_VISITED = gql`
 		getVisited(input: $input) {
 			list {
 				_id
-				propertyType
-				propertyStatus
-				propertyLocation
-				propertyAddress
-				propertyTitle
-				propertyPrice
-				propertySquare
-				propertyBeds
-				propertyRooms
-				propertyViews
-				propertyLikes
-				propertyComments
-				propertyRank
-				propertyImages
-				propertyDesc
-				propertyBarter
-				propertyRent
+				productType
+				productStatus
+				productAgeCategory
+				productColor
+				productSize
+				productName
+				productPrice
+				productViews
+				productLikes
+				productComments
+				productRank
+				productImages
+				productDesc
 				memberId
 				soldAt
 				deletedAt
-				constructedAt
-				createdAt
 				updatedAt
-				memberData {
-					_id
-					memberType
-					memberStatus
-					memberAuthType
-					memberPhone
-					memberNick
-					memberFullName
-					memberImage
-					memberAddress
-					memberDesc
-					memberProperties
-					memberArticles
-					memberPoints
-					memberLikes
-					memberViews
-					memberComments
-					memberFollowings
-					memberFollowers
-					memberRank
-					memberWarnings
-					memberBlocks
-					deletedAt
-					createdAt
-					updatedAt
-					accessToken
+				meLiked {
+					memberId
+					likeRefId
+					myFavorite
 				}
 			}
 			metaCounter {
 				total
 			}
+		}
+	}
+`;
+
+export const GET_PRODUCT = gql`
+	query GetProduct($input: String!) {
+		getProduct(productId: $input) {
+			_id
+			productType
+			productStatus
+			productCondition
+			productAgeCategory
+			productColor
+			productSize
+			productName
+			productBrand
+			productPrice
+			productViews
+			productLikes
+			productComments
+			productReviews
+			productRating
+			productRank
+			productImages
+			productDesc
+			productBrakeType
+			productSuspension
+			productGearCount
+			productWheelSize
+			productFrameSize
+			productWeight
+			productMileage
+			productYear
+			memberId
+			soldAt
+			deletedAt
+			createdAt
+			updatedAt
+			meLiked {
+				memberId
+				likeRefId
+				myFavorite
+			}
+			memberData {
+				_id
+				memberNick
+				memberImage
+				memberType
+				memberPhone
+			}
+		}
+	}
+`;
+
+/**************************
+ *         REVIEW         *
+ *************************/
+
+export const GET_REVIEWS = gql`
+	query GetReviews($input: ReviewInquiry!) {
+		getReviews(input: $input) {
+			list {
+				_id
+				reviewStatus
+				reviewGroup
+				reviewContent
+				reviewRating
+				reviewRefId
+				memberId
+				createdAt
+				updatedAt
+				memberData {
+					_id
+					memberNick
+					memberImage
+				}
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;
+
+/**************************
+ *         EVENT          *
+ *************************/
+
+export const GET_EVENTS = gql`
+	query GetEvents($input: EventInquiry!) {
+		getEvents(input: $input) {
+			list {
+				_id
+				eventTitle
+				eventDesc
+				eventStatus
+				eventImage
+				fromLocation
+				toLocation
+				distance
+				eventDate
+				maxParticipants
+				currentParticipants
+				eventParticipants
+				rating
+				memberId
+				createdAt
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;
+
+export const GET_MY_EVENTS = gql`
+	query GetMyEvents($input: EventInquiry!) {
+		getMyEvents(input: $input) {
+			list {
+				_id
+				eventTitle
+				eventDesc
+				eventStatus
+				eventImage
+				fromLocation
+				toLocation
+				distance
+				eventDate
+				maxParticipants
+				currentParticipants
+				eventParticipants
+				rating
+				memberId
+				createdAt
+			}
+			metaCounter {
+				total
+			}
+		}
+	}
+`;
+
+export const GET_EVENT = gql`
+	query GetEvent($input: String!) {
+		getEvent(eventId: $input) {
+			_id
+			eventTitle
+			eventDesc
+			eventStatus
+			eventImage
+			fromLocation
+			toLocation
+			distance
+			eventDate
+			maxParticipants
+			currentParticipants
+			eventParticipants
+			rating
+			memberId
+			createdAt
 		}
 	}
 `;
@@ -366,7 +399,6 @@ export const GET_BOARD_ARTICLE = gql`
 				memberDesc
 				memberWarnings
 				memberBlocks
-				memberProperties
 				memberRank
 				memberPoints
 				memberLikes
@@ -418,7 +450,6 @@ export const GET_BOARD_ARTICLES = gql`
 					memberDesc
 					memberWarnings
 					memberBlocks
-					memberProperties
 					memberRank
 					memberPoints
 					memberLikes
@@ -464,7 +495,6 @@ export const GET_COMMENTS = gql`
 					memberDesc
 					memberWarnings
 					memberBlocks
-					memberProperties
 					memberRank
 					memberPoints
 					memberLikes
@@ -515,7 +545,6 @@ export const GET_MEMBER_FOLLOWERS = gql`
 					memberImage
 					memberAddress
 					memberDesc
-					memberProperties
 					memberArticles
 					memberPoints
 					memberLikes
@@ -558,7 +587,6 @@ export const GET_MEMBER_FOLLOWINGS = gql`
 					memberImage
 					memberAddress
 					memberDesc
-					memberProperties
 					memberArticles
 					memberPoints
 					memberLikes
@@ -589,5 +617,42 @@ export const GET_MEMBER_FOLLOWINGS = gql`
 				total
 			}
 		}
+	}
+`;
+
+/**************************
+ *      NOTIFICATION      *
+ *************************/
+
+export const GET_MY_NOTIFICATIONS = gql`
+	query GetMyNotifications($input: NotificationsInquiry!) {
+		getMyNotifications(input: $input) {
+			list {
+				_id
+				notificationType
+				notificationStatus
+				notificationGroup
+				notificationTitle
+				notificationDesc
+				authorId
+				receiverId
+				productId
+				articleId
+				createdAt
+				authorData {
+					_id
+					memberNick
+					memberImage
+				}
+			}
+			totalCount
+			unreadCount
+		}
+	}
+`;
+
+export const GET_UNREAD_NOTIFICATION_COUNT = gql`
+	query GetUnreadNotificationCount {
+		getUnreadNotificationCount
 	}
 `;

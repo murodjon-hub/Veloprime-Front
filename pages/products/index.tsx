@@ -89,11 +89,11 @@ const ProductList: NextPage = () => {
   /** Mobile */
   if (device === "mobile") {
     return (
-      <Box className="product-list product-list--mobile">
+      <Box component="div" className="product-list product-list--mobile">
         <Typography className="product-list__heading">Products</Typography>
         {loading && <CircularProgress className="product-list__spinner" />}
         {error && <Alert severity="error">{error.message}</Alert>}
-        <Box className="product-list__grid">
+        <Box component="div" className="product-list__grid">
           {products.map((p) => (
             <ProductCard key={p._id} product={p} />
           ))}
@@ -114,32 +114,32 @@ const ProductList: NextPage = () => {
 
   /** Desktop */
   return (
-    <Box id="product-list-page" className="product-list">
-      <Box className="product-list__layout">
+    <Box component="div" id="product-list-page" className="product-list">
+      <Box component="div" className="product-list__layout">
 
         {/* Sidebar */}
         <Filter
           searchText={searchText}
-          onSearchChange={(v) => { setSearchText(v); resetPage(); }}
+          onSearchChange={(v: string) => { setSearchText(v); resetPage(); }}
           activeTypes={activeTypes}
-          onToggleType={(v) => toggleItem(activeTypes, setActiveTypes, v, resetPage)}
+          onToggleType={(v: string) => toggleItem(activeTypes, setActiveTypes, v, resetPage)}
           activeAges={activeAges}
-          onToggleAge={(v) => toggleItem(activeAges, setActiveAges, v, resetPage)}
+          onToggleAge={(v: string) => toggleItem(activeAges, setActiveAges, v, resetPage)}
           activeColors={activeColors}
-          onToggleColor={(v) => toggleItem(activeColors, setActiveColors, v, resetPage)}
+          onToggleColor={(v: string) => toggleItem(activeColors, setActiveColors, v, resetPage)}
           activeSizes={activeSizes}
-          onToggleSize={(v) => toggleItem(activeSizes, setActiveSizes, v, resetPage)}
+          onToggleSize={(v: string) => toggleItem(activeSizes, setActiveSizes, v, resetPage)}
           priceRange={priceRange}
-          onPriceChange={(v) => { setPriceRange(v); resetPage(); }}
+          onPriceChange={(v: [number, number]) => { setPriceRange(v); resetPage(); }}
           onReset={handleReset}
         />
 
         {/* Main content */}
-        <Box className="product-list__main">
+        <Box component="div" className="product-list__main">
 
           {/* Top bar */}
-          <Box className="product-list__topbar">
-            <Box className="product-list__heading-wrap">
+          <Box component="div" className="product-list__topbar">
+            <Box component="div" className="product-list__heading-wrap">
               <Typography className="product-list__heading">Our Products</Typography>
               {!loading && (
                 <Typography className="product-list__count">
@@ -148,9 +148,10 @@ const ProductList: NextPage = () => {
               )}
             </Box>
 
-            <Box className="product-list__sort-tabs">
+            <Box component="div" className="product-list__sort-tabs">
               {SORT_OPTIONS.map((opt, i) => (
                 <Box
+                  component="div"
                   key={i}
                   className={`product-list__sort-tab${
                     sortIndex === i ? " product-list__sort-tab--active" : ""
@@ -165,7 +166,7 @@ const ProductList: NextPage = () => {
 
           {/* States */}
           {loading && (
-            <Box className="product-list__loading">
+            <Box component="div" className="product-list__loading">
               <CircularProgress sx={{ color: "#1a1a1a" }} />
             </Box>
           )}
@@ -177,7 +178,7 @@ const ProductList: NextPage = () => {
           )}
 
           {!loading && !error && products.length === 0 && (
-            <Box className="product-list__empty">
+            <Box component="div" className="product-list__empty">
               <Typography className="product-list__empty-icon">🚲</Typography>
               <Typography className="product-list__empty-title">No products found</Typography>
               <Typography className="product-list__empty-sub">
@@ -188,16 +189,16 @@ const ProductList: NextPage = () => {
 
           {/* Grid */}
           {!loading && products.length > 0 && (
-            <Box className="product-list__grid">
-              {products.map((p) => (
-                <ProductCard key={p._id} product={p} />
+            <Box component="div" className="product-list__grid">
+              {products.map((p, i) => (
+                <ProductCard key={p._id} product={p} index={i} />
               ))}
             </Box>
           )}
 
           {/* Pagination */}
           {!loading && pageCount > 1 && (
-            <Box className="product-list__pagination-wrap">
+            <Box component="div" className="product-list__pagination-wrap">
               <Pagination
                 page={page}
                 count={pageCount}

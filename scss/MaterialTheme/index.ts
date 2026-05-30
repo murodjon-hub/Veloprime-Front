@@ -168,7 +168,7 @@ export const light = {
 			styleOverrides: {
 				root: {},
 				select: {
-					textAlign: 'left',
+					textAlign: 'left' as const,
 				},
 			},
 		},

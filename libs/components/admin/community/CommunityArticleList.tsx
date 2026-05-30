@@ -1,242 +1,162 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import {
-	Box,
-	Button,
-	Fade,
-	Menu,
-	MenuItem,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Tooltip,
+	Avatar, Box, Fade, IconButton, Menu, MenuItem,
+	Table, TableBody, TableCell, TableContainer,
+	TableHead, TableRow, Tooltip, Typography,
 } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
-import OpenInBrowserRoundedIcon from '@mui/icons-material/OpenInBrowserRounded';
-import Moment from 'react-moment';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { BoardArticle } from '../../../types/board-article/board-article';
-import { REACT_APP_API_URL } from '../../../config';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Typography from '@mui/material/Typography';
 import { BoardArticleStatus } from '../../../enums/board-article.enum';
+import { getImageUrl } from '../../../utils';
+import { StatusBadge } from '../shared/StatusBadge';
 
-interface Data {
-	category: string;
-	title: string;
-	writer: string;
-	register: string;
-	view: number;
-	like: number;
-	status: string;
-	article_id: string;
-}
+const COLS = ['ARTICLE', 'CATEGORY', 'AUTHOR', 'VIEWS', 'LIKES', 'DATE', 'STATUS', ''];
+const ALL_STATUSES = Object.values(BoardArticleStatus);
 
-interface HeadCell {
-	disablePadding: boolean;
-	id: keyof Data;
-	label: string;
-	numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-	{
-		id: 'article_id',
-		numeric: true,
-		disablePadding: false,
-		label: 'ARTICLE ID',
-	},
-	{
-		id: 'title',
-		numeric: true,
-		disablePadding: false,
-		label: 'TITLE',
-	},
-	{
-		id: 'category',
-		numeric: true,
-		disablePadding: false,
-		label: 'CATEGORY',
-	},
-	{
-		id: 'writer',
-		numeric: true,
-		disablePadding: false,
-		label: 'WRITER',
-	},
-	{
-		id: 'view',
-		numeric: false,
-		disablePadding: false,
-		label: 'VIEW',
-	},
-	{
-		id: 'like',
-		numeric: false,
-		disablePadding: false,
-		label: 'LIKE',
-	},
-	{
-		id: 'register',
-		numeric: true,
-		disablePadding: false,
-		label: 'REGISTER DATE',
-	},
-	{
-		id: 'status',
-		numeric: false,
-		disablePadding: false,
-		label: 'STATUS',
-	},
-];
-
-interface EnhancedTableProps {
-	numSelected: number;
-	onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
-	onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-	return (
-		<TableHead>
-			<TableRow>
-				{headCells.map((headCell) => (
-					<TableCell
-						key={headCell.id}
-						align={headCell.numeric ? 'left' : 'center'}
-						padding={headCell.disablePadding ? 'none' : 'normal'}
-					>
-						{headCell.label}
-					</TableCell>
-				))}
-			</TableRow>
-		</TableHead>
-	);
-}
-
-interface CommunityArticleListProps {
+interface Props {
 	articles: BoardArticle[];
-	anchorEl: any;
-	menuIconClickHandler: any;
-	menuIconCloseHandler: any;
-	updateArticleHandler: any;
-	removeArticleHandler: any;
+	updateArticleHandler: (data: { _id: string; articleStatus: string }) => void;
+	removeArticleHandler: (id: string) => void;
 }
 
-const CommunityArticleList = (props: CommunityArticleListProps) => {
-	const { articles, anchorEl, menuIconClickHandler, menuIconCloseHandler, updateArticleHandler, removeArticleHandler } =
-		props;
+export function CommunityArticleList({ articles, updateArticleHandler, removeArticleHandler }: Props) {
+	const [anchor, setAnchor] = useState<null | { el: HTMLElement; id: string; status: string }>(null);
+
+	const open  = (e: React.MouseEvent<HTMLButtonElement>, id: string, status: string) =>
+		setAnchor({ el: e.currentTarget, id, status });
+	const close = () => setAnchor(null);
 
 	return (
-		<Stack>
-			<TableContainer>
-				<Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
-					{/*@ts-ignore*/}
-					<EnhancedTableHead />
-					<TableBody>
-						{articles.length === 0 && (
-							<TableRow>
-								<TableCell align="center" colSpan={8}>
-									<span className={'no-data'}>data not found!</span>
+		<TableContainer>
+			<Table size="medium" sx={{ minWidth: 750 }}>
+				<TableHead>
+					<TableRow sx={{ background: '#fafafa' }}>
+						{COLS.map((col) => (
+							<TableCell key={col} sx={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', letterSpacing: 0.5, py: 1.5, borderBottom: '1px solid #f0f0f0' }}>
+								{col}
+							</TableCell>
+						))}
+					</TableRow>
+				</TableHead>
+
+				<TableBody>
+					{articles.length === 0 && (
+						<TableRow>
+							<TableCell colSpan={8} align="center" sx={{ py: 6, color: '#bbb', fontSize: 13 }}>
+								No articles found
+							</TableCell>
+						</TableRow>
+					)}
+
+					{articles.map((a) => {
+						const isDeleted = a.articleStatus === BoardArticleStatus.DELETE;
+						const dateStr   = a.createdAt
+							? new Date(a.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+							: '—';
+
+						return (
+							<TableRow key={a._id} hover sx={{ '& td': { borderBottom: '1px solid #f9f9f9', py: 1.2 } }}>
+
+								{/* Article title */}
+								<TableCell sx={{ maxWidth: 260 }}>
+									{a.articleStatus === BoardArticleStatus.ACTIVE ? (
+										<Link
+											href={`/community/detail?articleCategory=${a.articleCategory}&id=${a._id}`}
+											style={{ textDecoration: 'none' }}
+										>
+											<Typography sx={{ fontSize: 13, fontWeight: 600, color: '#1a1a2e', '&:hover': { color: '#e92c28' }, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+												{a.articleTitle}
+											</Typography>
+										</Link>
+									) : (
+										<Typography sx={{ fontSize: 13, fontWeight: 600, color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+											{a.articleTitle}
+										</Typography>
+									)}
+									<Typography sx={{ fontSize: 11, color: '#aaa' }}>{a._id.slice(-8)}</Typography>
+								</TableCell>
+
+								{/* Category */}
+								<TableCell><StatusBadge status={a.articleCategory} /></TableCell>
+
+								{/* Author */}
+								<TableCell>
+									<Box component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+										<Avatar
+											src={getImageUrl(a.memberData?.memberImage, '/img/profile/defaultUser.svg')}
+											sx={{ width: 26, height: 26 }}
+										/>
+										<Typography sx={{ fontSize: 12, color: '#374151' }}>
+											{a.memberData?.memberNick ?? '—'}
+										</Typography>
+									</Box>
+								</TableCell>
+
+								{/* Views */}
+								<TableCell>
+									<Typography sx={{ fontSize: 12, color: '#6b7280' }}>{a.articleViews ?? 0}</Typography>
+								</TableCell>
+
+								{/* Likes */}
+								<TableCell>
+									<Typography sx={{ fontSize: 12, color: '#6b7280' }}>{a.articleLikes ?? 0}</Typography>
+								</TableCell>
+
+								{/* Date */}
+								<TableCell>
+									<Typography sx={{ fontSize: 12, color: '#374151' }}>{dateStr}</Typography>
+								</TableCell>
+
+								{/* Status */}
+								<TableCell><StatusBadge status={a.articleStatus} /></TableCell>
+
+								{/* Actions */}
+								<TableCell align="right">
+									{isDeleted ? (
+										<Tooltip title="Permanently remove">
+											<IconButton
+												size="small"
+												onClick={() => removeArticleHandler(a._id)}
+												sx={{ color: '#dc2626' }}
+											>
+												<DeleteForeverIcon fontSize="small" />
+											</IconButton>
+										</Tooltip>
+									) : (
+										<IconButton
+											size="small"
+											onClick={(e) => open(e, a._id, a.articleStatus)}
+											sx={{ color: '#9ca3af' }}
+										>
+											<MoreVertIcon fontSize="small" />
+										</IconButton>
+									)}
 								</TableCell>
 							</TableRow>
-						)}
+						);
+					})}
+				</TableBody>
+			</Table>
 
-						{articles.length !== 0 &&
-							articles.map((article: BoardArticle, index: number) => (
-								<TableRow hover key={article._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-									<TableCell align="left">{article._id}</TableCell>
-									<TableCell align="left">
-										<Box component={'div'}>
-											{article.articleTitle}
-											{article.articleStatus === BoardArticleStatus.ACTIVE && (
-												<Link
-													href={`/community/detail?articleCategory=${article.articleCategory}&id=${article._id}`}
-													className={'img_box'}
-												>
-													<IconButton className="btn_window">
-														<Tooltip title={'Open window'}>
-															<OpenInBrowserRoundedIcon />
-														</Tooltip>
-													</IconButton>
-												</Link>
-											)}
-										</Box>
-									</TableCell>
-									<TableCell align="left">{article.articleCategory}</TableCell>
-									<TableCell align="left" className={'name'}>
-										<Link href={`/member?memberId=${article?.memberData?._id}`}>
-											<Avatar
-												alt="Remy Sharp"
-												src={
-													article?.memberData?.memberImage
-														? `${REACT_APP_API_URL}/${article?.memberData?.memberImage}`
-														: `/img/profile/defaultUser.svg`
-												}
-												sx={{ ml: '2px', mr: '10px' }}
-											/>
-											{article?.memberData?.memberNick}
-										</Link>
-									</TableCell>
-									<TableCell align="center">{article?.articleViews}</TableCell>
-									<TableCell align="center">{article?.articleLikes}</TableCell>
-									<TableCell align="left">
-										<Moment format={'DD.MM.YY HH:mm'}>{article?.createdAt}</Moment>
-									</TableCell>
-									<TableCell align="center">
-										{article.articleStatus === BoardArticleStatus.DELETE ? (
-											<Button
-												variant="outlined"
-												sx={{ p: '3px', border: 'none', ':hover': { border: '1px solid #000000' } }}
-												onClick={() => removeArticleHandler(article._id)}
-											>
-												<DeleteIcon fontSize="small" />
-											</Button>
-										) : (
-											<>
-												<Button onClick={(e: any) => menuIconClickHandler(e, index)} className={'badge success'}>
-													{article.articleStatus}
-												</Button>
-
-												<Menu
-													className={'menu-modal'}
-													MenuListProps={{
-														'aria-labelledby': 'fade-button',
-													}}
-													anchorEl={anchorEl[index]}
-													open={Boolean(anchorEl[index])}
-													onClose={menuIconCloseHandler}
-													TransitionComponent={Fade}
-													sx={{ p: 1 }}
-												>
-													{Object.values(BoardArticleStatus)
-														.filter((ele) => ele !== article.articleStatus)
-														.map((status: string) => (
-															<MenuItem
-																onClick={() => updateArticleHandler({ _id: article._id, articleStatus: status })}
-																key={status}
-															>
-																<Typography variant={'subtitle1'} component={'span'}>
-																	{status}
-																</Typography>
-															</MenuItem>
-														))}
-												</Menu>
-											</>
-										)}
-									</TableCell>
-								</TableRow>
-							))}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		</Stack>
+			<Menu
+				anchorEl={anchor?.el}
+				open={Boolean(anchor)}
+				onClose={close}
+				TransitionComponent={Fade}
+				PaperProps={{ sx: { borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 160 } }}
+			>
+				{ALL_STATUSES.filter(s => s !== anchor?.status).map(status => (
+					<MenuItem
+						key={status}
+						onClick={() => { updateArticleHandler({ _id: anchor!.id, articleStatus: status }); close(); }}
+						sx={{ fontSize: 13, py: 1 }}
+					>
+						Set&nbsp;<StatusBadge status={status} />
+					</MenuItem>
+				))}
+			</Menu>
+		</TableContainer>
 	);
-};
-
-export default CommunityArticleList;
+}

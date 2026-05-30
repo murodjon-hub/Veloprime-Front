@@ -1,106 +1,70 @@
 import React, { useState } from 'react';
 import { NextPage } from 'next';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
-import { Pagination, Stack, Typography } from '@mui/material';
-
-import { Property } from '../../types/property/property';
+import { Box, Pagination, Typography } from '@mui/material';
 import { T } from '../../types/common';
-import { useMutation, useQuery } from '@apollo/client';
-import { LIKE_TARGET_PROPERTY } from '../../../apollo/user/mutation';
+import { useQuery } from '@apollo/client';
 import { GET_FAVORITES } from '../../../apollo/user/query';
-import { Messages } from '../../config';
-import { sweetMixinErrorAlert } from '../../sweetAlert';
-import ProductCard from '../product/ProductCard';
+import ProductCard, { Product } from '../product/ProductCard';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const MyFavorites: NextPage = () => {
-	const device = useDeviceDetect();
-	const [myFavorites, setMyFavorites] = useState<Property[]>([]);
+	const [myFavorites, setMyFavorites] = useState<Product[]>([]);
 	const [total, setTotal] = useState<number>(0);
-	const [searchFavorites, setSearchFavorites] = useState<T>({ page: 1, limit: 6 });
+	const [searchFavorites, setSearchFavorites] = useState<{ page: number; limit: number }>({ page: 1, limit: 8 });
 
-	/** APOLLO REQUESTS **/
-	const [likeTargetProperty] = useMutation(LIKE_TARGET_PROPERTY);
-
-	const {
-		loading: getFavoritesLoading,
-		data: getFavoritesData,
-		error: getFavoritesError,
-		refetch: getFavoritesRefetch,
-	} = useQuery(GET_FAVORITES, {
+	useQuery(GET_FAVORITES, {
 		fetchPolicy: 'network-only',
 		variables: { input: searchFavorites },
 		notifyOnNetworkStatusChange: true,
 		onCompleted(data: T) {
-			setMyFavorites(data.getFavorites?.list);
+			setMyFavorites(data.getFavorites?.list ?? []);
 			setTotal(data.getFavorites?.metaCounter?.[0]?.total || 0);
 		},
 	});
 
-	/** HANDLERS **/
-	const paginationHandler = (e: T, value: number) => {
-		setSearchFavorites({ ...searchFavorites, page: value });
-	};
+	const paginationHandler = (_: T, value: number) => setSearchFavorites({ ...searchFavorites, page: value });
 
-	const likePropertyHandler = async (user: any, id: string) => {
-		try {
-			if (!id) return;
-			if (!user._id) throw new Error(Messages.error2);
+	return (
+		<div id="my-favorites-page">
+			<Box component="div" className="favorites-header">
+				<h2>Liked Bikes</h2>
+				<span>{total} bike{total !== 1 ? 's' : ''}</span>
+			</Box>
 
-			await likeTargetProperty({
-				variables: { input: id },
-			});
+			{myFavorites.length === 0 ? (
+				<Box component="div" sx={{ py: '60px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+					<FavoriteBorderIcon sx={{ fontSize: 48, color: '#e0e0e0' }} />
+					<Typography sx={{ fontFamily: 'Inter', fontSize: 15, fontWeight: 700, color: '#111' }}>
+						No liked bikes yet
+					</Typography>
+					<Typography sx={{ fontSize: 13, color: '#9a9a96' }}>
+						Tap the heart on any bike to save it here.
+					</Typography>
+				</Box>
+			) : (
+				<Box component="div" sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px', mb: '8px' }}>
+					{myFavorites.map((product: Product) => (
+						<ProductCard key={product._id} product={product} />
+					))}
+				</Box>
+			)}
 
-			await getFavoritesRefetch({ input: searchFavorites });
-		} catch (err: any) {
-			console.log('ERROR, likePropertyHandler:', err.message);
-			sweetMixinErrorAlert(err.message).then();
-		}
-	};
-
-	if (device === 'mobile') {
-		return <div>NESTAR MY FAVORITES MOBILE</div>;
-	} else {
-		return (
-			<div id="my-favorites-page">
-				<Stack className="main-title-box">
-					<Stack className="right-box">
-						<Typography className="main-title">My Favorites</Typography>
-						<Typography className="sub-title">We are glad to see you again!</Typography>
-					</Stack>
-				</Stack>
-				<Stack className="favorites-list-box">
-					{myFavorites?.length ? (
-						myFavorites?.map((property: Property) => {
-							return <ProductCard property={property} likePropertyHandler={likePropertyHandler} myFavorites={true} />;
-						})
-					) : (
-						<div className={'no-data'}>
-							<img src="/img/icons/icoAlert.svg" alt="" />
-							<p>No Favorites found!</p>
-						</div>
-					)}
-				</Stack>
-				{myFavorites?.length ? (
-					<Stack className="pagination-config">
-						<Stack className="pagination-box">
-							<Pagination
-								count={Math.ceil(total / searchFavorites.limit)}
-								page={searchFavorites.page}
-								shape="circular"
-								color="primary"
-								onChange={paginationHandler}
-							/>
-						</Stack>
-						<Stack className="total-result">
-							<Typography>
-								Total {total} favorite propert{total > 1 ? 'ies' : 'y'}
-							</Typography>
-						</Stack>
-					</Stack>
-				) : null}
-			</div>
-		);
-	}
+			{total > searchFavorites.limit && (
+				<Box component="div" className="pagination-config">
+					<Pagination
+						count={Math.ceil(total / searchFavorites.limit)}
+						page={searchFavorites.page}
+						shape="circular"
+						color="primary"
+						onChange={paginationHandler}
+					/>
+					<Box component="div" className="total-result">
+						<p>{total} bike{total !== 1 ? 's' : ''} liked</p>
+					</Box>
+				</Box>
+			)}
+		</div>
+	);
 };
 
 export default MyFavorites;

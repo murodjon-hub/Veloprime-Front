@@ -1,203 +1,205 @@
-import React, { useState } from "react";
-import { Box, Typography, Chip, IconButton } from "@mui/material";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import { useMutation } from "@apollo/client";
-import { gql } from "@apollo/client";
-import {
-  ProductType,
-  ProductStatus,
-  ProductAgeCategory,
-  ProductColor,
-  ProductSize,
-} from "../../enums/product/product";
+import React, { useState } from 'react';
+import { Heart, Eye, MessageCircle, ArrowUpRight } from 'lucide-react';
 
-/** ─── GraphQL Mutation ───────────────────────────────────── */
+import { motion } from 'framer-motion';
+import { useMutation, gql } from '@apollo/client';
+import { useRouter } from 'next/router';
+import {
+	ProductType,
+	ProductStatus,
+	ProductAgeCategory,
+	ProductColor,
+	ProductSize,
+} from '../../enums/product/product';
+import { getImageUrl } from '../../utils';
+
 const LIKE_TARGET_PRODUCT = gql`
   mutation LikeTargetProduct($input: String!) {
     likeTargetProduct(productId: $input) {
       _id
       productLikes
-      meLiked {
-        memberId
-        likeRefId
-        myFavorite
-      }
+      meLiked { memberId likeRefId myFavorite }
     }
   }
 `;
 
-/** ─── Types ─────────────────────────────────────────────── */
 export interface Product {
-  _id: string;
-  productType: ProductType;
-  productStatus: ProductStatus;
-  productAgeCategory: ProductAgeCategory;
-  productColor: ProductColor;
-  productSize: ProductSize;
-  productName: string;
-  productPrice: number;
-  productViews: number;
-  productLikes: number;
-  productComments: number;
-  productRank: number;
-  productImages: string[];
-  productDesc: string;
-  memberId: string;
-  soldAt?: string;
-  deletedAt?: string;
-  updatedAt: string;
-  meLiked?: { memberId: string; likeRefId: string; myFavorite: boolean }[];
+	_id: string;
+	productType: ProductType;
+	productStatus: ProductStatus;
+	productAgeCategory: ProductAgeCategory;
+	productColor: ProductColor;
+	productSize: ProductSize;
+	productName: string;
+	productPrice: number;
+	productViews: number;
+	productLikes: number;
+	productComments: number;
+	productRank: number;
+	productImages: string[];
+	productDesc: string;
+	memberId: string;
+	soldAt?: string;
+	deletedAt?: string;
+	updatedAt: string;
+	meLiked?: { memberId: string; likeRefId: string; myFavorite: boolean }[];
+	memberData?: { memberNick: string; memberImage?: string };
 }
 
 interface ProductCardProps {
-  product: Product;
+	product: Product;
+	index?: number;
 }
 
-/** ─── Constants ─────────────────────────────────────────── */
+const STATUS_LABEL: Record<ProductStatus, string> = {
+	[ProductStatus.ACTIVE]:  'Available',
+	[ProductStatus.SOLD]:    'Sold',
+	[ProductStatus.HIDDEN]:  'Hidden',
+	[ProductStatus.DELETED]: 'Deleted',
+};
+
 const STATUS_COLOR: Record<ProductStatus, string> = {
-  [ProductStatus.ACTIVE]:  "#22c55e",
-  [ProductStatus.SOLD]:    "#ef4444",
-  [ProductStatus.HIDDEN]:  "#f59e0b",
-  [ProductStatus.DELETED]: "#9ca3af",
+	[ProductStatus.ACTIVE]:  '#22c55e',
+	[ProductStatus.SOLD]:    '#ef4444',
+	[ProductStatus.HIDDEN]:  '#f59e0b',
+	[ProductStatus.DELETED]: '#9ca3af',
 };
 
 const TYPE_LABEL: Record<ProductType, string> = {
-  [ProductType.ROAD]:      "Road",
-  [ProductType.E_BIKE]:    "E-Bike",
-  [ProductType.ACCESSORY]: "Accessory",
+	[ProductType.ROAD]:      'Road',
+	[ProductType.MOUNTAIN]:  'Mountain',
+	[ProductType.HYBRID]:    'Hybrid',
+	[ProductType.BMX]:       'BMX',
+	[ProductType.E_BIKE]:    'E-Bike',
+	[ProductType.KIDS]:      'Kids',
+	[ProductType.TOURING]:   'Touring',
+	[ProductType.ACCESSORY]: 'Accessory',
 };
 
-const AGE_LABEL: Record<ProductAgeCategory, string> = {
-  [ProductAgeCategory.KIDS]:     "Kids",
-  [ProductAgeCategory.TEENAGER]: "Teenager",
-  [ProductAgeCategory.ADULT]:    "Adult",
-};
+const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
+	const router = useRouter();
+	const [imgError, setImgError]   = useState(false);
+	const [liked, setLiked]         = useState(product.meLiked?.[0]?.myFavorite ?? false);
+	const [likeCount, setLikeCount] = useState(product.productLikes);
+	const [hovered, setHovered]     = useState(false);
 
-/** ─── Component ─────────────────────────────────────────── */
-const ProductCard = ({ product }: ProductCardProps) => {
-  const [imgError, setImgError]   = useState(false);
-  const [liked, setLiked]         = useState(product.meLiked?.[0]?.myFavorite ?? false);
-  const [likeCount, setLikeCount] = useState(product.productLikes);
+	const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
-  const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
+	if (product.productType === ProductType.ACCESSORY) return null;
 
-  // hide accessories
-  if (product.productType === ProductType.ACCESSORY) return null;
+	const imgSrc = imgError
+		? '/img/4253517958_2224302_3.png'
+		: getImageUrl(product.productImages?.[0], '/img/4253517958_2224302_3.png');
 
-  const imgSrc =
-    !imgError && product.productImages?.[0]
-      ? `${process.env.NEXT_PUBLIC_API_URL}/${product.productImages[0]}`
-      : "/img/placeholder-bike.png";
+	const handleLike = async (e: React.MouseEvent) => {
+		e.stopPropagation();
+		try {
+			const { data } = await likeTargetProduct({ variables: { input: product._id } });
+			const next = data?.likeTargetProduct?.productLikes ?? likeCount;
+			setLiked(next > likeCount);
+			setLikeCount(next);
+		} catch {}
+	};
 
-  const handleLike = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // prevent card click if you add navigation later
-    try {
-      const { data } = await likeTargetProduct({
-        variables: { input: product._id },
-      });
-      const modifier = data?.likeTargetProduct?.productLikes - likeCount;
-      setLiked(modifier > 0);
-      setLikeCount(data?.likeTargetProduct?.productLikes ?? likeCount);
-    } catch (err) {
-      console.error("Like failed:", err);
-    }
-  };
+	const goToDetail = () => router.push(`/products/${product._id}`);
+	const isSold     = product.productStatus === ProductStatus.SOLD;
 
-  return (
-    <Box className="product-card">
-      {/* Image */}
-      <Box className="product-card__image-wrap">
-        <Box
-          component="img"
-          src={imgSrc}
-          alt={product.productName}
-          onError={() => setImgError(true)}
-          className="product-card__image"
-        />
+	return (
+		<motion.div
+			className="pc"
+			initial={{ opacity: 0, y: 28 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.45, delay: index * 0.07, ease: [0.4, 0, 0.2, 1] }}
+			onHoverStart={() => setHovered(true)}
+			onHoverEnd={() => setHovered(false)}
+		>
+			<div className="product-card" onClick={goToDetail} style={{ opacity: isSold ? 0.72 : 1 }}>
 
-        <Box
-          className="product-card__status"
-          sx={{ backgroundColor: STATUS_COLOR[product.productStatus] ?? "#9ca3af" }}
-        >
-          {product.productStatus}
-        </Box>
+				{/* ── Image ──────────────────────────────────────── */}
+				<div className="product-card__img-wrap">
+					<motion.img
+						src={imgSrc}
+						alt={product.productName}
+						onError={() => setImgError(true)}
+						className="product-card__img"
+						animate={{ scale: hovered ? 1.07 : 1 }}
+						transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+					/>
 
-        {product.productColor && (
-          <Box
-            className="product-card__color-dot"
-            sx={{ backgroundColor: product.productColor.toLowerCase() }}
-          />
-        )}
-      </Box>
+					<span
+						className="product-card__badge"
+						style={{ background: STATUS_COLOR[product.productStatus] }}
+					>
+						{STATUS_LABEL[product.productStatus]}
+					</span>
 
-      {/* Body */}
-      <Box className="product-card__body">
-        <Typography className="product-card__meta">
-          {TYPE_LABEL[product.productType]} · {product.productSize}
-        </Typography>
+					<motion.button
+						className={`product-card__like${liked ? ' product-card__like--active' : ''}`}
+						onClick={handleLike}
+						whileTap={{ scale: 0.9 }}
+					>
+						<motion.span
+							key={liked ? 'liked' : 'not'}
+							initial={{ scale: 0.6, opacity: 0 }}
+							animate={{ scale: 1,   opacity: 1 }}
+							transition={{ duration: 0.18 }}
+						>
+							<Heart size={13} fill={liked ? '#e63946' : 'none'} color={liked ? '#e63946' : '#666'} strokeWidth={2} />
+						</motion.span>
+						<span className="product-card__like-count">{likeCount}</span>
+					</motion.button>
 
-        <Typography className="product-card__name">
-          {product.productName}
-        </Typography>
+					<motion.div
+						className="product-card__overlay"
+						animate={{ opacity: hovered ? 1 : 0 }}
+						transition={{ duration: 0.22 }}
+					>
+						<div className="product-card__view-btn">
+							<ArrowUpRight size={20} />
+							<span>View Details</span>
+						</div>
+					</motion.div>
+				</div>
 
-        {/* ── Stats + Like button ── */}
-        <Box className="product-card__stats">
-          {/* Views */}
-          <Box className="product-card__stat">
-            <RemoveRedEyeOutlinedIcon sx={{ fontSize: 14 }} />
-            <Typography className="product-card__stat-count">
-              {product.productViews}
-            </Typography>
-          </Box>
+				{/* ── Body ───────────────────────────────────────── */}
+				<div className="product-card__body">
+					<div className="product-card__meta-row">
+						<span className="product-card__type">{TYPE_LABEL[product.productType]}</span>
+						{product.productSize && (
+							<span className="product-card__size">{product.productSize}</span>
+						)}
+					</div>
 
-          {/* Comments */}
-          <Box className="product-card__stat">
-            <ChatBubbleOutlineIcon sx={{ fontSize: 14 }} />
-            <Typography className="product-card__stat-count">
-              {product.productComments}
-            </Typography>
-          </Box>
+					<p className="product-card__name">{product.productName}</p>
 
-          {/* Like */}
-          <Box className="product-card__stat product-card__stat--like">
-            <IconButton
-              className="product-card__like-btn"
-              onClick={handleLike}
-              disableRipple
-              size="small"
-            >
-              {liked ? (
-                <FavoriteIcon sx={{ fontSize: 16, color: "#ef4444" }} />
-              ) : (
-                <FavoriteBorderIcon sx={{ fontSize: 16, color: "#aaa" }} />
-              )}
-            </IconButton>
-            <Typography
-              className="product-card__stat-count"
-              sx={{ color: liked ? "#ef4444" : "#999" }}
-            >
-              {likeCount}
-            </Typography>
-          </Box>
-        </Box>
+					{product.productDesc && (
+						<p className="product-card__desc">
+							{product.productDesc.slice(0, 72)}…
+						</p>
+					)}
 
-        {/* Footer */}
-        <Box className="product-card__footer">
-          <Typography className="product-card__price">
-            ${product.productPrice?.toLocaleString()}
-          </Typography>
-          <Chip
-            label={AGE_LABEL[product.productAgeCategory]}
-            size="small"
-            className="product-card__age-chip"
-          />
-        </Box>
-      </Box>
-    </Box>
-  );
+					<div className="product-card__stats">
+						<span className="product-card__stat">
+							<Eye size={11} /> {product.productViews}
+						</span>
+						<span className="product-card__stat">
+							<MessageCircle size={11} /> {product.productComments}
+						</span>
+					</div>
+
+					<div className="product-card__footer">
+						<span className="product-card__price">
+							${product.productPrice?.toLocaleString()}
+						</span>
+						<span className="product-card__age-tag">
+							{product.productAgeCategory}
+						</span>
+					</div>
+				</div>
+
+			</div>
+		</motion.div>
+	);
 };
 
 export default ProductCard;

@@ -7,6 +7,7 @@ import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { useMutation, gql } from "@apollo/client";
 import { useRouter } from "next/router";
 import { Product } from "../product/ProductCard";
+import { getImageUrl } from "../../utils";
 
 
 /** ─── GraphQL ───────────────────────────────────────────── */
@@ -34,10 +35,9 @@ const AccessoryCard = ({ product }: { product: Product }) => {
 
   const [likeTargetProduct] = useMutation(LIKE_TARGET_PRODUCT);
 
-  const imgSrc =
-    !imgError && product.productImages?.[0]
-      ? `${process.env.NEXT_PUBLIC_API_URL}/${product.productImages[0]}`
-      : "/img/placeholder-accessory.png";
+  const imgSrc = imgError
+    ? '/img/placeholder-accessory.png'
+    : getImageUrl(product.productImages?.[0], '/img/placeholder-accessory.png');
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -74,10 +74,10 @@ const AccessoryCard = ({ product }: { product: Product }) => {
   const dotBg = colorHex[product.productColor] ?? "#ccc";
 
   return (
-    <Box className="acc-card" onClick={handleClick}>
+    <Box component="div" className="acc-card" onClick={handleClick}>
 
       {/* Image area */}
-      <Box className="acc-card__img-wrap">
+      <Box component="div" className="acc-card__img-wrap">
         <Box
           component="img"
           src={imgSrc}
@@ -88,17 +88,18 @@ const AccessoryCard = ({ product }: { product: Product }) => {
 
         {/* Color swatch */}
         <Box
+          component="div"
           className="acc-card__color"
           sx={{ background: dotBg }}
         />
 
         {/* Status badge */}
-        <Box className={`acc-card__badge acc-card__badge--${product.productStatus.toLowerCase()}`}>
+        <Box component="div" className={`acc-card__badge acc-card__badge--${product.productStatus.toLowerCase()}`}>
           {product.productStatus}
         </Box>
 
         {/* Quick-like overlay */}
-        <Box className="acc-card__overlay">
+        <Box component="div" className="acc-card__overlay">
           <IconButton
             className="acc-card__like-btn"
             onClick={handleLike}
@@ -114,11 +115,11 @@ const AccessoryCard = ({ product }: { product: Product }) => {
       </Box>
 
       {/* Body */}
-      <Box className="acc-card__body">
+      <Box component="div" className="acc-card__body">
 
         {/* Size tag */}
         {product.productSize && (
-          <Box className="acc-card__size-tag">{product.productSize}</Box>
+          <Box component="div" className="acc-card__size-tag">{product.productSize}</Box>
         )}
 
         <Typography className="acc-card__name">{product.productName}</Typography>
@@ -128,27 +129,27 @@ const AccessoryCard = ({ product }: { product: Product }) => {
         </Typography>
 
         {/* Stats row */}
-        <Box className="acc-card__stats">
-          <Box className="acc-card__stat">
+        <Box component="div" className="acc-card__stats">
+          <Box component="div" className="acc-card__stat">
             <RemoveRedEyeOutlinedIcon sx={{ fontSize: 13 }} />
             <span>{product.productViews}</span>
           </Box>
-          <Box className="acc-card__stat">
+          <Box component="div" className="acc-card__stat">
             <ChatBubbleOutlineIcon sx={{ fontSize: 13 }} />
             <span>{product.productComments}</span>
           </Box>
-          <Box className="acc-card__stat acc-card__stat--like">
+          <Box component="div" className="acc-card__stat acc-card__stat--like">
             <FavoriteBorderIcon sx={{ fontSize: 13, color: liked ? "#e53e3e" : "inherit" }} />
             <span style={{ color: liked ? "#e53e3e" : "inherit" }}>{likeCount}</span>
           </Box>
         </Box>
 
         {/* Footer */}
-        <Box className="acc-card__footer">
+        <Box component="div" className="acc-card__footer">
           <Typography className="acc-card__price">
             ${product.productPrice?.toLocaleString()}
           </Typography>
-          <Box className="acc-card__arrow">→</Box>
+          <Box component="div" className="acc-card__arrow">→</Box>
         </Box>
       </Box>
     </Box>

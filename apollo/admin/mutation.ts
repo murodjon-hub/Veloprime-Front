@@ -17,7 +17,6 @@ export const UPDATE_MEMBER_BY_ADMIN = gql`
 			memberImage
 			memberAddress
 			memberDesc
-			memberProperties
 			memberRank
 			memberArticles
 			memberPoints
@@ -34,90 +33,75 @@ export const UPDATE_MEMBER_BY_ADMIN = gql`
 `;
 
 /**************************
- *        PROPERTY        *
+ *        PRODUCT         *
  *************************/
-
-export const UPDATE_PROPERTY_BY_ADMIN = gql`
-	mutation UpdatePropertyByAdmin($input: PropertyUpdate!) {
-		updatePropertyByAdmin(input: $input) {
-			_id
-			propertyType
-			propertyStatus
-			propertyLocation
-			propertyAddress
-			propertyTitle
-			propertyPrice
-			propertySquare
-			propertyBeds
-			propertyRooms
-			propertyViews
-			propertyLikes
-			propertyImages
-			propertyDesc
-			propertyBarter
-			propertyRent
-			memberId
-			soldAt
-			deletedAt
-			constructedAt
-			createdAt
-			updatedAt
-		}
-	}
-`;
-
-export const REMOVE_PROPERTY_BY_ADMIN = gql`
-	mutation RemovePropertyByAdmin($input: String!) {
-		removePropertyByAdmin(propertyId: $input) {
-			_id
-			propertyType
-			propertyStatus
-			propertyLocation
-			propertyAddress
-			propertyTitle
-			propertyPrice
-			propertySquare
-			propertyBeds
-			propertyRooms
-			propertyViews
-			propertyLikes
-			propertyImages
-			propertyDesc
-			propertyBarter
-			propertyRent
-			memberId
-			soldAt
-			deletedAt
-			constructedAt
-			createdAt
-			updatedAt
-		}
-	}
-`;
 
 export const CREATE_PRODUCT = gql`
 	mutation CreateProduct($input: ProductInput!) {
-    createProduct(input: $input) {
-        _id
-        productType
-        productStatus
-        productAgeCategory
-        productColor
-        productSize
-        productName
-        productPrice
-        productViews
-        productLikes
-        productComments
-        productRank
-        productImages
-        productDesc
-        memberId
-        soldAt
-        deletedAt
-        updatedAt
-    }
-}
+		createProduct(input: $input) {
+			_id
+			productType
+			productStatus
+			productCondition
+			productAgeCategory
+			productColor
+			productSize
+			productName
+			productBrand
+			productPrice
+			productImages
+			productDesc
+			productBrakeType
+			productSuspension
+			productGearCount
+			productWheelSize
+			productFrameSize
+			productWeight
+			productMileage
+			productYear
+			memberId
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+export const UPDATE_PRODUCT_BY_ADMIN = gql`
+	mutation UpdateProductByAdmin($input: UpdateProductInput!) {
+		updateProductByAdmin(input: $input) {
+			_id
+			productType
+			productStatus
+			productAgeCategory
+			productColor
+			productSize
+			productName
+			productPrice
+			productViews
+			productLikes
+			productImages
+			productDesc
+			memberId
+			soldAt
+			deletedAt
+			updatedAt
+		}
+	}
+`;
+
+export const REMOVE_PRODUCT_BY_ADMIN = gql`
+	mutation RemoveProductByAdmin($input: String!) {
+		removeProductByAdmin(productId: $input) {
+			_id
+			productType
+			productStatus
+			productName
+			productPrice
+			memberId
+			deletedAt
+			updatedAt
+		}
+	}
 `;
 
 /**************************
@@ -156,6 +140,43 @@ export const REMOVE_BOARD_ARTICLE_BY_ADMIN = gql`
 			memberId
 			createdAt
 			updatedAt
+		}
+	}
+`;
+
+/**************************
+ *          EVENT         *
+ *************************/
+
+export const UPDATE_EVENT_BY_ADMIN = gql`
+	mutation UpdateEventByAdmin($input: EventUpdate!) {
+		updateEventByAdmin(input: $input) {
+			_id
+			eventTitle
+			eventDesc
+			eventStatus
+			eventImage
+			fromLocation
+			toLocation
+			distance
+			eventDate
+			maxParticipants
+			currentParticipants
+			memberId
+			createdAt
+			updatedAt
+		}
+	}
+`;
+
+export const REMOVE_EVENT_BY_ADMIN = gql`
+	mutation RemoveEventByAdmin($input: String!) {
+		removeEventByAdmin(eventId: $input) {
+			_id
+			eventTitle
+			eventStatus
+			memberId
+			createdAt
 		}
 	}
 `;

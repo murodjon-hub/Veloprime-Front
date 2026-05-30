@@ -1,235 +1,707 @@
-// Variables
-$primary-color: #A5DC10;
-$secondary-color: #2ecc71;
-$danger-color: #e74c3c;
-$text-color: #2c3e50;
-$muted-text: #7f8c8d;
-$bg-color: #ffffff;
-$card-bg: #ffffff;
-$border-color: #dcdde1;
-$border-radius: 8px;
-$transition: all 0.3s ease;
+@import '/scss/variables.scss';
 
-// Mixins
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+// ─── Page shell ───────────────────────────────────────────────────────────────
+.ap-page {
+  margin-top: 80px;
+  min-height: 100vh;
+  background: $n-50;
+  padding: $sp-8 $sp-5 $sp-16;
+  font-family: $font;
 }
 
-@mixin input-base {
+.ap-wrapper {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.ap-header {
+  text-align: center;
+  margin-bottom: $sp-8;
+}
+
+.ap-title {
+  font-family: $font-display;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: $n-900;
+  margin: 0 0 $sp-2;
+  letter-spacing: -0.5px;
+}
+
+.ap-subtitle {
+  font-size: 0.95rem;
+  color: $n-500;
+  margin: 0;
+}
+
+// ─── Step progress ────────────────────────────────────────────────────────────
+.ap-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: $sp-8;
+  position: relative;
+  padding: 0 $sp-4;
+}
+
+.ap-step-line {
+  position: absolute;
+  top: 16px;
+  left: calc(50% - 140px);
+  width: 280px;
+  height: 2px;
+  background: $n-200;
+  z-index: 0;
+  border-radius: 2px;
+
+  .ap-step-fill {
+    height: 100%;
+    background: $brand-red;
+    border-radius: 2px;
+    transition: width 0.4s $t-slow;
+  }
+}
+
+.ap-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $sp-2;
+  flex: 1;
+  max-width: 160px;
+  position: relative;
+  z-index: 1;
+  cursor: default;
+
+  .ap-step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid $n-300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: $n-400;
+    transition: $t-base;
+  }
+
+  span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: $n-400;
+    text-align: center;
+    transition: $t-base;
+  }
+
+  &.active {
+    .ap-step-dot {
+      background: $brand-red;
+      border-color: $brand-red;
+      color: white;
+      box-shadow: 0 0 0 4px rgba($brand-red, 0.15);
+    }
+    span {
+      color: $brand-red;
+    }
+  }
+
+  &.done {
+    .ap-step-dot {
+      background: $brand-red;
+      border-color: $brand-red;
+      color: white;
+    }
+    span {
+      color: $n-600;
+    }
+  }
+}
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+.ap-card {
+  background: white;
+  border-radius: $r-xl;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+}
+
+// ─── Section ──────────────────────────────────────────────────────────────────
+.ap-section {
+  padding: $sp-10 $sp-10 $sp-6;
+
+  @media (max-width: $bp-sm) {
+    padding: $sp-6 $sp-5 $sp-5;
+  }
+}
+
+.ap-section-title {
+  font-family: $font-display;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: $n-900;
+  margin: 0 0 $sp-6;
+  letter-spacing: -0.3px;
+}
+
+.ap-sub-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: $n-700;
+  margin: 0 0 $sp-4;
+
+  .optional {
+    font-weight: 400;
+    color: $n-400;
+    margin-left: $sp-2;
+  }
+}
+
+.ap-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: $n-700;
+  margin-bottom: $sp-2;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+
+  .req { color: $brand-red; margin-left: 2px; }
+
+  .ap-count {
+    font-weight: 500;
+    color: $n-400;
+    text-transform: none;
+    margin-left: $sp-2;
+  }
+}
+
+.ap-divider {
+  height: 1px;
+  background: $n-100;
+  margin: $sp-8 0 $sp-6;
+}
+
+// ─── Type cards ───────────────────────────────────────────────────────────────
+.ap-type-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $sp-3;
+
+  @media (max-width: $bp-sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.ap-type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $sp-2;
+  padding: $sp-4 $sp-3;
+  border: 2px solid $n-200;
+  border-radius: $r-lg;
+  background: white;
+  cursor: pointer;
+  transition: $t-base;
+
+  .ap-type-emoji {
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .ap-type-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: $n-600;
+    letter-spacing: 0.2px;
+  }
+
+  &:hover {
+    border-color: $n-400;
+    background: $n-50;
+  }
+
+  &.selected {
+    border-color: $brand-red;
+    background: rgba($brand-red, 0.04);
+
+    .ap-type-label {
+      color: $brand-red;
+    }
+  }
+}
+
+// ─── Condition cards ──────────────────────────────────────────────────────────
+.ap-condition-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $sp-3;
+
+  @media (max-width: $bp-sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.ap-condition-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: $sp-4;
+  border: 2px solid $n-200;
+  border-radius: $r-md;
+  background: white;
+  cursor: pointer;
+  transition: $t-base;
+  text-align: left;
+
+  .ap-cond-label {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: $n-800;
+    margin-bottom: $sp-1;
+  }
+
+  .ap-cond-desc {
+    font-size: 0.72rem;
+    color: $n-500;
+    line-height: 1.3;
+  }
+
+  &:hover {
+    border-color: $n-400;
+  }
+
+  &.selected {
+    border-color: var(--c-color);
+    background: color-mix(in srgb, var(--c-color) 6%, white);
+
+    .ap-cond-label {
+      color: var(--c-color);
+    }
+  }
+}
+
+// ─── Pills ────────────────────────────────────────────────────────────────────
+.ap-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $sp-2;
+}
+
+.ap-pill {
+  padding: 6px 14px;
+  border: 1.5px solid $n-200;
+  border-radius: $r-full;
+  background: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $n-600;
+  cursor: pointer;
+  transition: $t-base;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: $n-400;
+    color: $n-800;
+  }
+
+  &.selected {
+    background: $brand-red;
+    border-color: $brand-red;
+    color: white;
+  }
+}
+
+// ─── Fields & inputs ──────────────────────────────────────────────────────────
+.ap-row {
+  display: flex;
+  gap: $sp-5;
+  flex-wrap: wrap;
+  margin-bottom: $sp-5;
+
+  .ap-field {
+    flex: 1;
+    min-width: 140px;
+
+    &.flex-2 { flex: 2; min-width: 220px; }
+  }
+}
+
+.ap-field {
+  margin-bottom: $sp-5;
+}
+
+.ap-input {
   width: 100%;
-  padding: 12px 15px;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  font-size: 1rem;
-  color: $text-color;
-  transition: $transition;
-  background-color: #fff;
+  padding: 10px 14px;
+  border: 1.5px solid $n-200;
+  border-radius: $r-md;
+  font-size: 0.9rem;
+  color: $n-800;
+  background: white;
+  transition: $t-base;
+  box-sizing: border-box;
+
+  &::placeholder { color: $n-400; }
 
   &:focus {
     outline: none;
-    border-color: $primary-color;
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    border-color: $brand-red;
+    box-shadow: 0 0 0 3px rgba($brand-red, 0.1);
   }
 
-  &::placeholder {
-    color: $muted-text;
+  &.error {
+    border-color: $brand-red;
+    background: rgba($brand-red, 0.02);
+  }
+
+  &.has-prefix {
+    padding-left: 34px;
   }
 }
 
-.add-product-container {
-    margin-top: 100px;
-  min-height: 100vh;
-  background-color: $bg-color;
-  padding: 40px 20px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+.ap-input-prefix {
+  position: relative;
 
-  .form-card {
-    max-width: 800px;
-    margin: 0 auto;
-    background: $card-bg;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
+  .prefix {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    color: $n-500;
+    font-weight: 600;
+    pointer-events: none;
+  }
+}
 
-    .form-header {
-      padding: 30px;
-      background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
-      color: white;
-      text-align: center;
+.ap-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid $n-200;
+  border-radius: $r-md;
+  font-size: 0.9rem;
+  color: $n-800;
+  background: white;
+  transition: $t-base;
+  box-sizing: border-box;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 
-      h1 {
-        margin: 0;
-        font-size: 1.8rem;
-        font-weight: 700;
-      }
+  &:focus {
+    outline: none;
+    border-color: $brand-red;
+    box-shadow: 0 0 0 3px rgba($brand-red, 0.1);
+  }
+}
 
-      p {
-        margin: 10px 0 0;
-        opacity: 0.9;
-        font-size: 0.95rem;
-      }
+.ap-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid $n-200;
+  border-radius: $r-md;
+  font-size: 0.9rem;
+  color: $n-800;
+  background: white;
+  transition: $t-base;
+  resize: vertical;
+  min-height: 120px;
+  font-family: $font;
+  box-sizing: border-box;
+
+  &::placeholder { color: $n-400; }
+
+  &:focus {
+    outline: none;
+    border-color: $brand-red;
+    box-shadow: 0 0 0 3px rgba($brand-red, 0.1);
+  }
+}
+
+.ap-error {
+  font-size: 0.76rem;
+  color: $brand-red;
+  margin-top: $sp-1;
+  font-weight: 500;
+}
+
+// ─── Color swatches ───────────────────────────────────────────────────────────
+.ap-color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $sp-2;
+  margin-bottom: $sp-5;
+}
+
+.ap-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $t-base;
+  position: relative;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+
+  &.selected {
+    border-color: $n-800;
+    box-shadow: 0 0 0 2px white, 0 0 0 4px $n-800;
+  }
+}
+
+// ─── Drop zone ────────────────────────────────────────────────────────────────
+.ap-dropzone {
+  border: 2px dashed $n-300;
+  border-radius: $r-lg;
+  padding: $sp-10 $sp-8;
+  text-align: center;
+  cursor: pointer;
+  transition: $t-base;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $sp-3;
+  background: $n-50;
+  margin-bottom: $sp-4;
+
+  &:hover,
+  &.dragging {
+    border-color: $brand-red;
+    background: rgba($brand-red, 0.03);
+  }
+
+  &.uploading {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  .ap-upload-icon {
+    color: $n-400;
+  }
+
+  .ap-dz-main {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $n-700;
+
+    .ap-dz-link {
+      color: $brand-red;
+      text-decoration: underline;
+    }
+  }
+
+  .ap-dz-sub {
+    margin: 0;
+    font-size: 0.78rem;
+    color: $n-400;
+  }
+}
+
+// ─── Spinner ──────────────────────────────────────────────────────────────────
+.ap-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid $n-200;
+  border-top-color: $brand-red;
+  border-radius: 50%;
+  animation: ap-spin 0.7s linear infinite;
+}
+
+@keyframes ap-spin {
+  to { transform: rotate(360deg); }
+}
+
+// ─── Image grid ───────────────────────────────────────────────────────────────
+.ap-img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: $sp-3;
+  margin: $sp-4 0;
+}
+
+.ap-img-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: $r-md;
+  overflow: hidden;
+  border: 1.5px solid $n-200;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &.primary {
+    border-color: $brand-red;
+  }
+
+  .ap-img-badge {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    background: $brand-red;
+    color: white;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: $r-full;
+    letter-spacing: 0.3px;
+  }
+
+  .ap-img-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: $t-base;
+    padding: 0;
+
+    &:hover {
+      background: $brand-red;
+      transform: scale(1.1);
+    }
+  }
+}
+
+// ─── Summary ──────────────────────────────────────────────────────────────────
+.ap-summary {
+  margin-top: $sp-8;
+  padding: $sp-5;
+  background: $n-50;
+  border-radius: $r-lg;
+  border: 1px solid $n-200;
+}
+
+.ap-summary-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: $n-500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 $sp-4;
+}
+
+.ap-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $sp-4;
+
+  @media (max-width: $bp-sm) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    span {
+      font-size: 0.72rem;
+      color: $n-400;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      font-weight: 600;
     }
 
-    .form-body {
-      padding: 30px;
-
-      .form-group {
-        margin-bottom: 20px;
-
-        label {
-          display: block;
-          margin-bottom: 8px;
-          font-weight: 600;
-          color: $text-color;
-          font-size: 0.9rem;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-          @include input-base;
-        }
-
-        textarea {
-          resize: vertical;
-          min-height: 100px;
-        }
-      }
-
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-
-        @media (max-width: 600px) {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .upload-zone {
-        border: 2px dashed $border-color;
-        border-radius: $border-radius;
-        padding: 40px 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: $transition;
-        background-color: rgba($bg-color, 0.5);
-
-        &:hover {
-          border-color: $primary-color;
-          background-color: rgba($primary-color, 0.02);
-        }
-
-        .upload-content {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-
-          .upload-icon {
-            font-size: 2rem;
-            margin-bottom: 5px;
-          }
-
-          span {
-            font-weight: 600;
-            color: $text-color;
-          }
-
-          small {
-            color: $muted-text;
-          }
-        }
-      }
-
-      .image-preview-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 15px;
-        margin-top: 20px;
-
-        .preview-item {
-          position: relative;
-          aspect-ratio: 1;
-          border-radius: $border-radius;
-          overflow: hidden;
-          border: 1px solid $border-color;
-
-          img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-
-          .remove-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: rgba($danger-color, 0.9);
-            color: white;
-            border: none;
-            cursor: pointer;
-            @include flex-center;
-            font-size: 1.2rem;
-            transition: $transition;
-
-            &:hover {
-              background: $danger-color;
-              transform: scale(1.1);
-            }
-          }
-        }
-      }
-
-      .form-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 15px;
-        margin-top: 40px;
-        padding-top: 20px;
-        border-top: 1px solid $border-color;
-
-        button {
-          padding: 12px 25px;
-          border-radius: $border-radius;
-          font-weight: 600;
-          cursor: pointer;
-          transition: $transition;
-          font-size: 1rem;
-
-          &.cancel-btn {
-            background: transparent;
-            border: 1px solid $border-color;
-            color: $muted-text;
-
-            &:hover {
-              background: $bg-color;
-              color: $text-color;
-            }
-          }
-
-          &.submit-btn {
-            background: $primary-color;
-            border: 1px solid $primary-color;
-            color: white;
-
-            &:hover {
-              background: darken($primary-color, 5%);
-              box-shadow: 0 4px 12px rgba($primary-color, 0.2);
-            }
-
-            &:active {
-              transform: translateY(1px);
-            }
-          }
-        }
-      }
+    strong {
+      font-size: 0.88rem;
+      color: $n-800;
+      font-weight: 700;
     }
+  }
+}
+
+// ─── Navigation bar ───────────────────────────────────────────────────────────
+.ap-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $sp-5 $sp-10;
+  border-top: 1px solid $n-100;
+  background: $n-50;
+
+  @media (max-width: $bp-sm) {
+    padding: $sp-4 $sp-5;
+  }
+}
+
+.ap-nav-right {
+  display: flex;
+  gap: $sp-3;
+}
+
+.ap-btn-ghost {
+  padding: 9px 20px;
+  border: 1.5px solid $n-200;
+  border-radius: $r-md;
+  background: white;
+  color: $n-600;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $t-base;
+
+  &:hover {
+    border-color: $n-400;
+    color: $n-800;
+  }
+}
+
+.ap-btn-primary {
+  padding: 10px 28px;
+  border: none;
+  border-radius: $r-md;
+  background: $brand-red;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: $t-base;
+  letter-spacing: 0.2px;
+
+  &:hover:not(:disabled) {
+    background: $brand-red-dark;
+    box-shadow: $shadow-red;
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &.ap-btn-publish {
+    padding: 10px 32px;
+    font-size: 0.95rem;
   }
 }

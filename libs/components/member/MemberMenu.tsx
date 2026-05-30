@@ -1,260 +1,226 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { Stack, Typography, Box, List, ListItem, Button } from '@mui/material';
-import useDeviceDetect from '../../hooks/useDeviceDetect';
 import Link from 'next/link';
+import { Box, Typography, Avatar, Chip, Button, CircularProgress } from '@mui/material';
+import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
+import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
+import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
+import HowToRegOutlinedIcon from '@mui/icons-material/HowToRegOutlined';
 import { Member } from '../../types/member/member';
-import { REACT_APP_API_URL } from '../../config';
-import { useQuery } from '@apollo/client';
+import { useQuery, useReactiveVar } from '@apollo/client';
 import { GET_MEMBER } from '../../../apollo/user/query';
+import { userVar } from '../../../apollo/store';
+import { getImageUrl } from '../../utils';
 import { T } from '../../types/common';
+import { MemberType } from '../../enums/member.enum';
 
 interface MemberMenuProps {
-	subscribeHandler: any;
-	unsubscribeHandler: any;
+	subscribeHandler: (id: string, refetch: any, memberId: any) => Promise<void>;
+	unsubscribeHandler: (id: string, refetch: any, memberId: any) => Promise<void>;
 }
 
-const MemberMenu = (props: MemberMenuProps) => {
-	const { subscribeHandler, unsubscribeHandler } = props;
-	const device = useDeviceDetect();
-	const router = useRouter();
-	const category: any = router.query?.category;
-	const [member, setMember] = useState<Member | null>(null);
-	const { memberId } = router.query;
+const TABS = [
+	{ value: 'bikes',      label: 'Bikes',     icon: <DirectionsBikeIcon sx={{ fontSize: 15 }} />, countKey: 'memberProducts'  },
+	{ value: 'followers',  label: 'Followers', icon: <PeopleOutlineIcon sx={{ fontSize: 15 }} />,  countKey: 'memberFollowers' },
+	{ value: 'followings', label: 'Following', icon: <GroupAddOutlinedIcon sx={{ fontSize: 15 }} />, countKey: 'memberFollowings' },
+	{ value: 'articles',   label: 'Articles',  icon: <ArticleOutlinedIcon sx={{ fontSize: 15 }} />,  countKey: 'memberArticles'  },
+];
 
-	/** APOLLO REQUESTS **/
-	const {
-		loading: getMemberLoading,
-		data: getMemberData,
-		error: getMemberError,
-		refetch: getMemberRefetch,
-	} = useQuery(GET_MEMBER, {
+const BADGE_CLASS: Record<string, string> = {
+	[MemberType.MEMBER]: 'memb-profile-card__badge--member',
+	[MemberType.ADMIN]: 'memb-profile-card__badge--admin',
+};
+
+const MemberMenu = ({ subscribeHandler, unsubscribeHandler }: MemberMenuProps) => {
+	const router = useRouter();
+	const category    = (router.query.category as string) ?? 'bikes';
+	const { memberId } = router.query;
+	const currentUser  = useReactiveVar(userVar);
+
+	const [member,     setMember]     = useState<Member | null>(null);
+	const [following,  setFollowing]  = useState(false);
+	const [followLoading, setFollowLoading] = useState(false);
+
+	const { refetch: getMemberRefetch } = useQuery(GET_MEMBER, {
 		fetchPolicy: 'network-only',
 		variables: { input: memberId },
 		skip: !memberId,
 		notifyOnNetworkStatusChange: true,
 		onCompleted: (data: T) => {
-			setMember(data?.getMember);
+			const m = data?.getMember;
+			setMember(m);
+			setFollowing(m?.meFollowed?.[0]?.myFollowing ?? false);
 		},
 	});
 
-	if (device === 'mobile') {
-		return <div>MEMBER MENU MOBILE</div>;
-	} else {
-		return (
-			<Stack width={'100%'} padding={'30px 24px'}>
-				<Stack className={'profile'}>
-					<Box component={'div'} className={'profile-img'}>
-						<img
-							src={member?.memberImage ? `${REACT_APP_API_URL}/${member?.memberImage}` : '/img/profile/defaultUser.svg'}
-							alt={'member-photo'}
-						/>
-					</Box>
-					<Stack className={'user-info'}>
-						<Typography className={'user-name'}>{member?.memberNick}</Typography>
-						<Box component={'div'} className={'user-phone'}>
-							<img src={'/img/icons/call.svg'} alt={'icon'} />
-							<Typography className={'p-number'}>{member?.memberPhone}</Typography>
-						</Box>
-						<Typography className={'view-list'}>{member?.memberType}</Typography>
-					</Stack>
-				</Stack>
-				<Stack className="follow-button-box">
-					{member?.meFollowed && member?.meFollowed[0]?.myFollowing ? (
-						<>
-							<Button
-								variant="outlined"
-								sx={{ background: '#b9b9b9' }}
-								onClick={() => unsubscribeHandler(member?._id, getMemberRefetch, memberId)}
-							>
-								Unfollow
-							</Button>
-							<Typography>Following</Typography>
-						</>
-					) : (
-						<Button
-							variant="contained"
-							sx={{ background: '#ff5d18', ':hover': { background: '#ff5d18' } }}
-							onClick={() => subscribeHandler(member?._id, getMemberRefetch, memberId)}
-						>
-							Follow
-						</Button>
-					)}
-				</Stack>
-				<Stack className={'sections'}>
-					<Stack className={'section'}>
-						<Typography className="title" variant={'h5'}>
-							Details
-						</Typography>
-						<List className={'sub-section'}>
-							{member?.memberType === 'AGENT' && (
-								<ListItem className={category === 'properties' ? 'focus' : ''}>
-									<Link
-										href={{
-											pathname: '/member',
-											query: { ...router.query, category: 'properties' },
-										}}
-										scroll={false}
-										style={{ width: '100%' }}
-									>
-										<div className={'flex-box'}>
-											{category === 'properties' ? (
-												<img className={'com-icon'} src={'/img/icons/homeWhite.svg'} alt={'com-icon'} />
-											) : (
-												<img className={'com-icon'} src={'/img/icons/home.svg'} alt={'com-icon'} />
-											)}
-											<Typography className={'sub-title'} variant={'subtitle1'} component={'p'}>
-												Properties
-											</Typography>
-											<Typography className="count-title" variant="subtitle1">
-												{member?.memberProperties}
-											</Typography>
-										</div>
-									</Link>
-								</ListItem>
-							)}
-							<ListItem className={category === 'followers' ? 'focus' : ''}>
-								<Link
-									href={{
-										pathname: '/member',
-										query: { ...router.query, category: 'followers' },
-									}}
-									scroll={false}
-									style={{ width: '100%' }}
-								>
-									<div className={'flex-box'}>
-										<svg
-											className={'com-icon'}
-											fill={category === 'followers' ? 'white' : 'black'}
-											height="800px"
-											width="800px"
-											version="1.1"
-											id="Layer_1"
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 328 328"
-										>
-											<g id="XMLID_350_">
-												<path
-													id="XMLID_351_"
-													d="M52.25,64.001c0,34.601,28.149,62.749,62.75,62.749c34.602,0,62.751-28.148,62.751-62.749
-		S149.602,1.25,115,1.25C80.399,1.25,52.25,29.4,52.25,64.001z"
-												/>
-												<path
-													id="XMLID_352_"
-													d="M217.394,262.357c2.929,2.928,6.768,4.393,10.606,4.393c3.839,0,7.678-1.465,10.607-4.394
-		c5.857-5.858,5.857-15.356-0.001-21.214l-19.393-19.391l19.395-19.396c5.857-5.858,5.857-15.356-0.001-21.214
-		c-5.858-5.857-15.356-5.856-21.214,0.001l-30,30.002c-2.813,2.814-4.393,6.629-4.393,10.607c0,3.979,1.58,7.794,4.394,10.607
-		L217.394,262.357z"
-												/>
-												<path
-													id="XMLID_439_"
-													d="M15,286.75h125.596c19.246,24.348,49.031,40,82.404,40c57.896,0,105-47.103,105-105
-		c0-57.896-47.104-105-105-105c-34.488,0-65.145,16.716-84.297,42.47c-7.764-1.628-15.695-2.47-23.703-2.47
-		c-63.411,0-115,51.589-115,115C0,280.034,6.716,286.75,15,286.75z M223,146.75c41.355,0,75,33.645,75,75s-33.645,75-75,75
-		s-75-33.645-75-75S181.644,146.75,223,146.75z"
-												/>
-											</g>
-										</svg>
-										<Typography className={'sub-title'} variant={'subtitle1'} component={'p'}>
-											Followers
-										</Typography>
-										<Typography className="count-title" variant="subtitle1">
-											{member?.memberFollowers}
-										</Typography>
-									</div>
-								</Link>
-							</ListItem>
-							<ListItem className={category === 'followings' ? 'focus' : ''}>
-								<Link
-									href={{
-										pathname: '/member',
-										query: { ...router.query, category: 'followings' },
-									}}
-									scroll={false}
-									style={{ width: '100%' }}
-								>
-									<div className={'flex-box'}>
-										<svg
-											className={'com-icon'}
-											fill={category === 'followings' ? 'white' : 'black'}
-											height="800px"
-											width="800px"
-											version="1.1"
-											id="Layer_1"
-											xmlns="http://www.w3.org/2000/svg"
-											viewBox="0 0 328 328"
-										>
-											<g id="XMLID_334_">
-												<path
-													id="XMLID_337_"
-													d="M177.75,64.001C177.75,29.4,149.601,1.25,115,1.25c-34.602,0-62.75,28.15-62.75,62.751
-		S80.398,126.75,115,126.75C149.601,126.75,177.75,98.602,177.75,64.001z"
-												/>
-												<path
-													id="XMLID_338_"
-													d="M228.606,181.144c-5.858-5.857-15.355-5.858-21.214-0.001c-5.857,5.857-5.857,15.355,0,21.214
-		l19.393,19.396l-19.393,19.391c-5.857,5.857-5.857,15.355,0,21.214c2.93,2.929,6.768,4.394,10.607,4.394
-		c3.838,0,7.678-1.465,10.605-4.393l30-29.998c2.813-2.814,4.395-6.629,4.395-10.607c0-3.978-1.58-7.793-4.394-10.607
-		L228.606,181.144z"
-												/>
-												<path
-													id="XMLID_340_"
-													d="M223,116.75c-34.488,0-65.145,16.716-84.298,42.47c-7.763-1.628-15.694-2.47-23.702-2.47
-		c-63.412,0-115,51.589-115,115c0,8.284,6.715,15,15,15h125.596c19.246,24.348,49.03,40,82.404,40c57.896,0,105-47.103,105-105
-		C328,163.854,280.896,116.75,223,116.75z M223,296.75c-41.356,0-75-33.645-75-75s33.644-75,75-75c41.354,0,75,33.645,75,75
-		S264.354,296.75,223,296.75z"
-												/>
-											</g>
-										</svg>
-										<Typography className={'sub-title'} variant={'subtitle1'} component={'p'}>
-											Followings
-										</Typography>
-										<Typography className="count-title" variant="subtitle1">
-											{member?.memberFollowings}
-										</Typography>
-									</div>
-								</Link>
-							</ListItem>
-						</List>
-					</Stack>
-					<Stack className={'section'} sx={{ marginTop: '10px' }}>
-						<div>
-							<Typography className="title" variant={'h5'}>
-								Community
-							</Typography>
-							<List className={'sub-section'}>
-								<ListItem className={category === 'articles' ? 'focus' : ''}>
-									<Link
-										href={{
-											pathname: '/member',
-											query: { ...router.query, category: 'articles' },
-										}}
-										scroll={false}
-										style={{ width: '100%' }}
-									>
-										<div className={'flex-box'}>
-											{category === 'articles' ? (
-												<img className={'com-icon'} src={'/img/icons/discoveryWhite.svg'} alt={'com-icon'} />
-											) : (
-												<img className={'com-icon'} src={'/img/icons/discovery.svg'} alt={'com-icon'} />
-											)}
+	const handleFollow = async () => {
+		if (!member?._id) return;
+		if (!currentUser?._id) {
+			router.push('/account/join');
+			return;
+		}
+		setFollowLoading(true);
+		setFollowing((prev) => !prev);
+		try {
+			if (following) {
+				await unsubscribeHandler(member._id, getMemberRefetch, memberId);
+			} else {
+				await subscribeHandler(member._id, getMemberRefetch, memberId);
+			}
+		} catch {
+			setFollowing((prev) => !prev);
+		} finally {
+			setFollowLoading(false);
+		}
+	};
 
-											<Typography className={'sub-title'} variant={'subtitle1'} component={'p'}>
-												Articles
-											</Typography>
-											<Typography className="count-title" variant="subtitle1">
-												{member?.memberArticles}
-											</Typography>
-										</div>
-									</Link>
-								</ListItem>
-							</List>
-						</div>
-					</Stack>
-				</Stack>
-			</Stack>
-		);
-	}
+	const isOwnProfile = member?._id && currentUser?._id === member._id;
+
+	return (
+		<>
+			{/* ── Hero banner ──────────────────────────────────────────────── */}
+			<Box component="div" className="memb-hero">
+				<Box
+					component="img"
+					src="/img/banner/hero_bg.jpg"
+					className="memb-hero__cover"
+					onError={(e: any) => { e.target.style.display = 'none'; }}
+				/>
+				<Box component="div" className="memb-hero__overlay" />
+			</Box>
+
+			{/* ── Profile card ─────────────────────────────────────────────── */}
+			<Box component="div" className="memb-profile-card">
+				<Box component="div" className="memb-profile-card__inner">
+
+					{/* Avatar (overlaps hero) */}
+					<Box component="div" className="memb-profile-card__avatar-wrap">
+						<Avatar
+							src={getImageUrl(member?.memberImage, '/img/profile/defaultUser.svg')}
+							className="memb-profile-card__avatar"
+							sx={{ width: 96, height: 96 }}
+						/>
+						<Box component="div" className="memb-profile-card__online-dot" />
+					</Box>
+
+					{/* Name + bio + stats */}
+					<Box component="div" className="memb-profile-card__info">
+						<Box component="div" className="memb-profile-card__name-row">
+							<Typography className="memb-profile-card__name">
+								{member?.memberNick ?? (memberId ? '…' : '—')}
+							</Typography>
+							{member?.memberType && (
+								<Chip
+									label={member.memberType}
+									size="small"
+									className={`memb-profile-card__badge ${BADGE_CLASS[member.memberType] ?? ''}`}
+								/>
+							)}
+						</Box>
+
+						{member?.memberFullName && (
+							<Typography className="memb-profile-card__fullname">
+								{member.memberFullName}
+							</Typography>
+						)}
+
+						<Typography className="memb-profile-card__sub">
+							{member?.memberAddress || 'Cycling enthusiast'}
+						</Typography>
+
+						{member?.memberDesc && (
+							<Typography className="memb-profile-card__bio">
+								{member.memberDesc}
+							</Typography>
+						)}
+
+						<Box component="div" className="memb-profile-card__stats">
+							<Box component="div" className="memb-profile-card__stat">
+								<span>{member?.memberProducts ?? 0}</span>
+								<span>Bikes</span>
+							</Box>
+							<Box component="div" className="memb-profile-card__stat-dot" />
+							<Box component="div" className="memb-profile-card__stat">
+								<span>{member?.memberFollowers ?? 0}</span>
+								<span>Followers</span>
+							</Box>
+							<Box component="div" className="memb-profile-card__stat-dot" />
+							<Box component="div" className="memb-profile-card__stat">
+								<span>{member?.memberFollowings ?? 0}</span>
+								<span>Following</span>
+							</Box>
+							<Box component="div" className="memb-profile-card__stat-dot" />
+							<Box component="div" className="memb-profile-card__stat">
+								<span>{member?.memberLikes ?? 0}</span>
+								<span>Likes</span>
+							</Box>
+						</Box>
+					</Box>
+
+					{/* Follow button */}
+					{member?._id && !isOwnProfile && (
+						<Box component="div" className="memb-profile-card__actions">
+							<Button
+								className={`memb-profile-card__follow-btn ${
+									following ? 'memb-profile-card__follow-btn--following' : 'memb-profile-card__follow-btn--follow'
+								}`}
+								onClick={handleFollow}
+								disabled={followLoading}
+								startIcon={
+									followLoading
+										? <CircularProgress size={14} color="inherit" />
+										: following
+											? <HowToRegOutlinedIcon sx={{ fontSize: 16 }} />
+											: <PersonAddOutlinedIcon sx={{ fontSize: 16 }} />
+								}
+							>
+								{following ? 'Following' : 'Follow'}
+							</Button>
+						</Box>
+					)}
+
+					{/* Own profile shortcut */}
+					{isOwnProfile && (
+						<Box component="div" className="memb-profile-card__actions">
+							<Button
+								className="memb-profile-card__edit-btn"
+								onClick={() => router.push('/mypage?category=settings')}
+							>
+								Edit Profile
+							</Button>
+						</Box>
+					)}
+				</Box>
+			</Box>
+
+			{/* ── Tab navigation ────────────────────────────────────────────── */}
+			<Box component="div" className="memb-tabs">
+				<Box component="div" className="memb-tabs__inner">
+					{TABS.map((tab) => {
+						const count = member ? (member as any)[tab.countKey] : undefined;
+						return (
+							<Link
+								key={tab.value}
+								href={{ pathname: '/member', query: { ...router.query, category: tab.value } }}
+								scroll={false}
+								style={{ textDecoration: 'none' }}
+							>
+								<Box component="div" className={`memb-tab${category === tab.value ? ' active' : ''}`}>
+									{tab.icon}
+									{tab.label}
+									{count != null && (
+										<Box component="span" className="memb-tab__count">{count}</Box>
+									)}
+								</Box>
+							</Link>
+						);
+					})}
+				</Box>
+			</Box>
+		</>
+	);
 };
 
 export default MemberMenu;

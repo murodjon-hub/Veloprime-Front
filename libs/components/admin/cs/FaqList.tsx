@@ -1,202 +1,118 @@
-import React from 'react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import React, { useState } from 'react';
 import {
-	TableCell,
-	TableHead,
-	TableBody,
-	TableRow,
-	Table,
-	TableContainer,
-	Button,
-	Menu,
-	Fade,
-	MenuItem,
+	Box, Fade, IconButton, Menu, MenuItem,
+	Table, TableBody, TableCell, TableContainer,
+	TableHead, TableRow, Typography,
 } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import { Stack } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { NoticeStatus } from '../../../enums/notice.enum';
+import { StatusBadge } from '../shared/StatusBadge';
 
-interface Data {
-	category: string;
-	title: string;
-	writer: string;
-	date: string;
-	status: string;
-	id?: string;
+const COLS = ['QUESTION', 'CATEGORY', 'STATUS', 'DATE', ''];
+const ALL_STATUSES = Object.values(NoticeStatus);
+
+export interface FaqItem {
+	_id: string;
+	noticeTitle: string;
+	noticeCategory: string;
+	noticeStatus: string;
+	createdAt: string;
 }
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-	if (b[orderBy] < a[orderBy]) {
-		return -1;
-	}
-	if (b[orderBy] > a[orderBy]) {
-		return 1;
-	}
-	return 0;
+interface Props {
+	items: FaqItem[];
+	updateHandler: (data: { _id: string; noticeStatus: string }) => void;
+	removeHandler: (id: string) => void;
 }
 
-type Order = 'asc' | 'desc';
+export function FaqArticlesPanelList({ items, updateHandler, removeHandler }: Props) {
+	const [anchor, setAnchor] = useState<null | { el: HTMLElement; id: string; status: string }>(null);
 
-interface HeadCell {
-	disablePadding: boolean;
-	id: keyof Data;
-	label: string;
-	numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-	{
-		id: 'category',
-		numeric: true,
-		disablePadding: false,
-		label: 'CATEGORY',
-	},
-	{
-		id: 'title',
-		numeric: true,
-		disablePadding: false,
-		label: 'TITLE',
-	},
-
-	{
-		id: 'writer',
-		numeric: true,
-		disablePadding: false,
-		label: 'WRITER',
-	},
-	{
-		id: 'date',
-		numeric: true,
-		disablePadding: false,
-		label: 'DATE',
-	},
-	{
-		id: 'status',
-		numeric: false,
-		disablePadding: false,
-		label: 'STATUS',
-	},
-];
-
-interface EnhancedTableProps {
-	numSelected: number;
-	onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
-	onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	order: Order;
-	orderBy: string;
-	rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-	const { onSelectAllClick } = props;
+	const open  = (e: React.MouseEvent<HTMLButtonElement>, id: string, status: string) =>
+		setAnchor({ el: e.currentTarget, id, status });
+	const close = () => setAnchor(null);
 
 	return (
-		<TableHead>
-			<TableRow>
-				{headCells.map((headCell) => (
-					<TableCell
-						key={headCell.id}
-						align={headCell.numeric ? 'left' : 'center'}
-						padding={headCell.disablePadding ? 'none' : 'normal'}
+		<TableContainer>
+			<Table size="medium" sx={{ minWidth: 700 }}>
+				<TableHead>
+					<TableRow sx={{ background: '#fafafa' }}>
+						{COLS.map((col) => (
+							<TableCell key={col} sx={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', letterSpacing: 0.5, py: 1.5, borderBottom: '1px solid #f0f0f0' }}>
+								{col}
+							</TableCell>
+						))}
+					</TableRow>
+				</TableHead>
+
+				<TableBody>
+					{items.length === 0 && (
+						<TableRow>
+							<TableCell colSpan={5} align="center" sx={{ py: 6, color: '#bbb', fontSize: 13 }}>
+								No FAQ entries found
+							</TableCell>
+						</TableRow>
+					)}
+
+					{items.map((item) => (
+						<TableRow key={item._id} hover sx={{ '& td': { borderBottom: '1px solid #f9f9f9', py: 1.2 } }}>
+
+							<TableCell sx={{ maxWidth: 340 }}>
+								<Typography sx={{ fontSize: 13, fontWeight: 600, color: '#1a1a2e', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+									{item.noticeTitle}
+								</Typography>
+								<Typography sx={{ fontSize: 11, color: '#aaa' }}>{item._id.slice(-8)}</Typography>
+							</TableCell>
+
+							<TableCell><StatusBadge status={item.noticeCategory} /></TableCell>
+
+							<TableCell><StatusBadge status={item.noticeStatus} /></TableCell>
+
+							<TableCell>
+								<Typography sx={{ fontSize: 12, color: '#374151' }}>
+									{item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+								</Typography>
+							</TableCell>
+
+							<TableCell align="right">
+								<Box component="div" sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+									<IconButton
+										size="small"
+										onClick={(e) => open(e, item._id, item.noticeStatus)}
+										sx={{ color: '#9ca3af' }}
+									>
+										<MoreVertIcon fontSize="small" />
+									</IconButton>
+								</Box>
+							</TableCell>
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+
+			<Menu
+				anchorEl={anchor?.el}
+				open={Boolean(anchor)}
+				onClose={close}
+				TransitionComponent={Fade}
+				PaperProps={{ sx: { borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 160 } }}
+			>
+				{ALL_STATUSES.filter(s => s !== anchor?.status).map(status => (
+					<MenuItem
+						key={status}
+						onClick={() => { updateHandler({ _id: anchor!.id, noticeStatus: status }); close(); }}
+						sx={{ fontSize: 13, py: 1 }}
 					>
-						{headCell.label}
-					</TableCell>
+						Set&nbsp;<StatusBadge status={status} />
+					</MenuItem>
 				))}
-			</TableRow>
-		</TableHead>
+				<MenuItem
+					onClick={() => { removeHandler(anchor!.id); close(); }}
+					sx={{ fontSize: 13, py: 1, color: '#dc2626' }}
+				>
+					Remove permanently
+				</MenuItem>
+			</Menu>
+		</TableContainer>
 	);
 }
-
-interface FaqArticlesPanelListType {
-	dense?: boolean;
-	membersData?: any;
-	searchMembers?: any;
-	anchorEl?: any;
-	handleMenuIconClick?: any;
-	handleMenuIconClose?: any;
-	generateMentorTypeHandle?: any;
-}
-
-export const FaqArticlesPanelList = (props: FaqArticlesPanelListType) => {
-	const {
-		dense,
-		membersData,
-		searchMembers,
-		anchorEl,
-		handleMenuIconClick,
-		handleMenuIconClose,
-		generateMentorTypeHandle,
-	} = props;
-	const router = useRouter();
-
-	/** APOLLO REQUESTS **/
-	/** LIFECYCLES **/
-	/** HANDLERS **/
-
-	return (
-		<Stack>
-			<TableContainer>
-				<Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={dense ? 'small' : 'medium'}>
-					{/*@ts-ignore*/}
-					<EnhancedTableHead />
-					<TableBody>
-						{[1, 2, 3, 4, 5].map((ele: any, index: number) => {
-							const member_image = '/img/profile/defaultUser.svg';
-
-							let status_class_name = '';
-
-							return (
-								<TableRow hover key={'member._id'} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-									<TableCell align="left">mb id</TableCell>
-									<TableCell align="left">member.mb_full_name</TableCell>
-									<TableCell align="left" className={'name'}>
-										<Stack direction={'row'}>
-											<Link href={`/_admin/users/detail?mb_id=$'{member._id'}`}>
-												<div>
-													<Avatar alt="Remy Sharp" src={member_image} sx={{ ml: '2px', mr: '10px' }} />
-												</div>
-											</Link>
-											<Link href={`/_admin/users/detail?mb_id=${'member._id'}`}>
-												<div>member.mb_nick</div>
-											</Link>
-										</Stack>
-									</TableCell>
-									<TableCell align="left">member.mb_phone</TableCell>
-									<TableCell align="center">
-										<Button onClick={(e: any) => handleMenuIconClick(e, index)} className={'badge success'}>
-											member.mb_type
-										</Button>
-
-										<Menu
-											className={'menu-modal'}
-											MenuListProps={{
-												'aria-labelledby': 'fade-button',
-											}}
-											anchorEl={anchorEl[index]}
-											open={Boolean(anchorEl[index])}
-											onClose={handleMenuIconClose}
-											TransitionComponent={Fade}
-											sx={{ p: 1 }}
-										>
-											<MenuItem onClick={(e) => generateMentorTypeHandle('member._id', 'mentor', 'originate')}>
-												<Typography variant={'subtitle1'} component={'span'}>
-													MENTOR
-												</Typography>
-											</MenuItem>
-											<MenuItem onClick={(e) => generateMentorTypeHandle('member._id', 'user', 'remove')}>
-												<Typography variant={'subtitle1'} component={'span'}>
-													USER
-												</Typography>
-											</MenuItem>
-										</Menu>
-									</TableCell>
-								</TableRow>
-							);
-						})}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		</Stack>
-	);
-};

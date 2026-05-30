@@ -1,239 +1,157 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import {
-	TableCell,
-	TableHead,
-	TableBody,
-	TableRow,
-	Table,
-	TableContainer,
-	Button,
-	Menu,
-	Fade,
-	MenuItem,
+	Avatar, Box, Fade, IconButton, Menu, MenuItem,
+	Table, TableBody, TableCell, TableContainer,
+	TableHead, TableRow, Tooltip, Typography,
 } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
-import { Stack } from '@mui/material';
-import { Property } from '../../../types/property/property';
-import { REACT_APP_API_URL } from '../../../config';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Typography from '@mui/material/Typography';
-import { PropertyStatus } from '../../../enums/property.enum';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { Product } from '../../product/ProductCard';
+import { getImageUrl } from '../../../utils';
+import { ProductStatus } from '../../../enums/product/product';
+import { StatusBadge } from '../shared/StatusBadge';
 
-interface Data {
-	id: string;
-	title: string;
-	price: string;
-	agent: string;
-	location: string;
-	type: string;
-	status: string;
+const COLS = ['PRODUCT', 'PRICE', 'TYPE / SIZE', 'MEMBER', 'STATUS', ''];
+
+const ALL_STATUSES = Object.values(ProductStatus);
+
+interface Props {
+	products: Product[];
+	updateProductHandler: (data: { _id: string; productStatus: ProductStatus }) => void;
+	removeProductHandler: (id: string) => void;
 }
 
-type Order = 'asc' | 'desc';
+export function ProductPanelList({ products, updateProductHandler, removeProductHandler }: Props) {
+	const [anchor, setAnchor] = useState<null | { el: HTMLElement; id: string; status: ProductStatus }>(null);
 
-interface HeadCell {
-	disablePadding: boolean;
-	id: keyof Data;
-	label: string;
-	numeric: boolean;
-}
-
-const headCells: readonly HeadCell[] = [
-	{
-		id: 'id',
-		numeric: true,
-		disablePadding: false,
-		label: 'MB ID',
-	},
-	{
-		id: 'title',
-		numeric: true,
-		disablePadding: false,
-		label: 'TITLE',
-	},
-	{
-		id: 'price',
-		numeric: false,
-		disablePadding: false,
-		label: 'PRICE',
-	},
-	{
-		id: 'agent',
-		numeric: false,
-		disablePadding: false,
-		label: 'AGENT',
-	},
-	{
-		id: 'location',
-		numeric: false,
-		disablePadding: false,
-		label: 'LOCATION',
-	},
-	{
-		id: 'type',
-		numeric: false,
-		disablePadding: false,
-		label: 'TYPE',
-	},
-	{
-		id: 'status',
-		numeric: false,
-		disablePadding: false,
-		label: 'STATUS',
-	},
-];
-
-interface EnhancedTableProps {
-	numSelected: number;
-	onRequestSort: (event: React.MouseEvent<unknown>, property: keyof Data) => void;
-	onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	order: Order;
-	orderBy: string;
-	rowCount: number;
-}
-
-function EnhancedTableHead(props: EnhancedTableProps) {
-	const { onSelectAllClick } = props;
+	const open = (e: React.MouseEvent<HTMLButtonElement>, id: string, status: ProductStatus) => {
+		setAnchor({ el: e.currentTarget, id, status });
+	};
+	const close = () => setAnchor(null);
 
 	return (
-		<TableHead>
-			<TableRow>
-				{headCells.map((headCell) => (
-					<TableCell
-						key={headCell.id}
-						align={headCell.numeric ? 'left' : 'center'}
-						padding={headCell.disablePadding ? 'none' : 'normal'}
+		<TableContainer>
+			<Table size="medium" sx={{ minWidth: 700 }}>
+				<TableHead>
+					<TableRow sx={{ background: '#fafafa' }}>
+						{COLS.map((col) => (
+							<TableCell key={col} sx={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', letterSpacing: 0.5, py: 1.5, borderBottom: '1px solid #f0f0f0' }}>
+								{col}
+							</TableCell>
+						))}
+					</TableRow>
+				</TableHead>
+
+				<TableBody>
+					{products.length === 0 && (
+						<TableRow>
+							<TableCell colSpan={6} align="center" sx={{ py: 6, color: '#bbb', fontSize: 13 }}>
+								No products found
+							</TableCell>
+						</TableRow>
+					)}
+
+					{products.map((p) => (
+						<TableRow key={p._id} hover sx={{ '& td': { borderBottom: '1px solid #f9f9f9', py: 1.2 } }}>
+
+							{/* Product */}
+							<TableCell>
+								<Box component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+									<Box
+										component="img"
+										src={getImageUrl(p.productImages?.[0], '/img/banner/header1.svg')}
+										sx={{ width: 44, height: 44, borderRadius: 1.5, objectFit: 'cover', border: '1px solid #f0f0f0', flexShrink: 0 }}
+									/>
+									<Box component="div">
+										{p.productStatus === ProductStatus.ACTIVE ? (
+											<Link href={`/products/${p._id}`} style={{ textDecoration: 'none' }}>
+												<Typography sx={{ fontSize: 13, fontWeight: 600, color: '#1a1a2e', '&:hover': { color: '#e92c28' } }}>
+													{p.productName}
+												</Typography>
+											</Link>
+										) : (
+											<Typography sx={{ fontSize: 13, fontWeight: 600, color: '#666' }}>{p.productName}</Typography>
+										)}
+										<Typography sx={{ fontSize: 11, color: '#aaa' }}>{p._id.slice(-8)}</Typography>
+									</Box>
+								</Box>
+							</TableCell>
+
+							{/* Price */}
+							<TableCell>
+								<Typography sx={{ fontSize: 13, fontWeight: 700, color: '#e92c28' }}>
+									${p.productPrice?.toLocaleString()}
+								</Typography>
+							</TableCell>
+
+							{/* Type / Size */}
+							<TableCell>
+								<Typography sx={{ fontSize: 12, color: '#374151', fontWeight: 500 }}>{p.productType}</Typography>
+								<Typography sx={{ fontSize: 11, color: '#aaa' }}>{p.productSize ?? '—'}</Typography>
+							</TableCell>
+
+							{/* Member */}
+							<TableCell>
+								<Box component="div" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+									<Avatar
+										src={getImageUrl((p as any).memberData?.memberImage, '/img/profile/defaultUser.svg')}
+										sx={{ width: 26, height: 26 }}
+									/>
+									<Typography sx={{ fontSize: 12, color: '#374151' }}>
+										{(p as any).memberData?.memberNick ?? '—'}
+									</Typography>
+								</Box>
+							</TableCell>
+
+							{/* Status */}
+							<TableCell><StatusBadge status={p.productStatus} /></TableCell>
+
+							{/* Actions */}
+							<TableCell align="right">
+								{p.productStatus === ProductStatus.DELETED ? (
+									<Tooltip title="Permanently remove">
+										<IconButton
+											size="small"
+											onClick={() => removeProductHandler(p._id)}
+											sx={{ color: '#dc2626' }}
+										>
+											<DeleteForeverIcon fontSize="small" />
+										</IconButton>
+									</Tooltip>
+								) : (
+									<IconButton
+										size="small"
+										onClick={(e) => open(e, p._id, p.productStatus as ProductStatus)}
+										sx={{ color: '#9ca3af' }}
+									>
+										<MoreVertIcon fontSize="small" />
+									</IconButton>
+								)}
+							</TableCell>
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+
+			{/* Shared action menu */}
+			<Menu
+				anchorEl={anchor?.el}
+				open={Boolean(anchor)}
+				onClose={close}
+				TransitionComponent={Fade}
+				PaperProps={{ sx: { borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 160 } }}
+			>
+				{ALL_STATUSES.filter(s => s !== anchor?.status).map(status => (
+					<MenuItem
+						key={status}
+						onClick={() => { updateProductHandler({ _id: anchor!.id, productStatus: status }); close(); }}
+						sx={{ fontSize: 13, py: 1 }}
 					>
-						{headCell.label}
-					</TableCell>
+						Set&nbsp;<StatusBadge status={status} />
+					</MenuItem>
 				))}
-			</TableRow>
-		</TableHead>
+			</Menu>
+		</TableContainer>
 	);
 }
-
-interface PropertyPanelListType {
-	properties: Property[];
-	anchorEl: any;
-	menuIconClickHandler: any;
-	menuIconCloseHandler: any;
-	updatePropertyHandler: any;
-	removePropertyHandler: any;
-}
-
-export const PropertyPanelList = (props: PropertyPanelListType) => {
-	const {
-		properties,
-		anchorEl,
-		menuIconClickHandler,
-		menuIconCloseHandler,
-		updatePropertyHandler,
-		removePropertyHandler,
-	} = props;
-
-	return (
-		<Stack>
-			<TableContainer>
-				<Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={'medium'}>
-					{/*@ts-ignore*/}
-					<EnhancedTableHead />
-					<TableBody>
-						{properties.length === 0 && (
-							<TableRow>
-								<TableCell align="center" colSpan={8}>
-									<span className={'no-data'}>data not found!</span>
-								</TableCell>
-							</TableRow>
-						)}
-
-						{properties.length !== 0 &&
-							properties.map((property: Property, index: number) => {
-								const propertyImage = `${REACT_APP_API_URL}/${property?.propertyImages[0]}`;
-
-								return (
-									<TableRow hover key={property?._id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-										<TableCell align="left">{property._id}</TableCell>
-										<TableCell align="left" className={'name'}>
-											{property.propertyStatus === PropertyStatus.ACTIVE ? (
-												<Stack direction={'row'}>
-													<Link href={`/property/detail?id=${property?._id}`}>
-														<div>
-															<Avatar alt="Remy Sharp" src={propertyImage} sx={{ ml: '2px', mr: '10px' }} />
-														</div>
-													</Link>
-													<Link href={`/property/detail?id=${property?._id}`}>
-														<div>{property.propertyTitle}</div>
-													</Link>
-												</Stack>
-											) : (
-												<Stack direction={'row'}>
-													<div>
-														<Avatar alt="Remy Sharp" src={propertyImage} sx={{ ml: '2px', mr: '10px' }} />
-													</div>
-
-													<div style={{marginTop: '10px'}}>{property.propertyTitle}</div>
-												</Stack>
-											)}
-										</TableCell>
-										<TableCell align="center">{property.propertyPrice}</TableCell>
-										<TableCell align="center">{property.memberData?.memberNick}</TableCell>
-										<TableCell align="center">{property.propertyLocation}</TableCell>
-										<TableCell align="center">{property.propertyType}</TableCell>
-										<TableCell align="center">
-											{property.propertyStatus === PropertyStatus.DELETE && (
-												<Button
-													variant="outlined"
-													sx={{ p: '3px', border: 'none', ':hover': { border: '1px solid #000000' } }}
-													onClick={() => removePropertyHandler(property._id)}
-												>
-													<DeleteIcon fontSize="small" />
-												</Button>
-											)}
-
-											{property.propertyStatus === PropertyStatus.SOLD && (
-												<Button className={'badge warning'}>{property.propertyStatus}</Button>
-											)}
-
-											{property.propertyStatus === PropertyStatus.ACTIVE && (
-												<>
-													<Button onClick={(e: any) => menuIconClickHandler(e, index)} className={'badge success'}>
-														{property.propertyStatus}
-													</Button>
-
-													<Menu
-														className={'menu-modal'}
-														MenuListProps={{
-															'aria-labelledby': 'fade-button',
-														}}
-														anchorEl={anchorEl[index]}
-														open={Boolean(anchorEl[index])}
-														onClose={menuIconCloseHandler}
-														TransitionComponent={Fade}
-														sx={{ p: 1 }}
-													>
-														{Object.values(PropertyStatus)
-															.filter((ele) => ele !== property.propertyStatus)
-															.map((status: string) => (
-																<MenuItem
-																	onClick={() => updatePropertyHandler({ _id: property._id, propertyStatus: status })}
-																	key={status}
-																>
-																	<Typography variant={'subtitle1'} component={'span'}>
-																		{status}
-																	</Typography>
-																</MenuItem>
-															))}
-													</Menu>
-												</>
-											)}
-										</TableCell>
-									</TableRow>
-								);
-							})}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		</Stack>
-	);
-};

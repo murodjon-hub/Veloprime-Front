@@ -11,31 +11,19 @@ import E_bike from "../libs/components/homepage/E_bike";
 import Community from "../libs/components/homepage/Community";
 import Accessories from "../libs/components/homepage/Accesories";
 import Events from "../libs/components/homepage/Events";
+import AiShowcase from "../libs/components/homepage/AiShowcase";
+import { AiLauncher } from "../libs/components/ai/AiLauncher";
 
 const Home: NextPage = () => {
   const device = useDeviceDetect();
 
-const {
-  loading: getProductsLoading,
-  data: getProductsData,
-  error: getProductssError,
-  refetch: getProductsRefetch,
-} = useQuery(GET_PRODUCTS, {
+useQuery(GET_PRODUCTS, {
   fetchPolicy: "network-only",
-  variables : {
-     input: {
-        page: 1,
-        limit: 4,
-        sort: "createdAt",
-        direction: "DESC",
-        search: {
-        }
-    }
-  }
-
+  variables: {
+    input: { page: 1, limit: 4, sort: "createdAt", direction: "DESC", search: {} },
+  },
 });
 
-console.log("getProductsData =>", getProductsData);
 
   if (device === "mobile") {
     return <Stack>HOMEPAGE MOBILE</Stack>;
@@ -46,10 +34,12 @@ console.log("getProductsData =>", getProductsData);
           <NewArrivals />
           <FeaturedProduct />
           <E_bike />
+          <AiShowcase />
           <Community />
           <Accessories />
           <Events />
         </Stack>
+        <AiLauncher />
       </Stack>
     );
   }

@@ -1,5 +1,66 @@
-/** VARIABLES **/
+/** ─── VELOPRIME DESIGN SYSTEM ─────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@400;500;600;700;800;900&display=swap');
 
-$font: 'Poppins', sans-serif;
+// ─── Brand Palette ────────────────────────────────────────────────
+$brand-dark:    #0a0a0a;
+$brand-charcoal:#1a1a1a;
+$brand-red:     #e63946;
+$brand-red-dark:#c1121f;
+$brand-accent:  #f4a261;
+$brand-teal:    #06b6d4;
+$brand-gold:    #f59e0b;
+
+// ─── Neutrals ─────────────────────────────────────────────────────
+$n-50:  #fafafa;
+$n-100: #f5f5f5;
+$n-200: #e5e5e5;
+$n-300: #d4d4d4;
+$n-400: #a3a3a3;
+$n-500: #737373;
+$n-600: #525252;
+$n-700: #404040;
+$n-800: #262626;
+$n-900: #171717;
+
+// ─── Typography ───────────────────────────────────────────────────
+$font:         'Inter', sans-serif;
+$font-display: 'Barlow Condensed', sans-serif;
+
+// ─── Spacing ──────────────────────────────────────────────────────
+$sp-1: 4px;   $sp-2: 8px;   $sp-3: 12px;  $sp-4: 16px;
+$sp-5: 20px;  $sp-6: 24px;  $sp-8: 32px;  $sp-10: 40px;
+$sp-12: 48px; $sp-16: 64px; $sp-20: 80px; $sp-24: 96px;
+
+// ─── Border Radius ────────────────────────────────────────────────
+$r-sm:   6px;
+$r-md:   10px;
+$r-lg:   16px;
+$r-xl:   24px;
+$r-full: 9999px;
+
+// ─── Shadows ──────────────────────────────────────────────────────
+$shadow-xs:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+$shadow-sm:  0 4px 12px rgba(0,0,0,.08);
+$shadow-md:  0 8px 24px rgba(0,0,0,.10);
+$shadow-lg:  0 16px 48px rgba(0,0,0,.14);
+$shadow-xl:  0 32px 80px rgba(0,0,0,.20);
+$shadow-red: 0 8px 32px rgba(230,57,70,.30);
+
+// ─── Transitions ──────────────────────────────────────────────────
+$t-fast:   150ms ease;
+$t-base:   250ms ease;
+$t-slow:   400ms cubic-bezier(.4,0,.2,1);
+$t-spring: 600ms cubic-bezier(.34,1.56,.64,1);
+
+// ─── Breakpoints ──────────────────────────────────────────────────
+$bp-sm:  640px;
+$bp-md:  768px;
+$bp-lg:  1024px;
+$bp-xl:  1280px;
+$bp-2xl: 1536px;
+
+// ─── Glassmorphism ────────────────────────────────────────────────
+$glass-bg:     rgba(255,255,255,.08);
+$glass-border: rgba(255,255,255,.15);
+$glass-blur:   blur(20px);

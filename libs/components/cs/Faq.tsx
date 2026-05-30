@@ -33,7 +33,7 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
 const Faq = () => {
 	const device = useDeviceDetect();
 	const router = useRouter();
-	const [category, setCategory] = useState<string>('property');
+	const [category, setCategory] = useState<string>('bikes');
 	const [expanded, setExpanded] = useState<string | false>('panel1');
 
 	/** APOLLO REQUESTS **/
@@ -49,56 +49,56 @@ const Faq = () => {
 	};
 
 	const data: any = {
-		property: [
+		bikes: [
 			{
 				id: '00f5a45ed8897f8090116a01',
-				subject: 'Are the properties displayed on the site reliable?',
-				content: 'of course we only have verified properties',
+				subject: 'Are the bikes displayed on the site reliable?',
+				content: 'Absolutely! All our bikes are verified by our team and quality-checked before listing.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a22',
-				subject: 'What types of properties do you offer?',
-				content: 'We offer single-family homes, condos, townhouses, apartments, and penthouses',
+				subject: 'What types of bikes do you offer?',
+				content: 'We offer Road Bikes, E-Bikes, and a wide range of cycling accessories for all age groups.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a21',
-				subject: 'How can I search for properties on your website?',
-				content: 'Simply use our search bar to enter location, price range, bedrooms/bathrooms, and property type.',
+				subject: 'How can I search for bikes on your website?',
+				content: 'Use our filter tools to search by type, size, color, age category, and price range.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a23',
-				subject: 'Do you provide assistance for first-time homebuyers?',
-				content: 'Yes, we guide you through the process and help find suitable financing.',
+				subject: 'Do you offer bikes for kids, teenagers, and adults?',
+				content: 'Yes! Our bikes are categorized by age group: Kids, Teenager, and Adult to ensure the perfect fit.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a24',
-				subject: 'What should I consider when buying a property?',
-				content: 'Location, condition, size, amenities, and future development plans.',
+				subject: 'What should I consider when buying a bike?',
+				content: 'Consider the bike type (Road vs E-Bike), frame size, age category, color, and your budget.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a25',
-				subject: 'How long does the home-buying process typically take?',
-				content: 'Usually 3 to 6 days, depending on various factors.',
+				subject: 'How long does the delivery process typically take?',
+				content: 'Usually 3 to 7 business days, depending on your location and the seller.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a29',
-				subject: 'What happens if I encounter issues with the property after purchase?',
-				content: 'We offer post-purchase support to address any concerns promptly.',
+				subject: 'What happens if I encounter issues with my bike after purchase?',
+				content: 'We offer post-purchase support. Contact us and we will address any concerns promptly.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a28',
-				subject: 'Do you offer properties in specific neighborhoods?',
-				content: 'Yes, we have listings in various neighborhoods based on your preferences.',
+				subject: 'Do you offer bikes in specific sizes?',
+				content: 'Yes, we carry bikes in XS, S, M, L, XL, and XXL sizes to suit every rider.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a27',
-				subject: 'Can I sell my property through your website?',
-				content: 'Absolutely, we provide services for selling properties as well.',
+				subject: 'Can I sell my bike through your website?',
+				content: 'Absolutely! Register as an Agent and list your bikes for sale on our platform.',
 			},
 			{
 				id: '00f5a45ed8897f8090116b99',
-				subject: 'What if I need help understanding legal aspects of property purchase?',
-				content: 'Our team can provide basic guidance and recommend legal professionals if needed.',
+				subject: 'What if I need help choosing the right bike?',
+				content: 'Our cycling specialists can provide guidance and recommend the perfect bike for your needs.',
 			},
 		],
 		payment: [
@@ -162,116 +162,105 @@ const Faq = () => {
 			{
 				id: '00f5a45ed8897f8090116a03',
 				subject: 'What should buyers pay attention to?',
-				content: 'Buyers should check and decide whether the property they want to buy or rent is actually suitable!',
+				content: 'Check the bike type, size, age category, color, and condition to ensure it meets your riding needs!',
 			},
 			{
 				id: '00f5a45ed8897f8090116a85',
-				subject: 'How can I determine if a property is within my budget?',
-				content:
-					'Calculate your budget by considering your income, down payment, and potential mortgage payments. Our agents can assist you within your budget.',
+				subject: 'How can I determine if a bike is within my budget?',
+				content: 'Use our price range filter to narrow results by budget. Our sellers can also suggest the best value bikes for you.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a84',
-				subject: 'What documents do I need to provide when purchasing a property?',
-				content:
-					"You'll typically need identification, proof of income, bank statements, and any necessary loan documentation. Our team will guide you through.",
+				subject: 'What should I check before finalizing a bike purchase?',
+				content: 'Verify the frame size, gear system, brakes, and whether the bike is new or pre-owned. Request photos if buying online.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a83',
-				subject: 'What factors should I consider when choosing a neighborhood?',
-				content:
-					'Consider factors such as location, safety, schools, amenities, transportation, and future development plans.',
+				subject: 'What factors should I consider when choosing a bike type?',
+				content: 'Consider your riding style, terrain (city, mountain, trail), daily distance, fitness level, and budget.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a82',
-				subject: 'Can I negotiate the price of a property?',
-				content:
-					'Yes, you can negotiate the price of a property. Our agents will assist you in making competitive offers and negotiating terms with the seller.',
+				subject: 'Can I negotiate the price of a bike?',
+				content: 'Yes! You can contact the seller directly through our platform to discuss pricing and available options.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a81',
-				subject: 'What are some red flags to watch out for when viewing properties?',
-				content:
-					'Watch out for signs of structural damage, water damage, mold, outdated systems, and undesirable neighborhood conditions.',
+				subject: 'What are some red flags when buying a used bike?',
+				content: 'Watch out for frame cracks, rust, worn brake pads, skipping gears, bent wheels, and mismatched components.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a80',
-				subject: 'Do you provide assistance with property inspections?',
-				content:
-					'Yes, we can recommend reputable inspectors and accompany you during property inspections to identify any potential issues.',
+				subject: 'Do you provide assistance with bike selection?',
+				content: 'Yes, our cycling specialists can help you find the right bike based on your age, size, and riding goals.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a79',
-				subject: 'How long does it typically take to find the right property?',
-				content:
-					'The timeframe varies depending on your preferences and market conditions. Our agents will work diligently to find the right property as quickly as possible.',
+				subject: 'How long does it typically take to find the right bike?',
+				content: 'Our filters and search tools make it quick. Most buyers find their ideal bike within a few minutes of browsing.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a78',
-				subject: 'What are the advantages of using a real estate agent when buying a property?',
-				content:
-					'Real estate agents provide expertise, negotiation skills, and guidance throughout the buying process, ultimately saving you time and hassle.',
+				subject: 'What are the advantages of buying through Veloprime?',
+				content: 'Veloprime offers verified listings, secure payment, expert seller support, and a community of passionate cyclists.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a77',
-				subject: 'What happens if I change my mind about a property after making an offer?',
-				content:
-					'Depending on the terms of the offer and the stage of the transaction, you may have options to withdraw your offer.',
+				subject: 'What happens if I change my mind about a bike after ordering?',
+				content: 'Contact us as soon as possible. Cancellation policies depend on the seller and the stage of the order.',
 			},
 		],
 
 		agents: [
 			{
 				id: '00f5a45ed8897f8090116a04',
-				subject: 'What do I need to do if I want to become an agent?',
-				content:
-					'If you really decide to become an agent, you should read our terms and conditions and contact the admin!',
+				subject: 'What do I need to do if I want to become a seller/agent?',
+				content: 'Read our terms and conditions, then register as an Agent on the sign-up page and start listing your bikes!',
 			},
 			{
 				id: '00f5a45ed8897f8090116a62',
-				subject: 'What qualifications do I need to become a real estate agent?',
-				content: 'Complete pre-licensing course, pass licensing exam, meet state requirements.',
+				subject: 'What qualifications do I need to become a bike seller?',
+				content: 'No formal qualifications needed. Simply register as an Agent, verify your account, and start listing bikes.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a63',
-				subject: 'How do I find clients as a new real estate agent?',
-				content: 'Build network, use online/offline marketing, join reputable brokerage.',
+				subject: 'How do I find buyers as a new bike seller?',
+				content: 'Build your profile, upload quality photos, set competitive prices, and engage with the Veloprime community.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a64',
-				subject: 'What are some effective marketing strategies for selling properties?',
-				content: 'Use social media, online platforms, networking events, and direct mail.',
+				subject: 'What are effective strategies for selling bikes on the platform?',
+				content: 'Use clear photos, detailed descriptions, competitive pricing, and respond quickly to buyer inquiries.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a65',
-				subject: 'How do I handle negotiations with buyers and sellers?',
-				content: 'Develop strong negotiation skills, understand market trends, represent client interests.',
+				subject: 'How do I handle price negotiations with buyers?',
+				content: 'Know your bike\'s market value, set a fair price, and be open to reasonable offers from serious buyers.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a66',
-				subject: 'What should I do to stay updated with market trends and changes?',
-				content: 'Attend industry events, follow real estate news, participate in training.',
+				subject: 'What should I do to stay updated with cycling market trends?',
+				content: 'Follow cycling news, attend bike expos, and monitor our platform for trending models and popular categories.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a67',
-				subject: 'How do I handle difficult clients or situations?',
-				content:
-					'Approach with professionalism, empathy, and patience. Listen actively, address issues collaboratively.',
+				subject: 'How do I handle difficult buyers or disputes?',
+				content: 'Approach with professionalism and patience. If needed, involve our support team to mediate the situation.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a68',
-				subject: 'What tools and technologies should I utilize as a real estate agent?',
-				content: 'Use CRM software, virtual tours, digital marketing tools, and mobile apps.',
+				subject: 'What tools should I use as a bike seller on Veloprime?',
+				content: 'Use our seller dashboard, listing management tools, and messaging system to manage your shop effectively.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a69',
-				subject: 'How do I ensure compliance with real estate laws and regulations?',
-				content: 'Stay updated with laws, attend education courses, consult legal professionals.',
+				subject: 'How do I ensure my listings meet platform standards?',
+				content: 'Follow our listing guidelines — accurate descriptions, real photos, correct sizing, and honest condition ratings.',
 			},
 			{
 				id: '00f5a45ed8897f8090116a70',
-				subject: 'What strategies can I use to grow my real estate business?',
-				content: 'Build relationships, provide exceptional service, seek referrals, and continuously improve skills.',
+				subject: 'What strategies can I use to grow my bike sales business?',
+				content: 'Build a strong profile, collect positive reviews, respond promptly, and keep your inventory updated regularly.',
 			},
 		],
 		membership: [
@@ -422,8 +411,8 @@ const Faq = () => {
 			},
 			{
 				id: '00f5a45ed8897f8090116a31',
-				subject: 'Do you host events or webinars related to real estate?',
-				content: "We're not hosting events or webinars at this time.",
+				subject: 'Do you host cycling events or community rides?',
+				content: "We feature upcoming cycling events on our homepage. Stay tuned for community rides and sponsored challenges!",
 			},
 			{
 				id: '00f5a45ed8897f8090116a30',
@@ -438,14 +427,14 @@ const Faq = () => {
 	} else {
 		return (
 			<Stack className={'faq-content'}>
-				<Box className={'categories'} component={'div'}>
+				<Box component="div" className={'categories'}>
 					<div
-						className={category === 'property' ? 'active' : ''}
+						className={category === 'bikes' ? 'active' : ''}
 						onClick={() => {
-							changeCategoryHandler('property');
+							changeCategoryHandler('bikes');
 						}}
 					>
-						Property
+						Bikes
 					</div>
 					<div
 						className={category === 'payment' ? 'active' : ''}
@@ -496,7 +485,7 @@ const Faq = () => {
 						Other
 					</div>
 				</Box>
-				<Box className={'wrap'} component={'div'}>
+				<Box component="div" className={'wrap'}>
 					{data[category] &&
 						data[category].map((ele: any) => (
 							<Accordion expanded={expanded === ele?.id} onChange={handleChange(ele?.id)} key={ele?.subject}>

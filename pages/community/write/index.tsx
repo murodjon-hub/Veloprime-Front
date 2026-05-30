@@ -1,344 +1,399 @@
-import React, { useMemo, useRef, useState, useCallback } from 'react';
+import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { Box, Button, FormControl, MenuItem, Select, Stack, TextField, Typography, CircularProgress } from '@mui/material';
+import {
+	Box, Button, FormControl, MenuItem, Select,
+	TextField, Typography, CircularProgress, LinearProgress, Tooltip,
+} from '@mui/material';
 import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import { useMutation, useReactiveVar } from '@apollo/client';
 import axios from 'axios';
-import dynamic from 'next/dynamic';
-import useDeviceDetect from '../../../libs/hooks/useDeviceDetect';
 import { getJwtToken } from '../../../libs/auth';
 import { userVar } from '../../../apollo/store';
 import { BoardArticleCategory } from '../../../libs/enums/board-article.enum';
 import { CREATE_BOARD_ARTICLE } from '../../../apollo/user/mutation';
-import { REACT_APP_API_URL } from '../../../libs/config';
-import { Message } from '../../../libs/enums/common.enum';
+import { getImageUrl } from '../../../libs/utils';
 import { sweetErrorHandling, sweetTopSuccessAlert } from '../../../libs/sweetAlert';
 import withLayoutBasic from '../../../libs/components/layout/LayoutBasic';
-import '@toast-ui/editor/dist/toastui-editor.css';
 
-// Dynamically import the Editor component to prevent SSR issues
-const Editor = dynamic(
-  () => import('@toast-ui/react-editor').then((m) => m.Editor),
-  { ssr: false },
-);
+const CATEGORY_LABELS: Record<BoardArticleCategory, string> = {
+	[BoardArticleCategory.FREE]:      'Free Board',
+	[BoardArticleCategory.RECOMMEND]: 'Recommend',
+	[BoardArticleCategory.NEWS]:      'News',
+	[BoardArticleCategory.HUMOR]:     'Humor',
+};
 
-interface ArticleFormState {
-  articleTitle: string;
-  articleContent: string;
-  articleImage: string;
-}
+const readingTime = (text: string) => {
+	const words = text.trim().split(/\s+/).filter(Boolean).length;
+	return Math.max(1, Math.round(words / 200));
+};
 
 const WriteBlogPage: NextPage = () => {
-  const router = useRouter();
-  const device = useDeviceDetect();
-  const token = getJwtToken();
-  const user = useReactiveVar(userVar);
-  const editorRef = useRef<any>(null);
-  const coverInputRef = useRef<HTMLInputElement>(null);
+	const router          = useRouter();
+	const token           = getJwtToken();
+	const user            = useReactiveVar(userVar);
+	const coverInputRef   = useRef<HTMLInputElement>(null);
+	const dropZoneRef     = useRef<HTMLDivElement>(null);
 
-  // State for form fields
-  const [formState, setFormState] = useState<ArticleFormState>({
-    articleTitle: '',
-    articleContent: '',
-    articleImage: '',
-  });
-  const [articleCategory, setArticleCategory] = useState<BoardArticleCategory>(
-    BoardArticleCategory.FREE,
-  );
-  const [coverPreview, setCoverPreview] = useState<string>('');
-  const [coverUploading, setCoverUploading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+	const [articleTitle, setArticleTitle]       = useState('');
+	const [articleContent, setArticleContent]   = useState('');
+	const [articleImage, setArticleImage]       = useState('');
+	const [articleCategory, setArticleCategory] = useState<BoardArticleCategory>(BoardArticleCategory.FREE);
+	const [coverPreview, setCoverPreview]       = useState('');
+	const [coverUploading, setCoverUploading]   = useState(false);
+	const [uploadProgress, setUploadProgress]   = useState(0);
+	const [isDragging, setIsDragging]           = useState(false);
+	const [isSubmitting, setIsSubmitting]       = useState(false);
 
-  const [createBoardArticle] = useMutation(CREATE_BOARD_ARTICLE);
+	useEffect(() => {
+		if (!user?._id && typeof window !== 'undefined') {
+			const timer = setTimeout(() => {
+				if (!userVar()._id) router.push('/account/join?referrer=/community/write');
+			}, 800);
+			return () => clearTimeout(timer);
+		}
+	}, [user?._id]);
 
-  // Memoized form data for API submission
-  const articleInput = useMemo(
-    () => ({ ...formState, articleCategory }),
-    [formState, articleCategory],
-  );
+	const [createBoardArticle] = useMutation(CREATE_BOARD_ARTICLE);
 
-  // Shared image upload utility
-  const uploadImageToServer = useCallback(async (image: File): Promise<string | undefined> => {
-    try {
-      const formData = new FormData();
-      formData.append(
-        'operations',
-        JSON.stringify({
-          query: `mutation ImageUploader($file: Upload!, $target: String!) {
-            imageUploader(file: $file, target: $target)
-          }`,
-          variables: { file: null, target: 'article' },
-        }),
-      );
-      formData.append('map', JSON.stringify({ '0': ['variables.file'] }));
-      formData.append('0', image);
+	const uploadImageToServer = useCallback(async (file: File): Promise<string | undefined> => {
+		try {
+			setUploadProgress(0);
+			const fd = new FormData();
+			fd.append('operations', JSON.stringify({
+				query: `mutation ImageUploader($file: Upload!, $target: String!) { imageUploader(file: $file, target: $target) }`,
+				variables: { file: null, target: 'article' },
+			}));
+			fd.append('map', JSON.stringify({ '0': ['variables.file'] }));
+			fd.append('0', file);
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_GRAPHQL_URL}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'apollo-require-preflight': true,
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+			const response = await axios.post(
+				process.env.NEXT_PUBLIC_API_GRAPHQL_URL ?? 'http://localhost:3009/graphql',
+				fd,
+				{
+					headers: {
+						'apollo-require-preflight': 'true',
+						Authorization: `Bearer ${token}`,
+					},
+					onUploadProgress: (e) => {
+						if (e.total) setUploadProgress(Math.round((e.loaded / e.total) * 100));
+					},
+				},
+			);
+			return response.data?.data?.imageUploader;
+		} catch (err) {
+			sweetErrorHandling(new Error('Image upload failed.')).then();
+			return undefined;
+		}
+	}, [token]);
 
-      return response.data.data.imageUploader;
-    } catch (err) {
-      console.error('Error uploading image:', err);
-      sweetErrorHandling(new Error('Failed to upload image. Please try again.')).then();
-      return undefined;
-    }
-  }, [token]);
+	const handleCoverFile = useCallback(async (file: File) => {
+		if (!file.type.startsWith('image/')) return;
+		setCoverPreview(URL.createObjectURL(file));
+		setCoverUploading(true);
+		const url = await uploadImageToServer(file);
+		if (url) setArticleImage(url);
+		setCoverUploading(false);
+		setUploadProgress(0);
+	}, [uploadImageToServer]);
 
-  // Cover image handlers
-  const handleCoverChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+	const handleCoverChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) handleCoverFile(file);
+	}, [handleCoverFile]);
 
-    setCoverPreview(URL.createObjectURL(file));
-    setCoverUploading(true);
+	const removeCover = useCallback(() => {
+		setCoverPreview('');
+		setArticleImage('');
+		if (coverInputRef.current) coverInputRef.current.value = '';
+	}, []);
 
-    const uploadedImageUrl = await uploadImageToServer(file);
-    if (uploadedImageUrl) {
-      setFormState((prevState) => ({ ...prevState, articleImage: uploadedImageUrl }));
-    }
-    setCoverUploading(false);
-  }, [uploadImageToServer]);
+	const onDragEnter = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); };
+	const onDragLeave = (e: React.DragEvent) => { e.preventDefault(); setIsDragging(false); };
+	const onDrop      = useCallback((e: React.DragEvent) => {
+		e.preventDefault();
+		setIsDragging(false);
+		const file = e.dataTransfer.files?.[0];
+		if (file) handleCoverFile(file);
+	}, [handleCoverFile]);
 
-  const removeCover = useCallback(() => {
-    setCoverPreview('');
-    setFormState((prevState) => ({ ...prevState, articleImage: '' }));
-    if (coverInputRef.current) {
-      coverInputRef.current.value = '';
-    }
-  }, []);
+	const handleSubmit = useCallback(async () => {
+		if (!user?._id) { router.push('/account/join'); return; }
 
-  // Editor inline image hook
-  const uploadEditorImage = useCallback(async (image: File, callback: (url: string) => void) => {
-    const uploaded = await uploadImageToServer(image);
-    if (uploaded) {
-      callback(`${REACT_APP_API_URL}/${uploaded}`);
-    }
-    return false; // Prevent default behavior
-  }, [uploadImageToServer]);
+		if (!articleTitle.trim()) {
+			sweetErrorHandling(new Error('Please add a title before publishing.')).then(); return;
+		}
+		if (!articleContent.trim()) {
+			sweetErrorHandling(new Error('Your story is empty. Please write something.')).then(); return;
+		}
 
-  // Field handlers
-  const handleTitleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormState((prevState) => ({ ...prevState, articleTitle: e.target.value }));
-  }, []);
+		setIsSubmitting(true);
+		try {
+			const input: any = {
+				articleTitle:    articleTitle.trim(),
+				articleContent:  articleContent.trim(),
+				articleCategory,
+			};
+			if (articleImage) input.articleImage = articleImage;
 
-  const handleCategoryChange = useCallback((e: any) => {
-    setArticleCategory(e.target.value as BoardArticleCategory);
-  }, []);
+			await createBoardArticle({ variables: { input } });
+			await sweetTopSuccessAlert('Story published!', 700);
+			await router.push('/community');
+		} catch (err: any) {
+			sweetErrorHandling(err).then();
+		} finally {
+			setIsSubmitting(false);
+		}
+	}, [user, router, articleTitle, articleContent, articleImage, articleCategory, createBoardArticle]);
 
-  const handleEditorChange = useCallback(() => {
-    // Defensive check: ensure editorRef.current and getInstance exist
-    if (editorRef.current && typeof editorRef.current.getInstance === 'function') {
-      const editorInstance = editorRef.current.getInstance();
-      if (editorInstance) {
-        setFormState((prevState) => ({ ...prevState, articleContent: editorInstance.getHTML() }));
-      }
-    }
-  }, []);
+	const wordCount    = useMemo(() => articleContent.trim().split(/\s+/).filter(Boolean).length, [articleContent]);
+	const rtMin        = useMemo(() => readingTime(articleContent), [articleContent]);
+	const plainExcerpt = articleContent.slice(0, 160);
 
-  const handleSubmit = useCallback(async () => {
-    if (!user?._id) {
-      await router.push('/login');
-      return;
-    }
+	const readyChecks = [
+		{ label: 'Cover image', done: !!articleImage,                      required: false },
+		{ label: 'Title',       done: articleTitle.trim().length > 0,      required: true  },
+		{ label: 'Content',     done: articleContent.trim().length > 0,    required: true  },
+		{ label: 'Category',    done: true,                                required: true  },
+	];
+	const allReady = readyChecks.filter((c) => c.required).every((c) => c.done);
 
-    setIsSubmitting(true);
-    try {
-      let articleContent = formState.articleContent;
-      
-      // Final check of editor content before submission
-      if (editorRef.current && typeof editorRef.current.getInstance === 'function') {
-        const editorInstance = editorRef.current.getInstance();
-        if (editorInstance) {
-          articleContent = editorInstance.getHTML();
-        }
-      }
+	return (
+		<Box component="div" id="write-blog-page">
 
-      if (!formState.articleTitle.trim() || !articleContent.trim()) {
-        throw new Error(Message.INSERT_ALL_INPUTS);
-      }
+			{/* ── Sticky top nav ── */}
+			<Box component="div" className="wb-nav">
+				<Box component="div" className="wb-nav__left">
+					<Typography className="wb-nav__brand">New Story</Typography>
+					{wordCount > 0 && (
+						<Typography className="wb-nav__wordcount">{wordCount} words · {rtMin} min read</Typography>
+					)}
+				</Box>
+				<Box component="div" className="wb-nav__right">
+					<Button
+						className="wb-nav__btn wb-nav__btn--cancel"
+						onClick={() => router.push('/community')}
+						disabled={isSubmitting}
+					>
+						Discard
+					</Button>
+					<Tooltip title={!allReady ? 'Complete all requirements before publishing' : ''} arrow>
+						<span>
+							<Button
+								className="wb-nav__btn wb-nav__btn--publish"
+								onClick={handleSubmit}
+								disabled={isSubmitting || !allReady}
+								startIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : null}
+							>
+								{isSubmitting ? 'Publishing…' : 'Publish'}
+							</Button>
+						</span>
+					</Tooltip>
+				</Box>
+			</Box>
 
-      await createBoardArticle({
-        variables: { 
-          input: { 
-            ...articleInput, 
-            articleContent 
-          } 
-        },
-      });
+			{/* ── Two-column body ── */}
+			<Box component="div" className="wb-body">
 
-      await sweetTopSuccessAlert('Article published successfully!', 700);
-      await router.push('/community');
-    } catch (err: any) {
-      console.error('Error submitting article:', err);
-      sweetErrorHandling(err).then();
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [user, router, formState.articleTitle, formState.articleContent, articleInput, createBoardArticle]);
+				{/* ── LEFT: writing column ── */}
+				<Box component="div" className="wb-editor-col">
 
-  if (device === 'mobile') {
-    return <Stack>WRITE BLOG MOBILE</Stack>;
-  }
+					{/* Cover upload */}
+					<Box component="div" className="wb-cover">
+						{coverPreview ? (
+							<Box component="div" className="wb-cover__preview">
+								<img src={coverPreview} alt="Cover" className="wb-cover__img" />
+								{coverUploading && (
+									<Box component="div" className="wb-cover__progress-wrap">
+										<LinearProgress variant="determinate" value={uploadProgress} className="wb-cover__progress" />
+										<Typography className="wb-cover__progress-label">Uploading {uploadProgress}%</Typography>
+									</Box>
+								)}
+								<Box component="div" className="wb-cover__actions">
+									<Button startIcon={<AddPhotoAlternateOutlinedIcon />}
+										onClick={() => coverInputRef.current?.click()} disabled={coverUploading}
+										className="wb-cover__btn">Change</Button>
+									<Button startIcon={<CancelOutlinedIcon />}
+										onClick={removeCover} disabled={coverUploading}
+										className="wb-cover__btn wb-cover__btn--remove">Remove</Button>
+								</Box>
+							</Box>
+						) : (
+							<Box
+								component="div"
+								ref={dropZoneRef}
+								className={`wb-cover__drop${isDragging ? ' dragging' : ''}`}
+								onClick={() => coverInputRef.current?.click()}
+								onDragEnter={onDragEnter}
+								onDragOver={(e: React.DragEvent) => e.preventDefault()}
+								onDragLeave={onDragLeave}
+								onDrop={onDrop}
+							>
+								<AddPhotoAlternateOutlinedIcon className="wb-cover__drop-icon" />
+								<Typography className="wb-cover__drop-text">
+									{isDragging ? 'Drop to set cover' : 'Add cover image'}
+								</Typography>
+								<Typography className="wb-cover__drop-sub">
+									Drag & drop or click · JPG, PNG · 1400 × 600 recommended
+								</Typography>
+							</Box>
+						)}
+						<input ref={coverInputRef} type="file" accept="image/*" hidden onChange={handleCoverChange} />
+					</Box>
 
-  return (
-    <Box id="write-blog-page">
-      {/* Sticky nav bar */}
-      <Box className="write-blog__banner">
-        <Typography className="write-blog__banner-title">New Story</Typography>
-        <Typography className="write-blog__banner-sub">
-          Share your cycling story with the community
-        </Typography>
-      </Box>
+					{/* Title */}
+					<TextField
+						className="wb-title-input"
+						placeholder="Your story title…"
+						multiline
+						variant="standard"
+						fullWidth
+						value={articleTitle}
+						onChange={(e) => setArticleTitle(e.target.value)}
+						InputProps={{ disableUnderline: true }}
+						inputProps={{ maxLength: 120 }}
+					/>
 
-      <Box className="write-blog__body">
-        {/* Category */}
-        <Box className="write-blog__meta">
-          <Box className="write-blog__field">
-            <Typography className="write-blog__label">Category</Typography>
-            <FormControl>
-              <Select
-                value={articleCategory}
-                onChange={handleCategoryChange}
-                displayEmpty
-                inputProps={{ 'aria-label': 'Select article category' }}
-              >
-                {Object.values(BoardArticleCategory).map((category) => (
-                  <MenuItem key={category} value={category}>
-                    {category.charAt(0).toUpperCase() + category.slice(1).toLowerCase().replace(/_/g, ' ')}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </Box>
+					<Box component="div" className="wb-divider" />
 
-        {/* Cover image */}
-        <Box className="write-blog__cover">
-          {coverPreview ? (
-            <Box className="write-blog__cover-preview">
-              <Box
-                component="img"
-                src={coverPreview}
-                alt="Article cover image"
-                className="write-blog__cover-img"
-              />
-              <Box className="write-blog__cover-overlay">
-                <Button
-                  className="write-blog__cover-change"
-                  onClick={() => coverInputRef.current?.click()}
-                  startIcon={<AddPhotoAlternateOutlinedIcon />}
-                  disabled={coverUploading}
-                >
-                  {coverUploading ? <CircularProgress size={20} color="inherit" /> : 'Change cover'}
-                </Button>
-                <Button
-                  className="write-blog__cover-remove"
-                  onClick={removeCover}
-                  startIcon={<CancelOutlinedIcon />}
-                  disabled={coverUploading}
-                >
-                  Remove
-                </Button>
-              </Box>
-              {coverUploading && (
-                <Box className="write-blog__cover-uploading">Uploading...</Box>
-              )}
-            </Box>
-          ) : (
-            <Box
-              className="write-blog__cover-empty"
-              onClick={() => coverInputRef.current?.click()}
-            >
-              <AddPhotoAlternateOutlinedIcon className="write-blog__cover-icon" />
-              <Typography className="write-blog__cover-hint">Add a cover image</Typography>
-              <Typography className="write-blog__cover-hint-sub">
-                Recommended size 1400 × 600 px
-              </Typography>
-            </Box>
-          )}
-          <input
-            ref={coverInputRef}
-            type="file"
-            accept="image/*"
-            hidden
-            onChange={handleCoverChange}
-            disabled={coverUploading}
-          />
-        </Box>
+					{/* Content textarea */}
+					<TextField
+						className="wb-content-input"
+						placeholder="Tell your cycling story…"
+						multiline
+						variant="standard"
+						fullWidth
+						minRows={18}
+						value={articleContent}
+						onChange={(e) => setArticleContent(e.target.value)}
+						InputProps={{ disableUnderline: true }}
+					/>
+				</Box>
 
-        {/* Title */}
-        <TextField
-          className="write-blog__title-input"
-          onChange={handleTitleChange}
-          placeholder="Title"
-          multiline
-          variant="outlined"
-          fullWidth
-          value={formState.articleTitle}
-          disabled={isSubmitting}
-        />
+				{/* ── RIGHT: Sidebar ── */}
+				<Box component="div" className="wb-sidebar">
 
-        <Box className="write-blog__divider" />
+					{/* Live preview card */}
+					<Box component="div" className="wb-sidebar__section">
+						<Typography className="wb-sidebar__section-label">Preview</Typography>
+						<Box component="div" className="wb-preview-card">
+							<Box component="div" className="wb-preview-card__img-wrap">
+								{coverPreview || articleImage ? (
+									<img
+										src={coverPreview || getImageUrl(articleImage)}
+										alt="preview"
+										className="wb-preview-card__img"
+									/>
+								) : (
+									<Box component="div" className="wb-preview-card__img-empty">
+										<AddPhotoAlternateOutlinedIcon sx={{ fontSize: 28, color: '#ccc' }} />
+									</Box>
+								)}
+								<Box component="div" className="wb-preview-card__cat-badge">{CATEGORY_LABELS[articleCategory]}</Box>
+							</Box>
+							<Box component="div" className="wb-preview-card__body">
+								<Typography className="wb-preview-card__title" noWrap={false}>
+									{articleTitle || <span className="wb-preview-card__placeholder">Your title will appear here</span>}
+								</Typography>
+								{plainExcerpt && (
+									<Typography className="wb-preview-card__excerpt">
+										{plainExcerpt}{plainExcerpt.length >= 160 ? '…' : ''}
+									</Typography>
+								)}
+								<Box component="div" className="wb-preview-card__meta">
+									<img
+										src={getImageUrl(user?.memberImage, '/img/profile/defaultUser.svg')}
+										alt={user?.memberNick}
+										className="wb-preview-card__avatar"
+									/>
+									<Box component="div">
+										<Typography className="wb-preview-card__author">{user?.memberNick ?? 'You'}</Typography>
+										<Box component="div" className="wb-preview-card__info">
+											<AccessTimeIcon sx={{ fontSize: 12 }} />
+											<span>{rtMin} min read</span>
+											<RemoveRedEyeOutlinedIcon sx={{ fontSize: 12, ml: '6px' }} />
+											<span>0</span>
+										</Box>
+									</Box>
+								</Box>
+							</Box>
+						</Box>
+					</Box>
 
-        {/* Editor */}
-        <Box className="write-blog__editor">
-          <Typography className="write-blog__label">Content</Typography>
-          <Editor
-            initialValue={formState.articleContent}
-            placeholder="Tell your story..."
-            previewStyle="vertical"
-            height="520px"
-            initialEditType="wysiwyg"
-            toolbarItems={[
-              ['heading', 'bold', 'italic', 'strike'],
-              ['image', 'table', 'link'],
-              ['ul', 'ol', 'task'],
-              ['code', 'codeblock'],
-            ]}
-            ref={editorRef}
-            onChange={handleEditorChange}
-            hooks={{
-              addImageBlobHook: uploadEditorImage,
-            }}
-            usageStatistics={false}
-          />
-        </Box>
+					{/* Settings */}
+					<Box component="div" className="wb-sidebar__section">
+						<Typography className="wb-sidebar__section-label">Settings</Typography>
+						<Box component="div" className="wb-settings">
+							<Typography className="wb-settings__label">Category</Typography>
+							<FormControl fullWidth size="small">
+								<Select
+									value={articleCategory}
+									onChange={(e) => setArticleCategory(e.target.value as BoardArticleCategory)}
+									className="wb-settings__select"
+								>
+									{Object.entries(CATEGORY_LABELS).map(([val, label]) => (
+										<MenuItem key={val} value={val}>{label}</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Box>
+					</Box>
 
-        {/* Actions */}
-        <Stack direction="row" className="write-blog__actions">
-          <Button
-            variant="outlined"
-            className="write-blog__btn write-blog__btn--cancel"
-            onClick={() => router.push('/community')}
-            disabled={isSubmitting}
-          >
-            Discard
-          </Button>
-          <Button
-            variant="contained"
-            className="write-blog__btn write-blog__btn--submit"
-            onClick={handleSubmit}
-            disabled={isSubmitting || coverUploading}
-            startIcon={isSubmitting ? <CircularProgress size={20} color="inherit" /> : null}
-          >
-            {isSubmitting ? 'Publishing...' : 'Publish'}
-          </Button>
-        </Stack>
-      </Box>
-    </Box>
-  );
+					{/* Readiness checklist */}
+					<Box component="div" className="wb-sidebar__section">
+						<Typography className="wb-sidebar__section-label">Checklist</Typography>
+						<Box component="div" className="wb-checklist">
+							{readyChecks.map((check) => (
+								<Box component="div" key={check.label} className={`wb-checklist__item${check.done ? ' done' : ''}`}>
+									{check.done
+										? <CheckCircleIcon sx={{ fontSize: 15 }} />
+										: <RadioButtonUncheckedIcon sx={{ fontSize: 15 }} />}
+									<Typography>
+										{check.label}
+										{!check.required && (
+											<Box component="span" sx={{ fontSize: 10, color: '#9a9a96', ml: '5px', fontWeight: 500 }}>
+												optional
+											</Box>
+										)}
+									</Typography>
+								</Box>
+							))}
+						</Box>
+					</Box>
+
+					{/* Publish */}
+					<Box component="div" className="wb-sidebar__section">
+						<Tooltip title={!allReady ? 'Complete all checklist items first' : ''} arrow placement="top">
+							<span style={{ display: 'block' }}>
+								<Button
+									fullWidth
+									className="wb-sidebar__publish-btn"
+									onClick={handleSubmit}
+									disabled={isSubmitting || !allReady}
+									startIcon={isSubmitting ? <CircularProgress size={16} color="inherit" /> : null}
+								>
+									{isSubmitting ? 'Publishing…' : 'Publish Story'}
+								</Button>
+							</span>
+						</Tooltip>
+						<Button
+							fullWidth
+							className="wb-sidebar__cancel-btn"
+							onClick={() => router.push('/community')}
+							disabled={isSubmitting}
+						>
+							Discard
+						</Button>
+					</Box>
+				</Box>
+			</Box>
+		</Box>
+	);
 };
 
 export default withLayoutBasic(WriteBlogPage);
-

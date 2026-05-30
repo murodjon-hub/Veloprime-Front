@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, Container, Link } from '@mui/material';
+import { useRouter } from 'next/router';
+import { Box, Typography, Button, Container } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useQuery } from '@apollo/client';
@@ -7,6 +8,7 @@ import { GET_PRODUCTS } from '../../../apollo/user/query';
 import { Direction } from '../../enums/common.enum';
 import { ProductType } from '../../enums/product/product';
 import { ProductInquiry } from '../../types/product/productInput';
+import { getImageUrl } from '../../utils';
 
 const colorMap: Record<string, string> = {
   BLACK: '#111111',
@@ -25,6 +27,7 @@ const colorMap: Record<string, string> = {
 };
 
 const E_bike = () => {
+  const router = useRouter();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const [initialInput] = useState<ProductInquiry>({
@@ -41,52 +44,57 @@ const E_bike = () => {
     variables: { input: initialInput },
   });
 
-  if (loading) return <Box className="e-bike"><p>Loading...</p></Box>;
-  if (error) return <Box className="e-bike"><p>Error loading products</p></Box>;
+  if (loading) return <Box component="div" className="e-bike"><p>Loading...</p></Box>;
+  if (error) return <Box component="div" className="e-bike"><p>Error loading products</p></Box>;
 
   const products = data?.getProducts?.list || [];
 
   return (
-    <Box className="e-bike">
+    <Box component="div" className="e-bike">
       <Container maxWidth="lg">
 
         {/* Header */}
-        <Box className="e-bike-header">
+        <Box component="div" className="e-bike-header">
           <Typography variant="h3" component="h2" className="e-bike-title">
             E-BIKE COLLECTION
           </Typography>
-          <Link href="#" className="e-bike-see-all" underline="none">
-            See All <ArrowForwardIcon sx={{ fontSize: 18, marginLeft: 1 }} />
-          </Link>
+          <Button
+            className="e-bike-see-all"
+            onClick={() => router.push('/products')}
+            endIcon={<ArrowForwardIcon sx={{ fontSize: 18 }} />}
+          >
+            See All
+          </Button>
         </Box>
 
         {/* Grid */}
-        <Box className="e-bike-grid">
+        <Box component="div" className="e-bike-grid">
           {products.map((product: any) => (
             <Box
+              component="div"
               key={product._id}
               className={`e-bike-card ${hoveredId === product._id ? 'hovered' : ''}`}
               onMouseEnter={() => setHoveredId(product._id)}
               onMouseLeave={() => setHoveredId(null)}
+              onClick={() => router.push(`/products/${product._id}`)}
+              sx={{ cursor: 'pointer' }}
             >
               {/* Image Box */}
-              <Box className="e-bike-image-box">
+              <Box component="div" className="e-bike-image-box">
                 <img
                   className="e-bike-image"
                   src={
-                    product.productImages?.[0]
-                      ? `${process.env.NEXT_PUBLIC_API_URL}/${product.productImages[0]}`
-                      : '/img/4253517958_2224302_3.png'
+                    getImageUrl(product.productImages?.[0], '/img/4253517958_2224302_3.png')
                   }
                   alt={product.productName}
                 />
               </Box>
 
               {/* Info */}
-              <Box className="e-bike-info">
+              <Box component="div" className="e-bike-info">
 
                 {/* Name & Add to Cart */}
-                <Box className="e-bike-name-row">
+                <Box component="div" className="e-bike-name-row">
                   <Typography className="e-bike-name">
                     {product.productName}
                   </Typography>
@@ -104,16 +112,18 @@ const E_bike = () => {
                 </Typography>
 
                 {/* Color Dots */}
-                <Box className="e-bike-colors">
+                <Box component="div" className="e-bike-colors">
                   <Box
+                    component="div"
                     className="e-bike-color-dot"
                     sx={{ background: colorMap[product.productColor] || '#ccc' }}
                   />
                   <Button
                     className="e-bike-add-btn"
                     startIcon={<AddShoppingCartIcon sx={{ fontSize: 14 }} />}
+                    onClick={(e: React.MouseEvent) => { e.stopPropagation(); router.push(`/products/${product._id}`); }}
                   >
-                    Add to Cart
+                    View Details
                   </Button>
                 </Box>
 

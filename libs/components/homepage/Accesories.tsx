@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Box, Typography, Button, Container } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -8,8 +9,10 @@ import { GET_PRODUCTS } from '../../../apollo/user/query';
 import { Direction } from '../../enums/common.enum';
 import { ProductType } from '../../enums/product/product';
 import { ProductInquiry } from '../../types/product/productInput';
+import { getImageUrl } from '../../utils';
 
 const Accessories = () => {
+  const router = useRouter();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const [initialInput] = useState<ProductInquiry>({
@@ -50,8 +53,10 @@ const Accessories = () => {
     });
   };
 
+  // @ts-ignore – MUI Box union type complexity
   if (loading) return (
-    <Box className="accessories-section">
+    // @ts-ignore – MUI Box union type complexity
+    <Box component="div" className="accessories-section">
       <Container maxWidth="lg">
         <Typography>Loading...</Typography>
       </Container>
@@ -59,7 +64,7 @@ const Accessories = () => {
   );
 
   if (error) return (
-    <Box className="accessories-section">
+    <Box component="div" className="accessories-section">
       <Container maxWidth="lg">
         <Typography>Error loading accessories</Typography>
       </Container>
@@ -67,11 +72,11 @@ const Accessories = () => {
   );
 
   return (
-    <Box className="accessories-section">
+    <Box component="div" className="accessories-section">
       <Container maxWidth="lg">
 
         {/* Header */}
-        <Box className="accessories-header">
+        <Box component="div" className="accessories-header">
           <Typography variant="h4" component="h2" className="accessories-title">
             ACCESSORIES
           </Typography>
@@ -79,13 +84,14 @@ const Accessories = () => {
             variant="outlined"
             className="accessories-see-all-button"
             endIcon={<ArrowForwardIcon />}
+            onClick={() => router.push('/accessories')}
           >
             See All
           </Button>
         </Box>
 
         {/* Grid */}
-        <Box className="accessories-grid">
+        <Box component="div" className="accessories-grid">
           {accessories.length === 0 ? (
             <Typography className="accessories-empty">
               No accessories found.
@@ -93,29 +99,30 @@ const Accessories = () => {
           ) : (
             accessories.map((accessory: any) => (
               <Box
+                component="div"
                 key={accessory._id}
                 className={`accessory-card ${hoveredId === accessory._id ? 'hovered' : ''}`}
                 onMouseEnter={() => setHoveredId(accessory._id)}
                 onMouseLeave={() => setHoveredId(null)}
+                onClick={() => router.push(`/accessories/${accessory._id}`)}
+                sx={{ cursor: 'pointer' }}
               >
                 {/* Image Box */}
-                <Box className="accessory-image-box">
+                <Box component="div" className="accessory-image-box">
                   <img
                     className="accessory-image"
                     src={
-                      accessory.productImages?.[0]
-                        ? `${process.env.NEXT_PUBLIC_API_URL}/${accessory.productImages[0]}`
-                        : '/img/R1-01.webp'
+                      getImageUrl(accessory.productImages?.[0], '/img/R1-01.webp')
                     }
                     alt={accessory.productName}
                   />
                 </Box>
 
                 {/* Info */}
-                <Box className="accessory-info">
+                <Box component="div" className="accessory-info">
 
                   {/* Name & Add to Cart */}
-                  <Box className="accessory-name-row">
+                  <Box component="div" className="accessory-name-row">
                     <Typography className="accessory-name">
                       {accessory.productName}
                     </Typography>
@@ -136,13 +143,13 @@ const Accessories = () => {
                     ${accessory.productPrice.toLocaleString()}
                   </Typography>
 
-				   <Button
-                      className="accessory-add-btn"
-                      startIcon={<AddShoppingCartIcon sx={{ fontSize: 14 }} />}
-                      onClick={() => handleBuyNow(accessory)}
-                    >
-                      Add to Cart
-                    </Button>
+                  <Button
+                    className="accessory-add-btn"
+                    startIcon={<AddShoppingCartIcon sx={{ fontSize: 14 }} />}
+                    onClick={(e: React.MouseEvent) => { e.stopPropagation(); router.push(`/accessories/${accessory._id}`); }}
+                  >
+                    View Details
+                  </Button>
 
                 </Box>
               </Box>

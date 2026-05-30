@@ -1,0 +1,874 @@
+// ─── CREATE EVENT PAGE — Premium VeloPrime Design System ────────────────────
+//
+//  Namespace: .ce-  (create-event)
+//  Design:    cinematic dark header · clean white sections · glass preview
+//  Layout:    two-column (form 65% | sidebar 35%) → stacked on mobile
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Tokens ──────────────────────────────────────────────────────────────────
+
+$ce-red:      #e63946;
+$ce-dark:     #0a0a0a;
+$ce-darker:   #060608;
+$ce-bg:       #f2f3f7;
+$ce-white:    #fff;
+$ce-border:   #e8e9ed;
+$ce-muted:    #9ca3af;
+$ce-green:    #22c55e;
+$ce-shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+$ce-shadow-md: 0 4px 20px rgba(0, 0, 0, 0.09);
+$ce-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.14);
+$ce-radius:   18px;
+$ce-radius-sm: 10px;
+$ce-transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ── Page shell ──────────────────────────────────────────────────────────────
+
+.ce-page {
+  background: $ce-bg;
+  min-height: 100vh;
+
+  // ── Top header ──────────────────────────────────────────────────────
+
+  &__header {
+    background: linear-gradient(140deg, $ce-darker 0%, #111827 55%, #1e1b4b 100%);
+    padding: 44px 0 36px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  &__header-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+
+    @media (min-width: 900px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &__header-left { flex: 1; }
+
+  &__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+
+    span { cursor: pointer; transition: color $ce-transition; &:hover { color: rgba(255,255,255,0.75); } }
+  }
+
+  &__breadcrumb-sep { opacity: 0.3; }
+
+  &__title {
+    font-size: clamp(24px, 3vw, 36px) !important;
+    font-weight: 900 !important;
+    color: $ce-white !important;
+    letter-spacing: -0.4px !important;
+    margin-bottom: 6px !important;
+    line-height: 1.15 !important;
+  }
+
+  &__sub {
+    font-size: 14px !important;
+    color: rgba(255, 255, 255, 0.45) !important;
+    max-width: 380px;
+  }
+
+  // ── Body ────────────────────────────────────────────────────────────
+
+  &__body {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 36px 28px 100px;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+
+    @media (max-width: 900px) {
+      flex-direction: column;
+      padding: 24px 16px 80px;
+    }
+  }
+
+  &__form-col {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 90px;
+
+    @media (max-width: 900px) {
+      width: 100%;
+      position: static;
+      order: -1; // preview above form on mobile
+    }
+  }
+}
+
+// ── Step indicator ───────────────────────────────────────────────────────────
+
+.ce-page__steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 40px;
+  padding: 6px 10px;
+
+  @media (max-width: 900px) {
+    border-radius: 14px;
+    padding: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+.ce-step {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 14px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background $ce-transition;
+
+  &:hover { background: rgba(255, 255, 255, 0.08); }
+
+  &--active {
+    background: rgba(255, 255, 255, 0.14) !important;
+
+    .ce-step__circle { background: $ce-red; border-color: $ce-red; }
+    .ce-step__label { color: $ce-white; font-weight: 700; }
+  }
+
+  &--done {
+    .ce-step__circle {
+      background: rgba($ce-green, 0.2);
+      border-color: $ce-green;
+      color: $ce-green;
+    }
+    .ce-step__label { color: rgba(255,255,255,0.55); }
+  }
+
+  &__circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    flex-shrink: 0;
+    transition: all $ce-transition;
+  }
+
+  &__num {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+  }
+
+  &__label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+    transition: color $ce-transition;
+    white-space: nowrap;
+  }
+
+  &__line {
+    width: 20px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+    flex-shrink: 0;
+    transition: background $ce-transition;
+
+    &--done { background: rgba($ce-green, 0.5); }
+
+    @media (max-width: 900px) { display: none; }
+  }
+}
+
+// ── Step panel ───────────────────────────────────────────────────────────────
+
+.ce-step-panel {
+  background: $ce-white;
+  border-radius: $ce-radius;
+  padding: 32px;
+  box-shadow: $ce-shadow-md;
+  border: 1px solid $ce-border;
+
+  @media (max-width: 600px) { padding: 20px 16px; }
+}
+
+// ── Section titles ───────────────────────────────────────────────────────────
+
+.ce-section {
+  &__title.MuiTypography-root, &__title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 16px;
+    font-weight: 700;
+    color: $ce-dark;
+    margin-bottom: 6px;
+  }
+
+  &__hint.MuiTypography-root, &__hint {
+    font-size: 13px;
+    color: $ce-muted;
+    margin-bottom: 22px;
+    line-height: 1.55;
+  }
+
+  &__icon {
+    font-size: 20px !important;
+    color: $ce-red;
+  }
+
+  &__group { display: flex; flex-direction: column; }
+}
+
+// ── Fields ───────────────────────────────────────────────────────────────────
+
+.ce-field.MuiFormControl-root,
+.ce-field {
+  margin-bottom: 18px !important;
+
+  .MuiOutlinedInput-root {
+    border-radius: $ce-radius-sm;
+    transition: box-shadow $ce-transition;
+
+    &.Mui-focused { box-shadow: 0 0 0 3px rgba($ce-red, 0.12); }
+  }
+}
+
+.ce-field-error.MuiTypography-root {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: -12px;
+  margin-bottom: 12px;
+}
+
+// ── Upload zone ──────────────────────────────────────────────────────────────
+
+.ce-upload-zone {
+  height: 200px;
+  border: 2px dashed #d1d5db;
+  border-radius: $ce-radius;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all $ce-transition;
+  margin-bottom: 6px;
+  background: #fafbff;
+
+  &:hover, &--drag {
+    border-color: $ce-red;
+    background: rgba($ce-red, 0.03);
+
+    .ce-upload-zone__icon { color: $ce-red; transform: translateY(-3px); }
+    .ce-upload-zone__main { color: $ce-red; }
+  }
+
+  &--error {
+    border-color: #ef4444;
+    background: #fff5f5;
+  }
+
+  &__icon {
+    font-size: 44px !important;
+    color: #c0c8d8;
+    transition: all $ce-transition;
+  }
+
+  &__main {
+    font-size: 15px;
+    font-weight: 600;
+    color: #4b5563;
+    transition: color $ce-transition;
+  }
+
+  &__sub {
+    font-size: 12px;
+    color: $ce-muted;
+  }
+}
+
+// ── Banner preview ───────────────────────────────────────────────────────────
+
+.ce-banner-preview {
+  position: relative;
+  height: 240px;
+  border-radius: $ce-radius;
+  overflow: hidden;
+  margin-bottom: 6px;
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+  }
+
+  &__uploading {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: $ce-white;
+    backdrop-filter: blur(4px);
+  }
+
+  &__pct {
+    font-size: 18px;
+    font-weight: 700;
+    color: $ce-white;
+  }
+
+  &__bar {
+    width: 160px;
+    border-radius: 4px;
+    height: 4px;
+
+    &.MuiLinearProgress-root {
+      background: rgba(255,255,255,0.2);
+      .MuiLinearProgress-bar { background: $ce-green; }
+    }
+  }
+
+  &__ready {
+    position: absolute;
+    bottom: 14px;
+    left: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: $ce-white;
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(0,0,0,0.5);
+    padding: 5px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  &__actions {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.ce-banner-btn.MuiButton-root {
+  font-size: 12px;
+  text-transform: none;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.92);
+  color: $ce-dark;
+  padding: 5px 14px;
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background $ce-transition;
+
+  &:hover { background: $ce-white; box-shadow: $ce-shadow-sm; }
+
+  &--remove {
+    background: rgba(239, 68, 68, 0.9);
+    color: $ce-white;
+    &:hover { background: #ef4444; }
+  }
+}
+
+// ── Route row ────────────────────────────────────────────────────────────────
+
+.ce-route-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 4px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    .ce-route-connector { display: none; }
+  }
+}
+
+.ce-route-field {
+  flex: 1;
+  position: relative;
+
+  &__pin {
+    position: absolute;
+    top: 16px;
+    left: 12px;
+    font-size: 18px !important;
+    z-index: 1;
+
+    &--from { color: $ce-green; }
+    &--to   { color: $ce-red; }
+
+    // Push text away from pin icon
+    & + .MuiFormControl-root .MuiInputBase-root { padding-left: 36px; }
+  }
+}
+
+.ce-route-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 18px;
+  gap: 2px;
+
+  &__line {
+    width: 1px;
+    height: 18px;
+    background: linear-gradient(to bottom, $ce-green, $ce-red);
+  }
+
+  &__arrow {
+    font-size: 16px !important;
+    color: $ce-muted;
+  }
+}
+
+.ce-route-stats { margin-bottom: 8px; }
+
+.ce-schedule-row {
+  display: flex;
+  gap: 16px;
+
+  @media (max-width: 600px) { flex-direction: column; }
+}
+
+// ── Review grid ──────────────────────────────────────────────────────────────
+
+.ce-review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 28px;
+
+  @media (max-width: 560px) { grid-template-columns: 1fr; }
+}
+
+.ce-review-card {
+  border: 1px solid $ce-border;
+  border-radius: $ce-radius-sm;
+  padding: 16px;
+  cursor: pointer;
+  transition: all $ce-transition;
+  position: relative;
+
+  &:hover {
+    border-color: $ce-red;
+    box-shadow: 0 0 0 3px rgba($ce-red, 0.08);
+    transform: translateY(-1px);
+  }
+
+  &__label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: $ce-muted;
+    margin-bottom: 10px;
+  }
+
+  &__thumb-wrap {
+    width: 100%;
+    height: 70px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: $ce-bg;
+    margin-bottom: 10px;
+  }
+
+  &__thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__value {
+    font-size: 14px;
+    font-weight: 700;
+    color: $ce-dark;
+    margin-bottom: 4px;
+  }
+
+  &__desc {
+    font-size: 12px;
+    color: $ce-muted;
+    line-height: 1.4;
+  }
+
+  &__stat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: #4b5563;
+    margin-bottom: 7px;
+  }
+
+  &__edit {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $ce-red;
+    background: rgba($ce-red, 0.08);
+    padding: 2px 9px;
+    border-radius: 20px;
+  }
+}
+
+// ── Status pills ─────────────────────────────────────────────────────────────
+
+.ce-status-section { margin-bottom: 28px; }
+
+.ce-status-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ce-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 30px;
+  border: 1.5px solid $ce-border;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  transition: all $ce-transition;
+
+  &:hover { border-color: var(--pill-color); }
+
+  &--active {
+    border-color: var(--pill-color) !important;
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--pill-color);
+    font-weight: 700;
+
+    .ce-status-pill__dot { box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.08); }
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: box-shadow $ce-transition;
+  }
+}
+
+// ── Checklist ────────────────────────────────────────────────────────────────
+
+.ce-checklist {
+  background: #f8f9fc;
+  border-radius: $ce-radius-sm;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 28px;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    color: #9ca3af;
+    transition: color $ce-transition;
+
+    svg { color: #d1d5db; transition: color $ce-transition; flex-shrink: 0; }
+
+    &.done {
+      color: #374151;
+      svg { color: $ce-green; }
+    }
+  }
+}
+
+// ── Step nav ─────────────────────────────────────────────────────────────────
+
+.ce-step-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 24px;
+  border-top: 1px solid $ce-border;
+}
+
+// ── CTA Buttons ──────────────────────────────────────────────────────────────
+
+.ce-btn.MuiButton-root {
+  text-transform: none;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 10px;
+  padding: 11px 22px;
+  transition: all $ce-transition;
+
+  &--back {
+    color: #6b7280;
+    border: 1.5px solid $ce-border;
+    background: $ce-white;
+
+    &:hover {
+      border-color: $ce-dark;
+      color: $ce-dark;
+      box-shadow: $ce-shadow-sm;
+    }
+  }
+
+  &--next {
+    background: $ce-dark;
+    color: $ce-white;
+
+    &:hover {
+      background: #1a1a1a;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      transform: translateY(-1px);
+    }
+  }
+
+  &--publish {
+    background: linear-gradient(135deg, $ce-red 0%, #c1121f 100%);
+    color: $ce-white;
+    padding: 12px 28px;
+
+    &:hover {
+      box-shadow: 0 4px 20px rgba($ce-red, 0.4);
+      transform: translateY(-1px);
+    }
+
+    &.Mui-disabled {
+      background: #e5e7eb;
+      color: #9ca3af;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+// ── Live Preview Sidebar ──────────────────────────────────────────────────────
+
+.ce-preview {
+  background: $ce-white;
+  border-radius: $ce-radius;
+  padding: 20px;
+  box-shadow: $ce-shadow-md;
+  border: 1px solid $ce-border;
+
+  &__label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: $ce-muted;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  &__card {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid $ce-border;
+    background: #fff;
+    box-shadow: $ce-shadow-sm;
+  }
+
+  &__img-wrap {
+    position: relative;
+    height: 156px;
+    background: #f3f4f6;
+    overflow: hidden;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+
+    &:hover { transform: scale(1.03); }
+  }
+
+  &__img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fc;
+  }
+
+  &__img-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  &__status {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: $ce-white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  &__distance {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: $ce-red;
+    color: $ce-white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  &__body {
+    padding: 14px;
+  }
+
+  &__title.MuiTypography-root {
+    font-size: 15px;
+    font-weight: 700;
+    color: $ce-dark;
+    margin-bottom: 5px;
+  }
+
+  &__route {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: $ce-muted;
+    margin-bottom: 10px;
+
+    .MuiTypography-root { font-size: 11px; color: $ce-muted; }
+    svg { color: $ce-red; flex-shrink: 0; }
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 12px;
+  }
+
+  &__chip.MuiChip-root {
+    font-size: 10px;
+    height: 22px;
+    background: #f3f4f6;
+    color: #374151;
+
+    .MuiChip-icon { font-size: 12px !important; color: $ce-muted; }
+  }
+
+  &__organizer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid $ce-border;
+  }
+
+  &__organizer-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  // Progress bar
+  &__progress {
+    margin-top: 16px;
+  }
+
+  &__progress-label {
+    font-size: 11px;
+    color: $ce-muted;
+    margin-bottom: 6px;
+  }
+
+  &__progress-bar.MuiLinearProgress-root {
+    height: 5px;
+    border-radius: 10px;
+    background: #e5e7eb;
+
+    .MuiLinearProgress-bar {
+      background: linear-gradient(90deg, $ce-red 0%, #ff6b81 100%);
+      border-radius: 10px;
+    }
+  }
+}
+
+// ── Mobile responsiveness ─────────────────────────────────────────────────────
+
+@media (max-width: 600px) {
+  .ce-step {
+    &__label { display: none; }
+    padding: 6px 10px;
+  }
+
+  .ce-page__steps {
+    padding: 6px;
+    gap: 4px;
+  }
+
+  .ce-route-field__pin { display: none; }
+}

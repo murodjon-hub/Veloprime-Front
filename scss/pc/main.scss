@@ -1,6 +1,10 @@
 /** IMPORTS **/
 @import '/scss/variables.scss';
 @import '/scss/pc/general.scss';
+@import '/scss/pc/layout/navbar.scss';
+@import '/scss/pc/layout/header2.scss';
+@import '/scss/pc/layout/footer.scss';
+@import '/scss/pc/layout/notifications.scss';
 
 @import '/scss/pc/homepage/homepage';
 
@@ -11,6 +15,7 @@
 @import '/scss/pc/products/productCard.scss';
 @import '/scss/pc/blogs/blogs.scss';
 @import '/scss/pc/blogs/write.scss';
+@import '/scss/pc/blogs/detail.scss';
 
  @import '/scss/pc/accessories/accessories.scss';
 
@@ -24,9 +29,14 @@
 @import '/scss/pc/mypage/mySaved.scss';
 @import '/scss/pc/mypage/myProfile.scss';
 @import '/scss/pc/mypage/myArticles.scss';
+@import '/scss/pc/mypage/myEvents.scss';
 @import '/scss/pc/mypage/writeArticle.scss';
 
+@import '/scss/pc/events/events.scss';
+@import '/scss/pc/events/add-event.scss';
+@import '/scss/pc/events/create-event.scss';
 @import '/scss/pc/cs/cs.scss';
+@import '/scss/pc/ai/ai.scss';
 @import '/scss/pc/about/about.scss';
 @import '/scss/pc/account/join.scss';
 @import '/scss/pc/admin/admin.scss';
@@ -366,9 +376,14 @@ body::-webkit-scrollbar {
 	}
 
 	.bike-brand {
-		font-size: 28px;
-		font-weight: 700;
-		letter-spacing: 2px;
+		font-size: 22px;
+		font-weight: 800;
+		letter-spacing: 3px;
+		cursor: pointer;
+		font-style: italic;
+		transition: opacity 0.2s;
+
+		&:hover { opacity: 0.85; }
 	}
 
 	.bike-menu {
@@ -380,12 +395,19 @@ body::-webkit-scrollbar {
 			text-decoration: none;
 			font-weight: 500;
 			transition: 0.3s;
+			font-size: 0.82rem;
+			letter-spacing: 0.08em;
 
-			&:hover {
+			&:hover { color: #facc15; }
+
+			&.active {
 				color: #facc15;
+				border-bottom: 2px solid #facc15;
+				padding-bottom: 2px;
 			}
 		}
 	}
+
 
 	.bike-actions {
 		display: flex;
@@ -397,9 +419,16 @@ body::-webkit-scrollbar {
 			cursor: pointer;
 		}
 
-		i {
-			font-size: 18px;
+		.bike-action-icon {
+			font-size: 22px;
+			color: white;
 			cursor: pointer;
+			transition: color 0.2s, transform 0.2s;
+
+			&:hover {
+				color: #facc15;
+				transform: scale(1.1);
+			}
 		}
 	}
 

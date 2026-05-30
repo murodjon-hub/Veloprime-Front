@@ -1,173 +1,282 @@
-import React from 'react';
-import { Box, Typography, Button, Container, Rating } from '@mui/material';
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import { Box, Typography, Button, Container, Rating, CircularProgress } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import StraightenIcon from '@mui/icons-material/Straighten';
-import PersonIcon from '@mui/icons-material/Person';
+import GroupIcon from '@mui/icons-material/Group';
+import { useQuery, useMutation } from '@apollo/client';
+import { useReactiveVar } from '@apollo/client';
+import { userVar } from '../../../apollo/store';
+import { GET_EVENTS } from '../../../apollo/user/query';
+import { JOIN_EVENT, LEAVE_EVENT } from '../../../apollo/user/mutation';
+import { getImageUrl } from '../../utils';
 import Swal from 'sweetalert2';
 
-interface Event {
-  id: string;
-  title: string;
-  from: string;
-  to: string;
+interface EventItem {
+  _id: string;
+  eventTitle: string;
+  eventDesc: string;
+  eventStatus: string;
+  eventImage: string;
+  fromLocation: string;
+  toLocation: string;
   distance: string;
-  date: string;
-  createdBy: string;
-  image: string;
-  description: string;
+  eventDate: string;
+  maxParticipants: number;
+  currentParticipants: number;
   rating: number;
 }
 
-const eventsData: Event[] = [
+const FALLBACK_EVENTS: EventItem[] = [
   {
-    id: '1',
-    title: 'Mountain Trail Challenge',
-    from: 'Seoul',
-    to: 'Busan',
+    _id: '1',
+    eventTitle: 'Mountain Trail Challenge',
+    fromLocation: 'Seoul',
+    toLocation: 'Busan',
     distance: '420 km',
-    date: 'April 20, 2026',
-    createdBy: 'RiderKing',
-    image: '/img/patrick-hendry-OZh_OBP_fao-unsplash.jpg',
-    description: 'Epic cycling adventure through mountain terrain and scenic routes. Experience breathtaking views and challenging trails for ultimate relaxation.',
+    eventDate: 'April 20, 2026',
+    eventStatus: 'UPCOMING',
+    eventImage: '/img/patrick-hendry-OZh_OBP_fao-unsplash.jpg',
+    eventDesc: 'Epic cycling adventure through mountain terrain and scenic routes. Experience breathtaking views and challenging trails.',
     rating: 4.5,
+    maxParticipants: 50,
+    currentParticipants: 12,
   },
   {
-    id: '2',
-    title: 'City Sprint Classic',
-    from: 'Incheon',
-    to: 'Suwon',
+    _id: '2',
+    eventTitle: 'City Sprint Classic',
+    fromLocation: 'Incheon',
+    toLocation: 'Suwon',
     distance: '85 km',
-    date: 'May 5, 2026',
-    createdBy: 'SpeedQueen',
-    image: '/img/dmitrii-vaccinium-9qsK2QHidmg-unsplash (1).jpg',
-    description: 'Fast-paced urban cycling event connecting major cities. Perfect for speed enthusiasts and competitive riders seeking an adrenaline rush.',
+    eventDate: 'May 5, 2026',
+    eventStatus: 'UPCOMING',
+    eventImage: '/img/dmitrii-vaccinium-9qsK2QHidmg-unsplash (1).jpg',
+    eventDesc: 'Fast-paced urban cycling event connecting major cities. Perfect for speed enthusiasts seeking an adrenaline rush.',
     rating: 4.8,
+    maxParticipants: 100,
+    currentParticipants: 34,
   },
   {
-    id: '3',
-    title: 'Coastal Road Ride',
-    from: 'Gangneung',
-    to: 'Sokcho',
+    _id: '3',
+    eventTitle: 'Coastal Road Ride',
+    fromLocation: 'Gangneung',
+    toLocation: 'Sokcho',
     distance: '60 km',
-    date: 'May 18, 2026',
-    createdBy: 'TrailBlazer',
-    image: '/img/andrei-castanha-aQoB4RR2Xco-unsplash.jpg',
-    description: 'Scenic coastal cycling experience with golden beaches and ocean views. Ideal for leisure riders and water sports enthusiasts alike.',
+    eventDate: 'May 18, 2026',
+    eventStatus: 'UPCOMING',
+    eventImage: '/img/andrei-castanha-aQoB4RR2Xco-unsplash.jpg',
+    eventDesc: 'Scenic coastal cycling with golden beaches and ocean views. Ideal for leisure riders and nature lovers.',
     rating: 4.2,
+    maxParticipants: 80,
+    currentParticipants: 21,
   },
 ];
 
 const Events = () => {
-  const handleJoinEvent = (event: Event) => {
-    Swal.fire({
-      title: `Join ${event.title}?`,
+  const router = useRouter();
+  const user = useReactiveVar(userVar);
+  const [localCounts, setLocalCounts] = useState<Record<string, number>>({});
+  const [localParticipants, setLocalParticipants] = useState<Record<string, string[]>>({});
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  const { data, loading } = useQuery(GET_EVENTS, {
+    variables: { input: { page: 1, limit: 3, eventStatus: 'UPCOMING' } },
+    fetchPolicy: 'cache-and-network',
+    onError: () => {},
+  });
+
+  const [joinEvent] = useMutation(JOIN_EVENT);
+  const [leaveEvent] = useMutation(LEAVE_EVENT);
+
+  const events: EventItem[] = data?.getEvents?.list?.length
+    ? data.getEvents.list
+    : FALLBACK_EVENTS;
+
+  const formatDate = (dateStr: string) => {
+    try {
+      return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const getParticipants = (event: EventItem): string[] =>
+    localParticipants[event._id] ?? (event as any).eventParticipants ?? [];
+
+  const isJoined = (event: EventItem): boolean =>
+    !!user?._id && getParticipants(event).includes(user._id as string);
+
+  const handleJoinEvent = async (event: EventItem) => {
+    if (!user?._id) {
+      router.push('/account/join');
+      return;
+    }
+
+    if (isJoined(event)) {
+      const result = await Swal.fire({
+        title: 'Leave this event?',
+        text: `You are currently registered for ${event.eventTitle}.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, leave',
+        cancelButtonColor: '#555',
+        confirmButtonColor: '#d33',
+        background: '#1a1a1a',
+        color: '#ffffff',
+      });
+      if (!result.isConfirmed) return;
+
+      setLoadingId(event._id);
+      try {
+        const { data: mutData } = await leaveEvent({ variables: { input: event._id } });
+        const updated = mutData?.leaveEvent;
+        if (updated) {
+          setLocalCounts((prev) => ({ ...prev, [event._id]: updated.currentParticipants }));
+          setLocalParticipants((prev) => ({ ...prev, [event._id]: updated.eventParticipants ?? [] }));
+        }
+        Swal.fire({ title: 'Left', text: `You left ${event.eventTitle}.`, icon: 'info', background: '#1a1a1a', color: '#fff', showConfirmButton: false, timer: 1800 });
+      } catch (err: any) {
+        Swal.fire({ title: 'Error', text: err?.message ?? 'Could not leave event.', icon: 'error', background: '#1a1a1a', color: '#fff', timer: 2000, showConfirmButton: false });
+      } finally {
+        setLoadingId(null);
+      }
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: `Join ${event.eventTitle}?`,
       html: `
         <div style="text-align: left; font-size: 14px; color: #ffffff;">
           <p><strong>Distance:</strong> ${event.distance}</p>
-          <p><strong>Route:</strong> ${event.from} → ${event.to}</p>
-          <p><strong>Date:</strong> ${event.date}</p>
-          <p><strong>Organizer:</strong> ${event.createdBy}</p>
+          <p><strong>Route:</strong> ${event.fromLocation} → ${event.toLocation}</p>
+          <p><strong>Date:</strong> ${typeof event.eventDate === 'string' && event.eventDate.includes('T') ? formatDate(event.eventDate) : event.eventDate}</p>
+          <p><strong>Spots left:</strong> ${event.maxParticipants - (localCounts[event._id] ?? event.currentParticipants)}</p>
         </div>
       `,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#ffffff',
-      cancelButtonColor: '#d33',
       confirmButtonText: 'Yes, join now!',
+      cancelButtonColor: '#d33',
       background: '#1a1a1a',
       color: '#ffffff',
-      customClass: {
-        confirmButton: 'swal-confirm-btn',
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Joined!',
-          text: `You have successfully joined ${event.title}!`,
-          icon: 'success',
-          background: '#1a1a1a',
-          color: '#ffffff',
-          showConfirmButton: false,
-          timer: 2000
-        });
-      }
     });
+
+    if (!result.isConfirmed) return;
+
+    setLoadingId(event._id);
+    try {
+      const { data: mutData } = await joinEvent({ variables: { input: event._id } });
+      const updated = mutData?.joinEvent;
+      if (updated) {
+        setLocalCounts((prev) => ({ ...prev, [event._id]: updated.currentParticipants }));
+        setLocalParticipants((prev) => ({ ...prev, [event._id]: updated.eventParticipants ?? [] }));
+      }
+      Swal.fire({ title: 'Joined!', text: `You have joined ${event.eventTitle}!`, icon: 'success', background: '#1a1a1a', color: '#ffffff', showConfirmButton: false, timer: 2000 });
+    } catch (err: any) {
+      const msg = err?.message ?? '';
+      if (msg.includes('already joined')) {
+        Swal.fire({ title: 'Already joined', text: 'You are already registered for this event.', icon: 'info', background: '#1a1a1a', color: '#fff', timer: 2000, showConfirmButton: false });
+      } else {
+        Swal.fire({ title: 'Error', text: msg || 'Could not join event.', icon: 'error', background: '#1a1a1a', color: '#fff', timer: 2000, showConfirmButton: false });
+      }
+    } finally {
+      setLoadingId(null);
+    }
   };
 
   return (
-    <Box className="events-section">
+    // @ts-ignore – MUI Box union type complexity
+    <Box component="div" className="events-section">
       <Container maxWidth="lg">
-        <Box className="events-header">
+        <Box component="div" className="events-header">
           <Typography variant="h4" component="h2" className="events-title">
             UPCOMING EVENTS
           </Typography>
-          <Button variant="outlined" className="events-see-all-button">
+          <Button variant="outlined" className="events-see-all-button" onClick={() => router.push('/events')}>
             See All →
           </Button>
         </Box>
 
-        <Box className="events-grid">
-          {eventsData.map((event) => (
-            <Box key={event.id} className="event-card">
-              <Box className="event-image-container">
-                <img src={event.image} alt={event.title} className="event-bg-image" />
-                
-                {/* Distance Badge - Top Right */}
-                <Box className="event-distance-badge-top">
-                  <StraightenIcon sx={{ fontSize: 14 }} />
-                  <Typography className="badge-text">{event.distance}</Typography>
-                </Box>
+        {loading && (
+          // @ts-ignore
+          <Box component="div" sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+            <CircularProgress sx={{ color: '#1a1a1a' }} />
+          </Box>
+        )}
 
-                <Box className="event-overlay">
-                  <Box className="event-content">
-                    <Typography className="event-card-title">
-                      {event.title}
-                    </Typography>
-                    <Typography className="event-card-description">
-                      {event.description}
-                    </Typography>
+        {!loading && (
+          <Box component="div" className="events-grid">
+            {events.map((event) => {
+              const participants = localCounts[event._id] ?? event.currentParticipants;
+              const displayDate = typeof event.eventDate === 'string' && event.eventDate.includes('T')
+                ? formatDate(event.eventDate)
+                : event.eventDate;
 
-                    {/* Route */}
-                    <Box className="event-route">
-                      <LocationOnIcon sx={{ fontSize: 16 }} />
-                      <Typography className="event-route-text">
-                        {event.from} → {event.to}
-                      </Typography>
+              return (
+                <Box
+                  component="div"
+                  key={event._id}
+                  className="event-card"
+                  onClick={() => router.push('/events')}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  <Box component="div" className="event-image-container">
+                    <img
+                      src={getImageUrl(event.eventImage)}
+                      alt={event.eventTitle}
+                      className="event-bg-image"
+                    />
+
+                    <Box component="div" className="event-distance-badge-top">
+                      <StraightenIcon sx={{ fontSize: 14 }} />
+                      <Typography className="badge-text">{event.distance}</Typography>
                     </Box>
 
-                    {/* Meta Information */}
-                    <Box className="event-meta">
-                      <Box className="event-meta-item">
-                        <CalendarTodayIcon sx={{ fontSize: 14 }} />
-                        <Typography className="event-meta-text">{event.date}</Typography>
-                      </Box>
-                      <Box className="event-meta-item">
-                        <PersonIcon sx={{ fontSize: 14 }} />
-                        <Typography className="event-meta-text">{event.createdBy}</Typography>
+                    <Box component="div" className="event-overlay">
+                      <Box component="div" className="event-content">
+                        <Typography className="event-card-title">{event.eventTitle}</Typography>
+                        <Typography className="event-card-description">{event.eventDesc}</Typography>
+
+                        <Box component="div" className="event-route">
+                          <LocationOnIcon sx={{ fontSize: 16 }} />
+                          <Typography className="event-route-text">{event.fromLocation} → {event.toLocation}</Typography>
+                        </Box>
+
+                        <Box component="div" className="event-meta">
+                          <Box component="div" className="event-meta-item">
+                            <CalendarTodayIcon sx={{ fontSize: 14 }} />
+                            <Typography className="event-meta-text">{displayDate}</Typography>
+                          </Box>
+                          <Box component="div" className="event-meta-item">
+                            <GroupIcon sx={{ fontSize: 14 }} />
+                            <Typography className="event-meta-text">{participants}/{event.maxParticipants} riders</Typography>
+                          </Box>
+                        </Box>
+
+                        <Box component="div" className="event-card-footer">
+                          <Box component="div" className="event-rating-box">
+                            <Typography className="rating-number">{event.rating}</Typography>
+                            <Rating value={event.rating} precision={0.5} readOnly size="small" className="rating-stars" />
+                          </Box>
+                        </Box>
+
+                        <Button
+                          fullWidth
+                          className={`event-join-button${isJoined(event) ? ' joined' : ''}`}
+                          disabled={loadingId === event._id}
+                          onClick={(e: React.MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); handleJoinEvent(event); }}
+                        >
+                          {loadingId === event._id ? '...' : isJoined(event) ? '✓ Joined — Leave' : 'Join Now'}
+                        </Button>
                       </Box>
                     </Box>
-
-                    <Box className="event-card-footer">
-                      <Box className="event-rating-box">
-                        <Typography className="rating-number">{event.rating}</Typography>
-                        <Rating value={event.rating} precision={0.5} readOnly size="small" className="rating-stars" />
-                      </Box>
-                    </Box>
-
-                    <Button 
-                      fullWidth 
-                      className="event-join-button"
-                      onClick={() => handleJoinEvent(event)}
-                    >
-                      Join Now
-                    </Button>
                   </Box>
                 </Box>
-              </Box>
-            </Box>
-          ))}
-        </Box>
+              );
+            })}
+          </Box>
+        )}
       </Container>
     </Box>
   );

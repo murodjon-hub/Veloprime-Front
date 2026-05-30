@@ -49,12 +49,14 @@ const AccessoriesPage: NextPage = () => {
   /** Mobile */
   if (device === "mobile") {
     return (
-      <Box className="acc-page acc-page--mobile">
-        <Box className="acc-page__topbar">
+      // @ts-ignore – MUI Box union type complexity
+      <Box component="div" className="acc-page acc-page--mobile">
+        <Box component="div" className="acc-page__topbar">
           <Typography className="acc-page__heading">Accessories</Typography>
-          <Box className="acc-page__sort-row">
+          <Box component="div" className="acc-page__sort-row">
             {SORT_OPTIONS.map((opt, i) => (
               <Box
+                component="div"
                 key={i}
                 className={`acc-page__sort-chip${currentSort === i ? " acc-page__sort-chip--active" : ""}`}
                 onClick={() => { setCurrentSort(i); resetPage(); }}
@@ -68,7 +70,7 @@ const AccessoriesPage: NextPage = () => {
         {loading && <CircularProgress className="acc-page__spinner" />}
         {error   && <Alert severity="error">{error.message}</Alert>}
 
-        <Box className="acc-page__grid">
+        <Box component="div" className="acc-page__grid">
           {products.map((p) => <AccessoryCard key={p._id} product={p} />)}
         </Box>
 
@@ -88,20 +90,21 @@ const AccessoriesPage: NextPage = () => {
 
   /** Desktop */
   return (
-    <Box id="accessories-page" className="acc-page">
+    <Box component="div" id="accessories-page" className="acc-page">
 
       {/* Banner */}
-      <Box className="acc-page__banner">
-        <Box className="acc-page__banner-inner">
+      <Box component="div" className="acc-page__banner">
+        <Box component="div" className="acc-page__banner-inner">
           <Typography className="acc-page__banner-title">Accessories</Typography>
         </Box>
       </Box>
 
       {/* Sort bar */}
-      <Box className="acc-page__sortbar">
-        <Box className="acc-page__sort-row">
+      <Box component="div" className="acc-page__sortbar">
+        <Box component="div" className="acc-page__sort-row">
           {SORT_OPTIONS.map((opt, i) => (
             <Box
+              component="div"
               key={i}
               className={`acc-page__sort-chip${currentSort === i ? " acc-page__sort-chip--active" : ""}`}
               onClick={() => { setCurrentSort(i); resetPage(); }}
@@ -113,7 +116,7 @@ const AccessoriesPage: NextPage = () => {
       </Box>
 
       {loading && (
-        <Box className="acc-page__loading">
+        <Box component="div" className="acc-page__loading">
           <CircularProgress />
         </Box>
       )}
@@ -125,7 +128,7 @@ const AccessoriesPage: NextPage = () => {
       )}
 
       {!loading && !error && products.length === 0 && (
-        <Box className="acc-page__empty">
+        <Box component="div" className="acc-page__empty">
           <Typography className="acc-page__empty-icon">🎒</Typography>
           <Typography className="acc-page__empty-title">No accessories found</Typography>
           <Typography className="acc-page__empty-sub">Check back soon</Typography>
@@ -133,13 +136,13 @@ const AccessoriesPage: NextPage = () => {
       )}
 
       {!loading && products.length > 0 && (
-        <Box className="acc-page__grid">
+        <Box component="div" className="acc-page__grid">
           {products.map((p) => <AccessoryCard key={p._id} product={p} />)}
         </Box>
       )}
 
       {!loading && pageCount > 1 && (
-        <Box className="acc-page__pagination-wrap">
+        <Box component="div" className="acc-page__pagination-wrap">
           <Pagination
             page={currentPage}
             count={pageCount}

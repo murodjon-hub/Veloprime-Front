@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Stack, Box, Container, Typography, IconButton, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { useQuery } from '@apollo/client';
 import { GET_PRODUCTS } from '../../../apollo/user/query';
 import { Direction } from '../../enums/common.enum';
-import { ProductType, ProductStatus } from '../../enums/product/product';
+import { ProductType } from '../../enums/product/product';
 import { ProductInquiry } from '../../types/product/productInput';
+import { getImageUrl } from '../../utils';
 
 const FeaturedProduct = () => {
+	const router = useRouter();
 	const [currentIndex, setCurrentIndex] = useState(0);
 
 	const [initialInput] = useState<ProductInquiry>({
@@ -58,23 +61,23 @@ const FeaturedProduct = () => {
 					Discover our featured bike crafted for those who ride beyond limits.
 				</Typography>
 
-				<Box className="featured-bike-carousel">
+				<Box component="div" className="featured-bike-carousel">
 					<IconButton className="carousel-arrow arrow-left" onClick={handlePrev}>
 						<ArrowBackIcon />
 					</IconButton>
 
-					<Box className="bike-image-container">
+					<Box component="div" className="bike-image-container">
 						<Typography component="span" className="background-number">
 							{currentProduct.productName}
 						</Typography>
 						<img
 							className="bike-image"
 							src={
-								currentProduct.productImages?.[0]
-									? `${process.env.NEXT_PUBLIC_API_URL}/${currentProduct.productImages[0]}`
-									: '../img/4253517958_2224302_3.png'
+								getImageUrl(currentProduct.productImages?.[0], '/img/4253517958_2224302_3.png')
 							}
 							alt={currentProduct.productName}
+							style={{ cursor: 'pointer' }}
+							onClick={() => router.push(`/products/${currentProduct._id}`)}
 						/>
 					</Box>
 
@@ -83,7 +86,7 @@ const FeaturedProduct = () => {
 					</IconButton>
 				</Box>
 
-				<Box className="featured-bike-info">
+				<Box component="div" className="featured-bike-info">
 					<Typography variant="h2" className="bike-title">
 						{currentProduct.productName}
 					</Typography>
@@ -91,15 +94,20 @@ const FeaturedProduct = () => {
 						{currentProduct.productDesc ||
 							'Smooth, stylish, and effortlessly powerful built for everyday adventures with comfort, control, and performance in every ride.'}
 					</Typography>
-					<Button variant="contained" className="buy-now-btn">
+					<Button
+						variant="contained"
+						className="buy-now-btn"
+						onClick={() => router.push(`/products/${currentProduct._id}`)}
+					>
 						Buy Now
 					</Button>
 				</Box>
 
 				{/* Dot indicators */}
-				<Box className="carousel-dots">
+				<Box component="div" className="carousel-dots">
 					{products.map((_: any, i: number) => (
 						<Box
+							component="div"
 							key={i}
 							onClick={() => setCurrentIndex(i)}
 							className={`carousel-dot ${i === currentIndex ? 'active' : ''}`}

@@ -1,0 +1,206 @@
+$black:   #0f0f0f;
+$white:   #ffffff;
+$surface: #f5f5f3;
+$border:  #e8e8e6;
+$muted:   #9a9a96;
+$accent:  #e02323;
+$green:   #16a34a;
+$amber:   #d97706;
+$blue:    #2563eb;
+$font:    'Inter', system-ui, sans-serif;
+$ease:    cubic-bezier(0.22, 1, 0.36, 1);
+
+#my-events-page {
+  width: 100%;
+  font-family: $font;
+
+  // ── Header ────────────────────────────────────────────────────────────────
+  .myev-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+
+    &__title {
+      font-size: 22px !important;
+      font-weight: 800 !important;
+      color: $black !important;
+    }
+
+    &__create-btn {
+      height: 36px !important;
+      padding: 0 16px !important;
+      background: $black !important;
+      color: $white !important;
+      font-weight: 700 !important;
+      font-size: 13px !important;
+      text-transform: none !important;
+      border-radius: 10px !important;
+      box-shadow: none !important;
+      transition: background 180ms $ease !important;
+
+      &:hover { background: #333 !important; }
+    }
+  }
+
+  // ── Status filter tabs ─────────────────────────────────────────────────────
+  .myev-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+
+    .myev-tab {
+      height: 30px;
+      padding: 0 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: $font;
+      cursor: pointer;
+      border: 1px solid $border;
+      background: $white;
+      color: $muted;
+      transition: all 150ms $ease;
+      line-height: 28px;
+      white-space: nowrap;
+
+      &:hover { border-color: #bbb; color: $black; }
+
+      &.active {
+        background: $black;
+        border-color: $black;
+        color: $white;
+      }
+    }
+  }
+
+  // ── Table ──────────────────────────────────────────────────────────────────
+  .myev-table {
+    background: $white;
+    border: 1px solid $border;
+    border-radius: 14px;
+    overflow: hidden;
+
+    &__head {
+      display: grid;
+      grid-template-columns: 2.5fr 1.5fr 1fr 1fr 1fr 100px;
+      align-items: center;
+      padding: 0 20px;
+      height: 44px;
+      background: $surface;
+      border-bottom: 1px solid $border;
+    }
+
+    &__head-cell {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.5px !important;
+      text-transform: uppercase !important;
+      color: $muted !important;
+    }
+
+    &__row {
+      display: grid;
+      grid-template-columns: 2.5fr 1.5fr 1fr 1fr 1fr 100px;
+      align-items: center;
+      padding: 14px 20px;
+      border-bottom: 1px solid $border;
+      transition: background 150ms $ease;
+
+      &:last-child { border-bottom: none; }
+      &:hover { background: $surface; }
+    }
+
+    &__name-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+
+      img {
+        width: 56px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 8px;
+        flex-shrink: 0;
+        border: 1px solid $border;
+      }
+    }
+
+    &__name {
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      color: $black !important;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+
+      &:hover { color: $accent !important; }
+    }
+
+    &__cell {
+      font-size: 13px !important;
+      color: #444 !important;
+    }
+
+    &__participants {
+      font-size: 13px !important;
+      font-weight: 600 !important;
+      color: $black !important;
+    }
+
+    &__status {
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.5px !important;
+      text-transform: uppercase !important;
+      padding: 3px 8px !important;
+      border-radius: 6px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+
+      &--UPCOMING   { color: $blue;   background: rgba(37,99,235,0.1); }
+      &--ONGOING    { color: $green;  background: rgba(22,163,74,0.1); }
+      &--COMPLETED  { color: $muted;  background: $surface; }
+      &--CANCELLED  { color: $accent; background: rgba(224,35,35,0.1); }
+    }
+
+    &__actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    &__action-btn {
+      font-size: 11px !important;
+      text-transform: none !important;
+      border-radius: 7px !important;
+      padding: 3px 10px !important;
+    }
+  }
+
+  // ── Empty ──────────────────────────────────────────────────────────────────
+  .no-data {
+    padding: 60px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+
+    img { width: 48px; opacity: 0.35; }
+    p   { font-size: 14px; color: $muted; }
+  }
+
+  // ── Pagination ─────────────────────────────────────────────────────────────
+  .myev-pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 0 0;
+
+    p { font-size: 12px; color: $muted; }
+  }
+}

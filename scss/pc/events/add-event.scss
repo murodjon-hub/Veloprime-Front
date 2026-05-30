@@ -1,0 +1,377 @@
+// ─── ADD EVENT PAGE ───────────────────────────────────────────────────────────
+// Design tokens
+$ae-red:      #e63946;
+$ae-dark:     #0a0a0a;
+$ae-bg:       #f4f5f7;
+$ae-white:    #fff;
+$ae-border:   #e8e8e8;
+$ae-muted:    #aaa;
+$ae-green:    #2ecc71;
+$ae-shadow:   0 2px 12px rgba(0, 0, 0, 0.06);
+$ae-radius:   16px;
+
+// ─── Page shell ──────────────────────────────────────────────────────────────
+
+.add-event-page {
+  background: $ae-bg;
+  min-height: 100vh;
+
+  // Hero banner
+  &__hero {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 60%, #16213e 100%);
+    padding: 56px 0 44px;
+    text-align: center;
+  }
+
+  &__hero-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: $ae-red;
+    background: rgba($ae-red, 0.12);
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+
+  &__hero-title {
+    font-size: clamp(26px, 3.5vw, 40px);
+    font-weight: 900;
+    color: $ae-white;
+    letter-spacing: -0.5px;
+    margin: 0 0 8px;
+  }
+
+  &__hero-sub {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.55);
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  // ─── Two-column layout ───────────────────────────────────────────────
+  &__body {
+    display: flex;
+    gap: 28px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    align-items: flex-start;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      padding: 24px 16px 60px;
+    }
+  }
+
+  &__form-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+  }
+
+  &__sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 96px;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      position: static;
+    }
+  }
+
+  // ─── Form helpers ─────────────────────────────────────────────────────
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    @media (max-width: 480px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  &__arrow {
+    font-size: 20px;
+    font-weight: 700;
+    color: $ae-muted;
+    flex-shrink: 0;
+
+    @media (max-width: 480px) { display: none; }
+  }
+
+  &__field {
+    margin-bottom: 16px;
+  }
+
+  // ─── Banner upload area ───────────────────────────────────────────────
+  &__banner-empty {
+    height: 180px;
+    border: 2px dashed #d0d0d0;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    gap: 8px;
+
+    &:hover {
+      border-color: $ae-dark;
+      background: #fafafa;
+    }
+  }
+
+  &__banner-empty-icon { font-size: 40px; color: #ccc; }
+  &__banner-empty-hint { font-size: 14px; font-weight: 600; color: #555; }
+  &__banner-empty-sub  { font-size: 11px; color: $ae-muted; }
+
+  &__banner-preview {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 200px;
+  }
+
+  &__banner-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__banner-uploading {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: $ae-white;
+    font-size: 13px;
+  }
+
+  &__banner-actions {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
+  }
+
+  &__banner-btn.MuiButton-root {
+    font-size: 12px;
+    text-transform: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: $ae-dark;
+    padding: 4px 12px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    &:hover { background: $ae-white; }
+
+    &--remove {
+      background: rgba($ae-red, 0.9);
+      color: $ae-white;
+      &:hover { background: $ae-red; }
+    }
+  }
+}
+
+// ─── Form card ───────────────────────────────────────────────────────────────
+
+.add-event-card {
+  background: $ae-white;
+  border-radius: $ae-radius;
+  padding: 24px;
+  box-shadow: $ae-shadow;
+
+  &__title.MuiTypography-root {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: $ae-dark;
+    margin-bottom: 20px;
+  }
+
+  &__icon { font-size: 18px; color: $ae-red; }
+}
+
+// ─── Sidebar ─────────────────────────────────────────────────────────────────
+
+.add-event-sidebar {
+
+  &__section-label.MuiTypography-root {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: $ae-muted;
+    margin-bottom: 10px;
+  }
+
+  // Preview card
+  &__preview-card {
+    background: $ae-white;
+    border-radius: $ae-radius;
+    padding: 16px;
+    box-shadow: $ae-shadow;
+  }
+
+  &__card {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid $ae-border;
+  }
+
+  &__card-img-wrap {
+    position: relative;
+    height: 140px;
+    background: #f4f4f4;
+  }
+
+  &__card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__card-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f8f8;
+  }
+
+  &__card-status {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0, 0, 0, 0.65);
+    color: $ae-white;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  &__card-distance {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: $ae-red;
+    color: $ae-white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  &__card-body { padding: 12px; }
+
+  &__card-title.MuiTypography-root {
+    font-size: 14px;
+    font-weight: 700;
+    color: $ae-dark;
+    margin-bottom: 4px;
+  }
+
+  &__card-route.MuiTypography-root {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  // Publish panel
+  &__publish {
+    background: $ae-white;
+    border-radius: $ae-radius;
+    padding: 20px;
+    box-shadow: $ae-shadow;
+  }
+
+  &__checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  &__check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #bbb;
+    transition: color 0.2s;
+
+    svg { color: #ddd; transition: color 0.2s; }
+
+    &.done {
+      color: $ae-green;
+      svg { color: $ae-green; }
+    }
+  }
+
+  // Publish button — use .Mui-disabled (MUI class) not :disabled pseudo
+  &__publish-btn.MuiButton-root {
+    width: 100%;
+    background: $ae-dark;
+    color: $ae-white;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px;
+    border-radius: 10px;
+    text-transform: none;
+    margin-bottom: 10px;
+    transition: background 0.2s;
+
+    &:hover { background: #333; }
+
+    &.Mui-disabled {
+      background: #e0e0e0;
+      color: $ae-muted;
+    }
+  }
+
+  &__cancel-btn.MuiButton-root {
+    width: 100%;
+    color: #888;
+    font-size: 13px;
+    text-transform: none;
+    border: 1.5px solid $ae-border;
+    border-radius: 10px;
+    padding: 10px;
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover {
+      border-color: $ae-dark;
+      color: $ae-dark;
+    }
+  }
+}

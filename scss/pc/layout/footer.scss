@@ -1,0 +1,216 @@
+/** ─── VELOPRIME FOOTER ──────────────────────────────────────────── */
+
+#pc-wrap {
+
+  .footer {
+    background: #0a0a0a;
+    color: #fff;
+
+    &__inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 80px 40px 60px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1.4fr;
+      gap: 48px;
+
+      @media (max-width: 1100px) { grid-template-columns: 1fr 1fr 1fr; }
+      @media (max-width: 700px)  { grid-template-columns: 1fr; }
+    }
+
+    // ── Brand column ──────────────────────────────────────────────
+    &__brand-col { display: flex; flex-direction: column; gap: 16px; }
+
+    &__logo {
+      font-family: 'Barlow Condensed', 'Inter', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #fff;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    &__tagline {
+      font-size: 13px;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.48);
+      margin: 0;
+    }
+
+    &__social {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    &__social-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      color: rgba(255, 255, 255, 0.60);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+
+      &:hover {
+        background: #e63946;
+        color: #fff;
+        border-color: #e63946;
+      }
+    }
+
+    &__contact { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+    &__contact-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.45);
+
+      svg { flex-shrink: 0; color: rgba(255, 255, 255, 0.30); }
+    }
+
+    // ── Link columns ──────────────────────────────────────────────
+    &__col { display: flex; flex-direction: column; gap: 14px; }
+
+    &__col-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.35);
+      margin: 0 0 4px;
+    }
+
+    &__col-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    &__link {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.60);
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover { color: #fff; }
+    }
+
+    // ── Newsletter ─────────────────────────────────────────────────
+    &__newsletter-col { display: flex; flex-direction: column; gap: 12px; }
+
+    &__newsletter-sub {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.42);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    &__newsletter-form {
+      display: flex;
+      gap: 0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    &__newsletter-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: none;
+      outline: none;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+
+      &::placeholder { color: rgba(255, 255, 255, 0.28); }
+    }
+
+    &__newsletter-btn {
+      background: #e63946;
+      border: none;
+      color: #fff;
+      padding: 0 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+
+      &:hover { background: #c1121f; }
+    }
+
+    // ── Bottom bar ─────────────────────────────────────────────────
+    &__bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    &__bottom-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &__copy {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.28);
+    }
+
+    &__bottom-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    &__bottom-link {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.28);
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover { color: rgba(255, 255, 255, 0.65); }
+    }
+
+    // ── Mobile ─────────────────────────────────────────────────────
+    &--mobile {
+      padding: 32px 20px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+
+      .footer__brand {
+        font-size: 18px;
+        font-weight: 900;
+        letter-spacing: 3px;
+        color: #fff;
+      }
+    }
+
+    &__mobile-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      justify-content: center;
+    }
+
+    &__mobile-link {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.55);
+      text-decoration: none;
+    }
+  }
+}

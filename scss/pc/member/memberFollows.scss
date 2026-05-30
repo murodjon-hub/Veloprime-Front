@@ -1,172 +1,227 @@
-#pc-wrap {
-	#member-follows-page {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		.main-title-box {
-			width: 100%;
-			height: auto;
-			flex-direction: row;
-			justify-content: space-between;
-			.right-box {
-				width: 315px;
-				.main-title {
-					color: #181a20;
-					font-family: $font;
-					font-size: 30px;
-					font-style: normal;
-					font-weight: 600;
-					line-height: normal;
-					letter-spacing: 0.6px;
-					text-transform: capitalize;
-				}
-			}
-		}
-		.follows-list-box {
-			width: 100%;
-			margin-top: 85px;
-			gap: 15px;
-			.listing-title-box {
-				width: 100%;
-				height: auto;
-				flex-direction: row;
-				gap: 110px;
-				padding: 18px 34px 18px 33px;
-				border-radius: 12px;
-				background: #f6f6f6;
-				justify-content: space-between;
-				.title-text {
-					color: #181a20;
-					font-family: $font;
-					font-size: 15px;
-					font-style: normal;
-					font-weight: 600;
-					line-height: normal;
-				}
-			}
-			.follows-card-box {
-				padding-right: 30px;
-				padding-bottom: 5px;
-				width: 100%;
-				height: auto;
-				flex-direction: row;
-				align-items: center;
-				gap: 10px;
-				border-bottom: 1px solid #ddd;
-				.info {
-					width: 300px;
-					display: flex;
-					flex-direction: row;
-					align-items: center;
-					cursor: pointer;
-					.image-box {
-						width: 110px;
-						height: 110px;
-						overflow: hidden;
-						margin-right: 25px;
-						img {
-							width: 100%;
-							height: 100%;
-							object-fit: cover;
-							border-radius: 50%;
-						}
-					}
-					.information-box {
-						width: auto;
-						height: auto;
-						padding: 5px 0px;
-						.name {
-							color: #181a20;
-							font-family: $font;
-							font-size: 13px;
-							font-style: normal;
-							font-weight: 600;
-							line-height: normal;
-						}
-					}
-				}
-				.details-box {
-					width: 300px;
-					display: flex;
-					flex-direction: row;
-					justify-content: space-between;
-					.info-box {
-						display: flex;
-						align-items: center;
-						img {
-							width: 24px;
-							height: 24px;
-						}
-						svg {
-							width: 24px;
-							height: 24px;
-							cursor: pointer;
-						}
-						p {
-							color: #181a20;
-							font-family: $font;
-							font-size: 15px;
-							font-style: normal;
-							font-weight: 600;
-							line-height: normal;
-						}
-						span {
-							margin-left: 4px;
-							color: #181a20;
-							font-family: $font;
-							font-size: 13px;
-							font-style: normal;
-							font-weight: 600;
-							line-height: normal;
-						}
-					}
-				}
-				.action-box {
-					width: 300px;
-					height: 100%;
-					flex-direction: row;
-					align-items: center;
-					justify-content: flex-end;
-					gap: 20px;
-					button {
-						border: 1px solid #b9b9b9;
-						color: #181a20;
-						font-family: $font;
-						font-size: 14px;
-						font-style: normal;
-						font-weight: 400;
-						line-height: normal;
-					}
-					p {
-						color: #b9b9b9;
-						font-family: $font;
-						font-size: 14px;
-						font-style: italic;
-						font-weight: 400;
-						line-height: normal;
-					}
-				}
-			}
-		}
-		.pagination-config {
-			width: 100%;
-			height: auto;
-			justify-content: center;
-			align-items: center;
-			margin-top: 30px;
-			.total-result {
-				p {
-					color: #181a20;
-					text-align: center;
-					font-family: $font;
-					font-size: 14px;
-					font-style: normal;
-					font-weight: 400;
-					line-height: 26px;
-				}
-			}
-		}
-	}
+$black:   #0f0f0f;
+$white:   #ffffff;
+$surface: #f5f5f3;
+$border:  #e8e8e6;
+$muted:   #9a9a96;
+$accent:  #e02323;
+$green:   #16a34a;
+$blue:    #2563eb;
+$font:    'Inter', system-ui, sans-serif;
+$ease:    cubic-bezier(0.22, 1, 0.36, 1);
+
+// ── Section header ────────────────────────────────────────────────────────────
+.follows-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+
+  &__title {
+    font-family: $font !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    color: $black !important;
+  }
+
+  &__count {
+    font-family: $font !important;
+    font-size: 13px !important;
+    color: $muted !important;
+  }
+}
+
+// ── Cards grid ────────────────────────────────────────────────────────────────
+.follows-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ── Individual follow card ────────────────────────────────────────────────────
+.follow-card {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: box-shadow 200ms $ease, transform 200ms $ease, border-color 200ms $ease;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+    transform: translateY(-2px);
+    border-color: #d0d0ce;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__avatar-wrap { position: relative; flex-shrink: 0; }
+
+  &__avatar {
+    width: 52px !important;
+    height: 52px !important;
+    border-radius: 50% !important;
+    border: 2px solid $border !important;
+    transition: border-color 200ms $ease;
+
+    .follow-card:hover & { border-color: $black; }
+  }
+
+  &__meta { flex: 1; min-width: 0; }
+
+  &__name {
+    font-family: $font !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: $black !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__badge {
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    height: 18px !important;
+    border-radius: 4px !important;
+    margin-top: 3px !important;
+
+    .MuiChip-label { padding: 0 6px !important; }
+
+    &--user   { background: #f0f0f0 !important; color: $muted !important; }
+    &--member { background: rgba(37,99,235,0.1) !important; color: $blue !important; }
+    &--agent  { background: rgba(22,163,74,0.1) !important; color: $green !important; }
+    &--admin  { background: rgba(224,35,35,0.1) !important; color: $accent !important; }
+  }
+
+  &__stats {
+    display: flex;
+    gap: 16px;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &-num  { font-family: $font; font-size: 15px; font-weight: 800; color: $black; line-height: 1; }
+    &-label { font-family: $font; font-size: 10px; color: $muted; margin-top: 2px; }
+  }
+
+  &__stat-sep {
+    width: 1px;
+    background: $border;
+    align-self: stretch;
+    margin: 2px 0;
+  }
+
+  &__bio {
+    font-family: $font;
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 4px;
+  }
+
+  &__follow-btn {
+    flex: 1;
+    font-family: $font !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    text-transform: none !important;
+    border-radius: 8px !important;
+    padding: 7px 12px !important;
+    transition: all 160ms $ease !important;
+
+    &--follow {
+      background: $black !important;
+      color: $white !important;
+      border: 1px solid $black !important;
+      &:hover { background: #222 !important; transform: translateY(-1px); }
+    }
+
+    &--following {
+      background: $white !important;
+      color: $black !important;
+      border: 1px solid $border !important;
+      &:hover { border-color: $accent !important; color: $accent !important; background: rgba(224,35,35,0.04) !important; }
+    }
+  }
+
+  &__like-btn {
+    border-radius: 8px !important;
+    padding: 6px !important;
+    min-width: 36px !important;
+    border: 1px solid $border !important;
+    color: $muted !important;
+    transition: all 160ms $ease !important;
+
+    &--liked {
+      color: $accent !important;
+      border-color: rgba(224,35,35,0.3) !important;
+      background: rgba(224,35,35,0.04) !important;
+    }
+
+    &:hover:not(.follow-card__like-btn--liked) {
+      border-color: $accent !important;
+      color: $accent !important;
+    }
+  }
+
+  &__like-count {
+    font-family: $font;
+    font-size: 11px;
+    color: $muted;
+    min-width: 16px;
+    text-align: center;
+  }
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.follows-empty {
+  padding: 80px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+
+  &__icon { font-size: 48px !important; color: $border !important; }
+  &__title { font-family: $font !important; font-size: 16px !important; font-weight: 700 !important; color: $black !important; }
+  &__sub   { font-family: $font !important; font-size: 13px !important; color: $muted !important; }
+}
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+.follows-pagination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 0 0;
+
+  .total-result p { font-family: $font; font-size: 12px; color: $muted; }
 }

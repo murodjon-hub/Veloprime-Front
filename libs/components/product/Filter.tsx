@@ -10,9 +10,9 @@ interface FilterChipGroupProps {
 }
 
 const FilterChipGroup = ({ label, options, selected, onToggle }: FilterChipGroupProps) => (
-  <Box className="filter__group">
+  <Box component="div" className="filter__group">
     <Typography className="filter__group-label">{label}</Typography>
-    <Box className="filter__chip-row">
+    <Box component="div" className="filter__chip-row">
       {options.map((opt) => {
         const active = selected.includes(opt);
         return (
@@ -35,13 +35,13 @@ const Filter = ({
   activeSizes, onToggleSize, priceRange, onPriceChange, onReset,
 }: any) => {
   return (
-    <Box className="filter">
-      <Box className="filter__header">
+    <Box component="div" className="filter">
+      <Box component="div" className="filter__header">
         <Typography className="filter__title">Filters</Typography>
         <Typography className="filter__reset" onClick={onReset}>Reset all</Typography>
       </Box>
 
-      <Box className="filter__group">
+      <Box component="div" className="filter__group">
         <Typography className="filter__group-label">Search</Typography>
         <input
           className="filter__search-input"
@@ -62,7 +62,7 @@ const Filter = ({
       <FilterChipGroup label="Color"        options={Object.values(ProductColor)}       selected={activeColors} onToggle={onToggleColor} />
       <FilterChipGroup label="Size"         options={Object.values(ProductSize)}        selected={activeSizes} onToggle={onToggleSize} />
 
-      <Box className="filter__group filter__group--price">
+      <Box component="div" className="filter__group filter__group--price">
         <Typography className="filter__group-label">Price Range</Typography>
         <Slider
           value={priceRange}

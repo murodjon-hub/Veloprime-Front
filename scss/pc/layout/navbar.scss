@@ -458,6 +458,252 @@
     }
   }
 
+  // ─── Hamburger (desktop: hidden) ──────────────────────────────────
+  .hero__hamburger {
+    display: none;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 8px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+
+    &:hover { background: rgba(255, 255, 255, 0.12); }
+  }
+
+  // ─── Mobile drawer ─────────────────────────────────────────────────
+  .hero__mobile-drawer {
+    display: none;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 199;
+    background: rgba(8, 8, 12, 0.97);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    overflow-y: auto;
+    flex-direction: column;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .hero__mobile-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 16px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+
+    svg { color: rgba(255, 255, 255, 0.45); flex-shrink: 0; }
+
+    input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      &::placeholder { color: rgba(255, 255, 255, 0.35); }
+    }
+
+    button {
+      background: #e63946;
+      border: none;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+  }
+
+  .hero__mobile-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 0 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .hero__mobile-link {
+    display: block;
+    padding: 15px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+    transition: color 0.15s, background 0.15s;
+
+    &:hover  { color: #fff; background: rgba(255, 255, 255, 0.05); }
+    &.active { color: #e63946; }
+  }
+
+  .hero__mobile-footer {
+    padding: 20px 24px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .hero__mobile-langs {
+    display: flex;
+    gap: 8px;
+  }
+
+  .hero__mobile-lang {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    background: none;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &.active {
+      border-color: #e63946;
+      color: #e63946;
+      background: rgba(230, 57, 70, 0.1);
+    }
+  }
+
+  .hero__mobile-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  .hero__mobile-user-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    span { font-size: 13px; font-weight: 700; color: #fff; }
+    a    { font-size: 11px; color: #e63946; text-decoration: none; font-weight: 600; }
+  }
+
+  .hero__mobile-logout {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover { color: #e63946; background: rgba(230, 57, 70, 0.1); }
+  }
+
+  .hero__mobile-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    a { display: block; }
+  }
+
+  .hero__btn-ghost-sm {
+    width: 100%;
+    background: none;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    &:hover { border-color: rgba(255, 255, 255, 0.65); background: rgba(255, 255, 255, 0.07); }
+  }
+
+  .hero__btn-primary-sm {
+    width: 100%;
+    background: #e63946;
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 13px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+    &:hover { background: #c1121f; }
+  }
+
+  // ─── Mobile breakpoint ─────────────────────────────────────────────
+  @media (max-width: 768px) {
+    .hero {
+      height: 100svh; // use small viewport height so URL bar doesn't cut content
+      min-height: 600px;
+    }
+
+    .hero__topbar {
+      height: 56px;
+      padding: 0 16px;
+      background: rgba(8, 8, 12, 0.75); // always slightly dark on mobile
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .hero__topbar-inner {
+      gap: 0;
+      justify-content: space-between;
+    }
+
+    .hero__logo    { font-size: 16px; letter-spacing: 2px; }
+    .hero__nav     { display: none; }
+    .hero__actions { display: none; }
+    .hero__hamburger  { display: flex; }
+    .hero__mobile-drawer { display: flex; }
+
+    // Hero content stacked and smaller
+    .hero__content { padding: 80px 24px 40px; align-items: flex-start; }
+    .hero__content-inner { max-width: 100%; }
+
+    .hero__eyebrow  { font-size: 9px; letter-spacing: 2px; margin-bottom: 14px; }
+    .hero__title    { font-size: clamp(42px, 13vw, 72px); letter-spacing: -1px; margin-bottom: 18px; }
+    .hero__subtitle { font-size: 14px; margin-bottom: 28px; }
+
+    .hero__cta-group  { flex-direction: column; gap: 10px; margin-bottom: 36px; }
+    .hero__cta-primary, .hero__cta-secondary { width: 100%; justify-content: center; padding: 14px 24px; }
+
+    .hero__stats      { gap: 20px; }
+    .hero__stat-num   { font-size: 18px; }
+    .hero__stat-label { font-size: 9px; }
+
+    .hero__scroll-hint { display: none; }
+
+    // Search bar full-width on mobile
+    .hero__searchbar { padding: 10px 16px; top: 56px; }
+    .hero__search-form { max-width: 100%; }
+  }
+
   // ─── Animations ───────────────────────────────────────────────────
   @keyframes heroZoom {
     from { transform: scale(1.04); }

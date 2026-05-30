@@ -3,8 +3,7 @@ import { useRouter, withRouter } from 'next/router';
 import { getJwtToken, logOut, updateUserInfo } from '../auth';
 import { getImageUrl } from '../utils';
 import { Stack, MenuItem, Menu } from '@mui/material';
-import { Search, ChevronDown, LogOut, User, Heart, Package, Settings } from 'lucide-react';
-import useDeviceDetect from '../hooks/useDeviceDetect';
+import { Search, ChevronDown, LogOut, User, Heart, Package, Settings, Menu as MenuIcon, X } from 'lucide-react';
 import Link from 'next/link';
 import { useReactiveVar } from '@apollo/client';
 import { userVar } from '../../apollo/store';
@@ -96,7 +95,7 @@ const TR: Record<string, Record<string, string>> = {
 	},
 };
 
-const NAV_KEYS = ['Home', 'Bikes', 'Accessories', 'Events', 'Blogs', 'Members'];
+const NAV_KEYS  = ['Home', 'Bikes', 'Accessories', 'Events', 'Blogs', 'Members'];
 const NAV_HREFS: Record<string, string> = {
 	Home:        '/',
 	Bikes:       '/products',
@@ -107,17 +106,17 @@ const NAV_HREFS: Record<string, string> = {
 };
 
 const Top = () => {
-	const device  = useDeviceDetect();
 	const user    = useReactiveVar(userVar);
 	const router  = useRouter();
 	const tr      = TR[router.locale ?? 'en'] ?? TR.en;
 	const t       = (key: string) => tr[key] ?? key;
 
-	const [scrolled,    setScrolled]    = useState(false);
-	const [langAnchor,  setLangAnchor]  = useState<null | HTMLElement>(null);
-	const [userAnchor,  setUserAnchor]  = useState<null | HTMLElement>(null);
-	const [searchOpen,  setSearchOpen]  = useState(false);
-	const [searchQuery, setSearchQuery] = useState('');
+	const [scrolled,     setScrolled]     = useState(false);
+	const [langAnchor,   setLangAnchor]   = useState<null | HTMLElement>(null);
+	const [userAnchor,   setUserAnchor]   = useState<null | HTMLElement>(null);
+	const [searchOpen,   setSearchOpen]   = useState(false);
+	const [searchQuery,  setSearchQuery]  = useState('');
+	const [mobileOpen,   setMobileOpen]   = useState(false);
 	const searchRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -134,6 +133,15 @@ const Top = () => {
 	useEffect(() => {
 		if (searchOpen) searchRef.current?.focus();
 	}, [searchOpen]);
+
+	// Close mobile menu on route change
+	useEffect(() => { setMobileOpen(false); }, [router.pathname]);
+
+	// Lock body scroll when mobile menu open
+	useEffect(() => {
+		document.body.style.overflow = mobileOpen ? 'hidden' : '';
+		return () => { document.body.style.overflow = ''; };
+	}, [mobileOpen]);
 
 	const langChoice = useCallback(async (e: React.MouseEvent<HTMLElement>) => {
 		const id = (e.currentTarget as HTMLElement).id;
@@ -152,18 +160,6 @@ const Top = () => {
 
 	const currentLocale = (router.locale ?? 'en').toUpperCase();
 
-	if (device === 'mobile') {
-		return (
-			<Stack className="mobile-nav">
-				{NAV_KEYS.map((key) => (
-					<Link key={key} href={NAV_HREFS[key]}>
-						<div>{t(key)}</div>
-					</Link>
-				))}
-			</Stack>
-		);
-	}
-
 	return (
 		<Stack className="navbar">
 			<div className="hero">
@@ -178,6 +174,7 @@ const Top = () => {
 
 						<Link href="/" className="hero__logo">VELOPRIME</Link>
 
+						{/* Desktop nav */}
 						<nav className="hero__nav">
 							{NAV_KEYS.map((key) => (
 								<Link
@@ -190,6 +187,7 @@ const Top = () => {
 							))}
 						</nav>
 
+						{/* Desktop actions */}
 						<div className="hero__actions">
 							<button className="hero__icon-btn" onClick={() => setSearchOpen((p) => !p)} aria-label="Search">
 								<Search size={18} />
@@ -204,7 +202,7 @@ const Top = () => {
 							<Menu anchorEl={langAnchor} open={Boolean(langAnchor)} onClose={() => setLangAnchor(null)}>
 								{[
 									{ id: 'en', label: 'English' },
-									{ id: 'kr', label: '한국어' },
+									{ id: 'kr', label: '한국어'  },
 									{ id: 'ru', label: 'Русский' },
 								].map((l) => (
 									<MenuItem key={l.id} id={l.id} onClick={langChoice} sx={{ fontSize: 13 }}>
@@ -232,7 +230,7 @@ const Top = () => {
 										onClose={() => setUserAnchor(null)}
 										transformOrigin={{ vertical: 'top', horizontal: 'right' }}
 										anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-										PaperProps={{ sx: { mt: 1, minWidth: 180, borderRadius: 2, boxShadow: '0 16px 48px rgba(0,0,0,0.15)' } }}
+										slotProps={{ paper: { sx: { mt: 1, minWidth: 180, borderRadius: 2, boxShadow: '0 16px 48px rgba(0,0,0,0.15)' } } }}
 									>
 										<MenuItem onClick={() => { router.push(`/mypage?memberId=${user._id}`); setUserAnchor(null); }}>
 											<User size={15} style={{ marginRight: 8 }} /> {t('myPage')}
@@ -264,8 +262,18 @@ const Top = () => {
 								</div>
 							)}
 						</div>
+
+						{/* Hamburger — visible only on mobile */}
+						<button
+							className="hero__hamburger"
+							onClick={() => setMobileOpen((p) => !p)}
+							aria-label="Toggle menu"
+						>
+							{mobileOpen ? <X size={22} /> : <MenuIcon size={22} />}
+						</button>
 					</div>
 
+					{/* Desktop search bar */}
 					{searchOpen && (
 						<div className="hero__searchbar">
 							<form onSubmit={handleSearch} className="hero__search-form">
@@ -282,6 +290,76 @@ const Top = () => {
 						</div>
 					)}
 				</header>
+
+				{/* ── Mobile drawer ── */}
+				{mobileOpen && (
+					<div className="hero__mobile-drawer">
+						{/* Mobile search */}
+						<form onSubmit={(e) => { handleSearch(e); setMobileOpen(false); }} className="hero__mobile-search">
+							<Search size={15} />
+							<input
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								placeholder={t('searchPlaceholder')}
+							/>
+							<button type="submit">{t('searchBtn')}</button>
+						</form>
+
+						{/* Nav links */}
+						<nav className="hero__mobile-nav">
+							{NAV_KEYS.map((key) => (
+								<Link
+									key={key}
+									href={NAV_HREFS[key]}
+									className={`hero__mobile-link${router.pathname === NAV_HREFS[key] ? ' active' : ''}`}
+									onClick={() => setMobileOpen(false)}
+								>
+									{t(key)}
+								</Link>
+							))}
+						</nav>
+
+						{/* Auth / user section */}
+						<div className="hero__mobile-footer">
+							{/* Language switcher */}
+							<div className="hero__mobile-langs">
+								{(['en', 'kr', 'ru'] as const).map((loc) => (
+									<button
+										key={loc}
+										className={`hero__mobile-lang${router.locale === loc ? ' active' : ''}`}
+										onClick={() => { router.push(router.asPath, router.asPath, { locale: loc }); setMobileOpen(false); }}
+									>
+										{loc.toUpperCase()}
+									</button>
+								))}
+							</div>
+
+							{user?._id ? (
+								<div className="hero__mobile-user">
+									<img src={getImageUrl(user.memberImage, '/img/profile/defaultUser.svg')} alt={user.memberNick} />
+									<div className="hero__mobile-user-info">
+										<span>{user.memberNick}</span>
+										<Link href={`/mypage?memberId=${user._id}`} onClick={() => setMobileOpen(false)}>
+											{t('myPage')}
+										</Link>
+									</div>
+									<button className="hero__mobile-logout" onClick={() => { logOut(); setMobileOpen(false); }}>
+										<LogOut size={16} />
+									</button>
+								</div>
+							) : (
+								<div className="hero__mobile-auth">
+									<Link href="/account/join" onClick={() => setMobileOpen(false)}>
+										<button className="hero__btn-ghost-sm">{t('Login')}</button>
+									</Link>
+									<Link href="/account/join" onClick={() => setMobileOpen(false)}>
+										<button className="hero__btn-primary-sm">{t('SignUp')}</button>
+									</Link>
+								</div>
+							)}
+						</div>
+					</div>
+				)}
 
 				{/* ── Hero Content ── */}
 				<div className="hero__content">

@@ -47,7 +47,7 @@ const AccessoryCard = ({ product }: { product: Product }) => {
       setLiked(modifier > 0);
       setLikeCount(data?.likeTargetProduct?.productLikes ?? likeCount);
     } catch (err) {
-      console.error("Like failed:", err);
+      // silent — like failures don't need a modal
     }
   };
 

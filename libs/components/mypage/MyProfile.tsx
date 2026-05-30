@@ -71,7 +71,7 @@ const MyProfile = ({ initialValues }: MyProfileProps) => {
 			const responseImage = response.data.data.imageUploader;
 			setUpdateData((prev) => ({ ...prev, memberImage: responseImage }));
 		} catch (err) {
-			console.error('Image upload failed:', err);
+			sweetErrorHandling(err).then();
 		}
 	};
 
